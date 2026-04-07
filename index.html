@@ -1818,17 +1818,17 @@ body.data-mode::after {
   display: none;
   position: absolute;
   z-index: 100;
-  background: rgba(0,20,10,.92);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(0,255,136,.25);
-  border-radius: 10px;
-  padding: 18px 20px;
-  max-width: 340px;
+  background: rgba(5,25,15,.96);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0,255,136,.3);
+  border-radius: 12px;
+  padding: 22px 24px;
+  max-width: 380px;
   font-family: 'Courier New', monospace;
-  font-size: .78rem;
-  color: rgba(255,255,255,.85);
-  line-height: 1.6;
-  box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 20px rgba(0,255,136,.08);
+  font-size: .82rem;
+  color: rgba(255,255,255,.92);
+  line-height: 1.75;
+  box-shadow: 0 12px 48px rgba(0,0,0,.6), 0 0 30px rgba(0,255,136,.1), inset 0 1px 0 rgba(0,255,136,.1);
   animation: annotationAppear .5s cubic-bezier(.4,0,.2,1) both;
 }
 body.data-mode .data-annotation { display: block; }
@@ -1867,56 +1867,224 @@ body.data-mode .data-annotation { display: block; }
   letter-spacing: .5px;
 }
 .data-annotation code {
-  background: rgba(0,255,136,.1);
+  background: rgba(0,255,136,.12);
   color: #00FF88;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: .72rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: .76rem;
+  font-weight: 700;
+  border: 1px solid rgba(0,255,136,.15);
 }
 .data-annotation .da-metric {
   display: inline-block;
-  background: rgba(0,191,255,.1);
-  color: #00BFFF;
-  padding: 2px 8px;
-  border-radius: 3px;
-  font-size: .7rem;
+  background: rgba(0,191,255,.12);
+  color: #5CD6FF;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: .72rem;
   font-weight: 700;
-  margin: 2px 2px;
+  margin: 3px 2px;
   letter-spacing: .3px;
+  border: 1px solid rgba(0,191,255,.15);
 }
 .data-annotation .da-legal {
   display: block;
-  margin-top: 10px;
-  padding: 8px 10px;
-  background: rgba(255,59,59,.08);
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255,59,59,.1);
   border-left: 3px solid #FF3B3B;
-  border-radius: 0 6px 6px 0;
-  font-size: .72rem;
-  color: rgba(255,255,255,.7);
+  border-radius: 0 8px 8px 0;
+  font-size: .76rem;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
 }
-.data-annotation .da-legal strong { color: #FF3B3B; }
+.data-annotation .da-legal strong { color: #FF6B6B; }
 .data-annotation .da-ethical {
   display: block;
-  margin-top: 10px;
-  padding: 8px 10px;
-  background: rgba(191,90,242,.08);
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(191,90,242,.1);
   border-left: 3px solid #BF5AF2;
-  border-radius: 0 6px 6px 0;
-  font-size: .72rem;
-  color: rgba(255,255,255,.7);
+  border-radius: 0 8px 8px 0;
+  font-size: .76rem;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
 }
-.data-annotation .da-ethical strong { color: #BF5AF2; }
+.data-annotation .da-ethical strong { color: #D28BFF; }
 .data-annotation .da-advantage {
   display: block;
-  margin-top: 10px;
-  padding: 8px 10px;
-  background: rgba(255,149,0,.08);
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(255,149,0,.1);
   border-left: 3px solid #FF9500;
-  border-radius: 0 6px 6px 0;
-  font-size: .72rem;
-  color: rgba(255,255,255,.7);
+  border-radius: 0 8px 8px 0;
+  font-size: .76rem;
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
 }
-.data-annotation .da-advantage strong { color: #FF9500; }
+.data-annotation .da-advantage strong { color: #FFB340; }
+
+/* Live event flash on interacted elements */
+body.data-mode .menu-card { position: relative; }
+body.data-mode .menu-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+  transition: border-color .15s ease;
+  z-index: 50;
+}
+body.data-mode .menu-card.data-flash::after {
+  border-color: #00FF88;
+  box-shadow: 0 0 15px rgba(0,255,136,.2);
+}
+
+/* Data event log overlay */
+.data-event-log {
+  display: none;
+  position: fixed;
+  bottom: 90px;
+  left: 32px;
+  width: 340px;
+  max-height: 200px;
+  overflow-y: auto;
+  background: rgba(5,25,15,.95);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0,255,136,.2);
+  border-radius: 10px;
+  padding: 14px;
+  font-family: 'Courier New', monospace;
+  font-size: .68rem;
+  z-index: 1500;
+  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+}
+body.data-mode .data-event-log { display: block; }
+.data-event-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(0,255,136,.15);
+}
+.data-event-log-header span {
+  color: #00FF88;
+  font-weight: 700;
+  letter-spacing: 1px;
+  font-size: .72rem;
+}
+.data-event-log-header small {
+  color: rgba(255,255,255,.35);
+  font-size: .65rem;
+}
+.event-line {
+  padding: 3px 0;
+  color: rgba(255,255,255,.55);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  animation: eventFlash .3s ease;
+}
+.event-line .ev-time { color: rgba(255,255,255,.3); margin-right: 6px; }
+.event-line .ev-type { color: #00FF88; font-weight: 700; margin-right: 4px; }
+.event-line .ev-detail { color: rgba(255,255,255,.65); }
+@keyframes eventFlash {
+  from { background: rgba(0,255,136,.1); }
+  to { background: transparent; }
+}
+
+/* Data mode enhancements on filter buttons */
+body.data-mode .filter-btn { position: relative; }
+body.data-mode .filter-btn::after {
+  content: attr(data-filter);
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: .55rem;
+  color: #00FF88;
+  background: rgba(5,25,15,.9);
+  padding: 1px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(0,255,136,.2);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .2s;
+}
+body.data-mode .filter-btn:hover::after { opacity: 1; }
+body.data-mode .filter-btn[data-filter="all"]::after { content: 'SELECT * FROM dim_product'; }
+body.data-mode .filter-btn[data-filter="Burger"]::after { content: "WHERE category='Burger'"; }
+body.data-mode .filter-btn[data-filter="Side"]::after { content: "WHERE category='Side'"; }
+body.data-mode .filter-btn[data-filter="Drink"]::after { content: "WHERE category='Drink'"; }
+body.data-mode .filter-btn[data-filter="Dessert"]::after { content: "WHERE category='Dessert'"; }
+body.data-mode .filter-btn[data-filter="Breakfast"]::after { content: "WHERE category='Breakfast'"; }
+body.data-mode .filter-btn[data-filter="Extra"]::after { content: "WHERE category='Extra'"; }
+
+/* Payment method data labels */
+body.data-mode .pay-option { position: relative; }
+body.data-mode .pay-option::after {
+  content: '';
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Courier New', monospace;
+  font-size: .5rem;
+  color: #00BFFF;
+  white-space: nowrap;
+}
+body.data-mode .pay-option[data-pay="cash"]::after { content: 'payment_id=1'; }
+body.data-mode .pay-option[data-pay="ec"]::after { content: 'payment_id=2'; }
+body.data-mode .pay-option[data-pay="credit"]::after { content: 'payment_id=3'; }
+body.data-mode .pay-option[data-pay="mobile"]::after { content: 'payment_id=4'; }
+
+/* Add-to-cart button data flash */
+body.data-mode .add-to-cart { position: relative; }
+body.data-mode .add-to-cart::after {
+  content: 'EVENT';
+  position: absolute;
+  top: -8px; right: -8px;
+  font-family: 'Courier New', monospace;
+  font-size: .5rem;
+  background: #00FF88;
+  color: #000;
+  padding: 1px 4px;
+  border-radius: 3px;
+  font-weight: 700;
+  opacity: 0;
+  transition: opacity .2s;
+}
+body.data-mode .add-to-cart:hover::after { opacity: 1; }
+
+/* Location cards in data mode */
+body.data-mode .location-card { position: relative; }
+body.data-mode .location-card::before {
+  content: 'branch_id=' attr(data-branch);
+  position: absolute;
+  top: 8px; right: 8px;
+  font-family: 'Courier New', monospace;
+  font-size: .6rem;
+  color: #00FF88;
+  background: rgba(5,25,15,.9);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,255,136,.2);
+  z-index: 10;
+}
+
+/* Nav order button data mode */
+body.data-mode .nav-order-btn {
+  position: relative;
+}
+body.data-mode .nav-order-btn .cart-count {
+  background: #00FF88;
+  color: #000;
+}
+
+/* Hero stat data labels */
+body.data-mode .hero-stat-label { position: relative; }
+body.data-mode .hero-stat-num { color: #00FF88 !important; }
 
 /* Data pulse dots on elements */
 .data-pulse {
@@ -2115,6 +2283,15 @@ body.data-mode .data-schema-mini { display: block; }
 <!-- ===================== CONFETTI CONTAINER ===================== -->
 <div class="confetti-container" id="confettiContainer"></div>
 
+<!-- ===================== DATA EVENT LOG ===================== -->
+<div class="data-event-log" id="dataEventLog">
+  <div class="data-event-log-header">
+    <span>EVENT STREAM</span>
+    <small>live</small>
+  </div>
+  <div id="eventLogEntries"></div>
+</div>
+
 <!-- ===================== DATA MODE TOGGLE ===================== -->
 <div class="data-toggle" id="dataToggle">
   <span class="data-toggle-label" id="dataToggleLabel">DATA VIEW</span>
@@ -2247,7 +2424,16 @@ body.data-mode .data-schema-mini { display: block; }
 </section>
 
 <!-- ===================== MARQUEE ===================== -->
-<div class="marquee-strip">
+<div class="marquee-strip" style="position:relative;">
+  <!-- DATA ANNOTATION: MARQUEE -->
+  <div class="data-annotation" style="top:-120px;left:50%;transform:translateX(-50%);animation-delay:.15s;z-index:200;">
+    <div class="data-annotation-header">
+      <div class="data-annotation-icon da-icon-analyze"><i class="fa-solid fa-rotate"></i></div>
+      <div class="data-annotation-title">BRAND IMPRESSIONS</div>
+    </div>
+    Laufband = wiederholte Markenexposition. Messbar: <span class="da-metric">viewport_time</span> <span class="da-metric">scroll_past_speed</span><br>
+    → Online lässt sich exakt messen, wie lange ein Besucher Brand-Messages sieht. Im Laden: Schätzwerte.
+  </div>
   <div class="marquee-track">
     <span class="marquee-item"><span class="marquee-dot"></span>FLAME-GRILLED</span>
     <span class="marquee-item"><span class="marquee-dot"></span>100% FRÄNKISCHES WEIDERIND</span>
@@ -2679,7 +2865,21 @@ body.data-mode .data-schema-mini { display: block; }
 </section>
 
 <!-- ===================== FOOTER ===================== -->
-<footer class="footer">
+<footer class="footer" style="position:relative;">
+  <!-- DATA ANNOTATION: FOOTER -->
+  <div class="data-annotation" style="top:20px;right:24px;animation-delay:.2s;">
+    <div class="data-annotation-header">
+      <div class="data-annotation-icon da-icon-legal"><i class="fa-solid fa-gavel"></i></div>
+      <div class="data-annotation-title">RECHTLICHE PFLICHTEN</div>
+    </div>
+    Jede datenverarbeitende Website braucht:<br><br>
+    <span class="da-metric">Impressum</span> (§5 TMG / DDG)<br>
+    <span class="da-metric">Datenschutzerklärung</span> (Art. 13 DSGVO)<br>
+    <span class="da-metric">Cookie-Consent</span> (§25 TDDDG)<br>
+    <span class="da-metric">Opt-Out</span> für Analytics (Art. 21 DSGVO)<br><br>
+    <span class="da-legal"><strong>⚖ Wichtig:</strong> Ohne validen Cookie-Consent DARF keine Analyse-Software (Google Analytics, Matomo mit Cookies, etc.) geladen werden. Verstöße: Bußgelder bis 4% des Jahresumsatzes. Für den BI-Kurs: Datenschutz ist keine Option, sondern Voraussetzung jeder Datenerhebung.</span>
+    <span class="da-ethical"><strong>🔍 Digitale Souveränität:</strong> Wo werden die Analytics-Daten gespeichert? US-Cloud (Schrems II!) vs. EU-Server vs. Self-Hosted (euer VPS mit Supabase/Doris). Dies ist ein zentraler Lehrpunkt im Kurs.</span>
+  </div>
   <div class="footer-grid">
     <div>
       <a href="#" class="nav-logo" style="display:inline-flex;margin-bottom:8px;">
@@ -2835,8 +3035,7 @@ const PRODUCTS = [
   {id:5,name:"Chicken Burger",cat:"Burger",sub:"Chicken",price:6.49,cal:510,img:"photo-1606755962773-d324e0a13086",desc:"Zartes Hähnchenbrustfilet, knusprig paniert, mit Coleslaw.",tags:[],allergens:"Gluten, Sesam"},
   {id:6,name:"Crispy Chicken Deluxe",cat:"Burger",sub:"Chicken",price:7.49,cal:620,img:"photo-1513185158878-8d8c2a2a3da3",desc:"Crispy Chicken mit Jalapeños, Avocado-Creme und Rucola.",tags:["new"],allergens:"Gluten, Sesam, Ei"},
   {id:7,name:"Veggie Burger",cat:"Burger",sub:"Vegetarian",price:5.99,cal:420,img:"photo-1525059696034-4967a8e1dca2",desc:"Hausgemachtes Gemüse-Patty mit Röstzwiebeln und Kräuterquark.",tags:["veg"],allergens:"Gluten, Sesam, Soja"},
-  {id:8,name:"Vegan Beyond Burger",cat:"Burger",sub:"Vegan",price:8.49,cal:460,img:"photo-1520072959219-c595e6cdc07a",desc:"Plant-Based Patty, vegane Sauce, Avocado. 100% pflanzlich, 100% Geschmack.",tags:["vegan","new"],allergens:"Gluten, Sesam, Soja"},
-  {id:9,name:"Fish Burger",cat:"Burger",sub:"Fish",price:6.29,cal:480,img:"photo-1626082927389-6cd097cdc6ec",desc:"Atlantik-Kabeljau in Bierteig mit Remoulade und Eisbergsalat.",tags:[],allergens:"Gluten, Sesam, Fisch"},
+  {id:8,name:"Vegan Beyond Burger",cat:"Burger",sub:"Vegan",price:8.49,cal:460,img:"photo-1614961233913-a5113e3b3bfc",desc:"Plant-Based Patty, vegane Sauce, Avocado. 100% pflanzlich, 100% Geschmack.",tags:["vegan","new"],allergens:"Gluten, Sesam, Soja"},
   {id:10,name:"Kids Burger",cat:"Burger",sub:"Kids",price:3.49,cal:320,img:"photo-1572802419224-296b0aeee0d9",desc:"Kleiner Burger für kleine Gäste. Mit Apfelsaft oder Milch.",tags:[],allergens:"Gluten, Sesam"},
   {id:11,name:"Small Fries",cat:"Side",sub:"Fries",price:2.29,cal:230,img:"photo-1529589510304-b7e994a92f60",desc:"Knusprige Pommes, goldbraun frittiert.",tags:["veg","vegan"],allergens:"—"},
   {id:12,name:"Medium Fries",cat:"Side",sub:"Fries",price:2.99,cal:340,img:"photo-1573080496219-bb080dd4f877",desc:"Die perfekte Beilage in der beliebten Größe.",tags:["popular","veg"],allergens:"—"},
@@ -2846,8 +3045,7 @@ const PRODUCTS = [
   {id:16,name:"Onion Rings",cat:"Side",sub:"Fried",price:3.29,cal:350,img:"photo-1639024471283-03518883512d",desc:"Dicke Zwiebelringe in knuspriger Panade.",tags:["veg"],allergens:"Gluten, Milch"},
   {id:17,name:"Side Salad",cat:"Side",sub:"Salad",price:3.49,cal:80,img:"photo-1512621776951-a57141f2eefd",desc:"Blattsalat mit Cherry-Tomaten und Vinaigrette.",tags:["veg","vegan"],allergens:"—"},
   {id:18,name:"Mozzarella Sticks",cat:"Side",sub:"Fried",price:4.29,cal:420,img:"photo-1531749668029-2db88e4276c7",desc:"Panierte Mozzarella-Sticks mit Marinara-Dip.",tags:[],allergens:"Gluten, Milch"},
-  {id:19,name:"Loaded Fries",cat:"Side",sub:"Fries",price:4.99,cal:580,img:"photo-1585109649139-366815a0d713",desc:"Pommes mit Cheddar, Bacon-Bits und Sour Cream.",tags:["new"],allergens:"Gluten, Milch"},
-  {id:21,name:"Cola 0.3l",cat:"Drink",sub:"Soft Drink",price:2.49,cal:130,img:"photo-1622483767028-3f66f32aef97",desc:"Coca-Cola Classic, eiskalt serviert.",tags:["veg"],allergens:"—"},
+    {id:21,name:"Cola 0.3l",cat:"Drink",sub:"Soft Drink",price:2.49,cal:130,img:"photo-1622483767028-3f66f32aef97",desc:"Coca-Cola Classic, eiskalt serviert.",tags:["veg"],allergens:"—"},
   {id:22,name:"Cola 0.5l",cat:"Drink",sub:"Soft Drink",price:3.29,cal:210,img:"photo-1622483767028-3f66f32aef97",desc:"Mehr Cola, mehr Erfrischung.",tags:["popular"],allergens:"—"},
   {id:25,name:"Wasser 0.5l",cat:"Drink",sub:"Water",price:1.99,cal:0,img:"photo-1548839140-29a749e1cf4d",desc:"Stilles oder mit Kohlensäure.",tags:["veg","vegan"],allergens:"—"},
   {id:27,name:"Kaffee",cat:"Drink",sub:"Hot Drink",price:2.29,cal:5,img:"photo-1509042239860-f550ce710b93",desc:"Frisch gebrühter Filterkaffee.",tags:["veg"],allergens:"—"},
@@ -3117,7 +3315,7 @@ function initMap() {
 const locGrid = document.getElementById('locationsGrid');
 BRANCHES.forEach(b => {
   locGrid.innerHTML += `
-    <div class="location-card fade-up" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}','_blank')">
+    <div class="location-card fade-up" data-branch="${b.id}" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}','_blank')">
       <div class="location-card-header">
         <div class="location-name">${b.name}</div>
         <div class="location-type">${b.type}</div>
@@ -3235,9 +3433,49 @@ function stopEventCounter() {
   clearInterval(eventInterval);
 }
 
-// Track real interactions for the event counter
-document.addEventListener('click', () => { if (dataMode) eventCount++; });
-document.addEventListener('scroll', () => { if (dataMode) eventCount++; }, { passive: true });
+// Track real interactions for the event counter and log
+function logEvent(type, detail) {
+  if (!dataMode) return;
+  eventCount++;
+  const el = document.getElementById('dhbEvents');
+  if (el) { el.textContent = eventCount; el.style.color = '#00FF88'; setTimeout(() => el.style.color = '', 200); }
+
+  const log = document.getElementById('eventLogEntries');
+  if (!log) return;
+  const now = new Date();
+  const time = now.toTimeString().slice(0,8);
+  const line = document.createElement('div');
+  line.className = 'event-line';
+  line.innerHTML = `<span class="ev-time">${time}</span><span class="ev-type">${type}</span><span class="ev-detail">${detail}</span>`;
+  log.insertBefore(line, log.firstChild);
+  // Keep max 30 entries
+  while (log.children.length > 30) log.removeChild(log.lastChild);
+}
+
+document.addEventListener('click', (e) => {
+  if (!dataMode) return;
+  const btn = e.target.closest('.filter-btn');
+  if (btn) logEvent('FILTER', `category="${btn.dataset.filter}"`);
+  const addBtn = e.target.closest('.add-to-cart');
+  if (addBtn) {
+    const card = addBtn.closest('.menu-card');
+    const name = card?.querySelector('.menu-card-name')?.textContent || '?';
+    logEvent('ADD_CART', `product="${name}"`);
+    if (card) { card.classList.add('data-flash'); setTimeout(() => card.classList.remove('data-flash'), 600); }
+  }
+  const locCard = e.target.closest('.location-card');
+  if (locCard) logEvent('LOC_CLICK', `branch="${locCard.dataset.branch || '?'}"`);
+  const payBtn = e.target.closest('.pay-option');
+  if (payBtn) logEvent('PAY_SELECT', `method="${payBtn.dataset.pay}"`);
+  const navLink = e.target.closest('.nav-links a');
+  if (navLink) logEvent('NAV', `href="${navLink.getAttribute('href')}"`);
+});
+document.addEventListener('scroll', () => {
+  if (!dataMode) return;
+  const pct = Math.round((document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100);
+  // Only log at 25% intervals
+  if (pct % 25 === 0 && pct > 0) logEvent('SCROLL', `depth=${pct}%`);
+}, { passive: true });
 
 // =============================================================================
 // PAGE LOADER
