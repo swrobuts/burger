@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BurgerMetrics – Flame-Grilled Since 2017 | Würzburg</title>
+<meta name="description" content="BurgerMetrics – Würzburgs beste Burger. 8 Filialen, frische Zutaten, legendärer Geschmack. Jetzt online bestellen!">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ============================================
+   CSS CUSTOM PROPERTIES
+   ============================================ */
+:root {
+  --red: #B91C1C;
+  --red-dark: #991B1B;
+  --red-light: #DC2626;
+  --gold: #D97706;
+  --gold-light: #F59E0B;
+  --gold-pale: #FDE68A;
+  --charcoal: #1C1917;
+  --charcoal-light: #292524;
+  --stone-800: #44403C;
+  --stone-600: #57534E;
+  --stone-400: #A8A29E;
+  --stone-200: #E7E5E4;
+  --cream: #FFFBEB;
+  --cream-dark: #FEF3C7;
+  --white: #FFFFFF;
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-accent: 'Playfair Display', serif;
+  --font-body: 'Inter', sans-serif;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.12);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,.18);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,.25);
+  --radius: 8px;
+  --radius-lg: 16px;
+  --transition: .3s cubic-bezier(.4,0,.2,1);
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  color: var(--charcoal);
+  background: var(--white);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; font-family: inherit; }
+ul { list-style: none; }
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section-pad { padding: 100px 0; }
+.text-center { text-align: center; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.section-label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .8rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: block;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  line-height: 1.05;
+  letter-spacing: 1px;
+  color: var(--charcoal);
+  margin-bottom: 20px;
+}
+.section-subtitle {
+  font-size: 1.05rem;
+  color: var(--stone-600);
+  max-width: 560px;
+  margin: 0 auto 48px;
+  line-height: 1.7;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  font-weight: 600;
+  font-size: .95rem;
+  border-radius: 50px;
+  transition: all var(--transition);
+  letter-spacing: .3px;
+}
+.btn-primary {
+  background: var(--red);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(185,28,28,.35);
+}
+.btn-primary:hover {
+  background: var(--red-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(185,28,28,.4);
+}
+.btn-outline {
+  border: 2px solid var(--white);
+  color: var(--white);
+  background: transparent;
+}
+.btn-outline:hover {
+  background: var(--white);
+  color: var(--charcoal);
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(217,119,6,.3);
+}
+.btn-gold:hover {
+  background: var(--gold-light);
+  transform: translateY(-2px);
+}
+.btn-sm { padding: 10px 22px; font-size: .85rem; }
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  padding: 0 24px;
+  transition: all .4s ease;
+}
+.nav.scrolled {
+  background: rgba(28,25,23,.97);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0,0,0,.3);
+}
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 80px;
+}
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo-icon {
+  width: 42px;
+  height: 42px;
+  background: var(--red);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--white);
+  letter-spacing: 1px;
+}
+.nav-logo-text {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--white);
+  letter-spacing: 2px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+.nav-links a {
+  color: rgba(255,255,255,.85);
+  font-size: .9rem;
+  font-weight: 500;
+  transition: color var(--transition);
+  position: relative;
+}
+.nav-links a:hover { color: var(--gold-light); }
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--gold-light);
+  transform: scaleX(0);
+  transition: transform var(--transition);
+}
+.nav-links a:hover::after { transform: scaleX(1); }
+.nav-order-btn {
+  background: var(--red);
+  color: var(--white) !important;
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: .85rem;
+  letter-spacing: .5px;
+}
+.nav-order-btn::after { display: none; }
+.nav-order-btn:hover { background: var(--red-light) !important; color: var(--white) !important; }
+
+.cart-count {
+  background: var(--gold);
+  color: var(--white);
+  font-size: .7rem;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  font-weight: 700;
+}
+
+/* Mobile menu */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  padding: 8px;
+}
+.nav-toggle span {
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  transition: all var(--transition);
+}
+
+@media (max-width: 768px) {
+  .nav-toggle { display: flex; }
+  .nav-links {
+    position: fixed;
+    top: 0; right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: var(--charcoal);
+    flex-direction: column;
+    padding: 100px 40px 40px;
+    gap: 24px;
+    transition: right .4s ease;
+    box-shadow: var(--shadow-xl);
+  }
+  .nav-links.open { right: 0; }
+  .nav-links a { font-size: 1.1rem; }
+}
+
+/* ============================================
+   HERO SECTION
+   ============================================ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--charcoal);
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(28,25,23,.85) 0%, rgba(28,25,23,.5) 50%, rgba(28,25,23,.7) 100%),
+    url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=1600&q=80') center/cover no-repeat;
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 650px;
+  padding: 0 24px;
+  margin-left: 8%;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(217,119,6,.15);
+  border: 1px solid rgba(217,119,6,.3);
+  padding: 8px 18px;
+  border-radius: 50px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 28px;
+  letter-spacing: .5px;
+  backdrop-filter: blur(4px);
+}
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(3.2rem, 7vw, 5.8rem);
+  color: var(--white);
+  line-height: .95;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+.hero-title span { color: var(--gold-light); }
+.hero-tagline {
+  font-family: var(--font-accent);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: var(--gold-pale);
+  margin-bottom: 24px;
+  font-weight: 700;
+}
+.hero-desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.75);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 480px;
+}
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+
+.hero-stats {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 3;
+  background: rgba(28,25,23,.7);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
+.hero-stats-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  text-align: center;
+  padding: 28px 24px;
+}
+.hero-stat-num {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+}
+.hero-stat-label {
+  font-size: .8rem;
+  color: rgba(255,255,255,.6);
+  margin-top: 2px;
+  letter-spacing: .5px;
+}
+
+@media (max-width: 768px) {
+  .hero-content { margin-left: 0; }
+  .hero-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+
+/* ============================================
+   MARQUEE STRIP
+   ============================================ */
+.marquee-strip {
+  background: var(--red);
+  padding: 14px 0;
+  overflow: hidden;
+  position: relative;
+}
+.marquee-track {
+  display: flex;
+  gap: 48px;
+  animation: marquee 30s linear infinite;
+  width: max-content;
+}
+.marquee-item {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--white);
+  letter-spacing: 3px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.marquee-dot {
+  width: 6px; height: 6px;
+  background: var(--gold-light);
+  border-radius: 50%;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================
+   MENU SECTION
+   ============================================ */
+.menu { background: var(--cream); }
+.menu-filters {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+.filter-btn {
+  padding: 10px 24px;
+  border-radius: 50px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--stone-600);
+  background: var(--white);
+  border: 1px solid var(--stone-200);
+  transition: all var(--transition);
+}
+.filter-btn:hover, .filter-btn.active {
+  background: var(--charcoal);
+  color: var(--white);
+  border-color: var(--charcoal);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+.menu-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+  opacity: 0;
+  transform: translateY(20px);
+}
+.menu-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.menu-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+.menu-card-img {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+.menu-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s ease;
+}
+.menu-card:hover .menu-card-img img { transform: scale(1.08); }
+.menu-card-badges {
+  position: absolute;
+  top: 12px; left: 12px;
+  display: flex;
+  gap: 6px;
+}
+.menu-badge {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .3px;
+}
+.badge-veg { background: #16A34A; color: white; }
+.badge-vegan { background: #059669; color: white; }
+.badge-popular { background: var(--gold); color: white; }
+.badge-new { background: var(--red); color: white; }
+
+.menu-card-body { padding: 20px; }
+.menu-card-cat {
+  font-size: .72rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 6px;
+}
+.menu-card-name {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  letter-spacing: .5px;
+  margin-bottom: 8px;
+  color: var(--charcoal);
+}
+.menu-card-desc {
+  font-size: .85rem;
+  color: var(--stone-600);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.menu-card-nutrition {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--stone-200);
+  margin-bottom: 16px;
+}
+.nutrition-item {
+  text-align: center;
+  flex: 1;
+}
+.nutrition-val {
+  font-weight: 700;
+  font-size: .85rem;
+  color: var(--charcoal);
+}
+.nutrition-label {
+  font-size: .65rem;
+  color: var(--stone-400);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.menu-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.menu-card-price {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--charcoal);
+}
+.menu-card-price small {
+  font-family: var(--font-body);
+  font-size: .7rem;
+  color: var(--stone-400);
+  font-weight: 400;
+}
+.add-to-cart {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(185,28,28,.25);
+}
+.add-to-cart:hover {
+  background: var(--red-light);
+  transform: scale(1.1);
+}
+.add-to-cart.added {
+  background: #16A34A;
+  animation: cartPop .4s ease;
+}
+@keyframes cartPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* Allergen expandable */
+.allergen-toggle {
+  font-size: .75rem;
+  color: var(--stone-400);
+  cursor: pointer;
+  background: none;
+  padding: 0;
+  margin-top: 4px;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.allergen-info {
+  font-size: .75rem;
+  color: var(--stone-400);
+  margin-top: 6px;
+  display: none;
+  line-height: 1.5;
+}
+.allergen-info.show { display: block; }
+
+/* ============================================
+   APP PROMO BANNER
+   ============================================ */
+.app-banner {
+  background: linear-gradient(135deg, var(--charcoal) 0%, var(--charcoal-light) 100%);
+  position: relative;
+  overflow: hidden;
+}
+.app-banner::before {
+  content: '';
+  position: absolute;
+  top: -50%; right: -20%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(217,119,6,.12) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.app-banner-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+.app-banner-text h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--white);
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.app-banner-text h2 span { color: var(--gold-light); }
+.app-banner-text p {
+  color: rgba(255,255,255,.7);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+.app-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.app-feature {
+  display: flex;
+  align-items: start;
+  gap: 10px;
+}
+.app-feature i {
+  color: var(--gold-light);
+  font-size: .9rem;
+  margin-top: 3px;
+}
+.app-feature span {
+  color: rgba(255,255,255,.85);
+  font-size: .88rem;
+  line-height: 1.4;
+}
+.app-mockup {
+  display: flex;
+  justify-content: center;
+}
+.phone-mockup {
+  width: 260px;
+  height: 520px;
+  background: var(--charcoal-light);
+  border-radius: 36px;
+  border: 3px solid var(--stone-800);
+  overflow: hidden;
+  box-shadow: 0 30px 80px rgba(0,0,0,.5);
+  position: relative;
+}
+.phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 28px;
+  background: var(--charcoal-light);
+  border-radius: 0 0 18px 18px;
+  z-index: 2;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, var(--red-dark) 0%, var(--red) 30%, var(--cream) 30%);
+  padding: 44px 20px 20px;
+}
+.phone-header {
+  text-align: center;
+  padding-bottom: 14px;
+}
+.phone-logo {
+  font-family: var(--font-display);
+  color: var(--white);
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+}
+.phone-promo {
+  font-size: .65rem;
+  color: var(--gold-pale);
+  margin-top: 4px;
+}
+.phone-items {
+  background: var(--white);
+  border-radius: 14px;
+  padding: 14px;
+  margin-top: 6px;
+  box-shadow: var(--shadow-sm);
+}
+.phone-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--stone-200);
+}
+.phone-item:last-child { border-bottom: none; }
+.phone-item-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+}
+.phone-item-info { flex: 1; }
+.phone-item-name { font-size: .72rem; font-weight: 600; color: var(--charcoal); }
+.phone-item-price { font-size: .65rem; color: var(--stone-400); }
+.phone-total {
+  text-align: center;
+  padding: 14px 0 6px;
+}
+.phone-total-label { font-size: .65rem; color: var(--stone-400); }
+.phone-total-amount {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  color: var(--charcoal);
+}
+.phone-cta {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px;
+  background: var(--red);
+  color: var(--white);
+  border-radius: 10px;
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: center;
+  letter-spacing: .5px;
+}
+
+@media (max-width: 768px) {
+  .app-banner-inner { grid-template-columns: 1fr; text-align: center; }
+  .app-features { justify-items: start; }
+}
+
+/* ============================================
+   LOCATIONS SECTION
+   ============================================ */
+.locations { background: var(--white); }
+#map {
+  width: 100%;
+  height: 450px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  margin-bottom: 48px;
+}
+.locations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 20px;
+}
+.location-card {
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: all var(--transition);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.location-card:hover {
+  border-color: var(--gold-light);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.location-card-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.location-name {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: .5px;
+  color: var(--charcoal);
+}
+.location-type {
+  font-size: .68rem;
+  font-weight: 600;
+  letter-spacing: .5px;
+  padding: 3px 10px;
+  border-radius: 50px;
+  background: var(--red);
+  color: var(--white);
+}
+.location-address {
+  font-size: .85rem;
+  color: var(--stone-600);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.location-features {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.loc-feature {
+  font-size: .72rem;
+  color: var(--stone-600);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.loc-feature i { color: var(--gold); font-size: .7rem; }
+.location-directions {
+  font-size: .82rem;
+  color: var(--red);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap var(--transition);
+}
+.location-card:hover .location-directions { gap: 10px; }
+
+/* ============================================
+   ABOUT SECTION
+   ============================================ */
+.about {
+  background: var(--charcoal);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+.about::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 200px;
+  background: linear-gradient(180deg, rgba(28,25,23,0) 0%, var(--charcoal) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.about .section-label { color: var(--gold-light); }
+.about .section-title { color: var(--white); }
+.about .section-subtitle { color: rgba(255,255,255,.65); }
+
+.about-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 80px;
+}
+.about-story-img {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+.about-story-img img {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+}
+.about-story-text h3 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.about-story-text p {
+  color: rgba(255,255,255,.7);
+  line-height: 1.8;
+  margin-bottom: 12px;
+  font-size: .95rem;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 80px;
+}
+.value-card {
+  background: var(--charcoal-light);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px;
+  transition: all var(--transition);
+}
+.value-card:hover {
+  border-color: rgba(217,119,6,.3);
+  transform: translateY(-4px);
+}
+.value-icon {
+  width: 52px;
+  height: 52px;
+  background: rgba(217,119,6,.12);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: var(--gold-light);
+  margin-bottom: 20px;
+}
+.value-card h4 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: .5px;
+  margin-bottom: 10px;
+}
+.value-card p {
+  font-size: .88rem;
+  color: rgba(255,255,255,.6);
+  line-height: 1.6;
+}
+
+.team-section { text-align: center; }
+.team-section h3 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  letter-spacing: 1px;
+  margin-bottom: 40px;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.team-member {
+  text-align: center;
+}
+.team-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 16px;
+  border: 3px solid var(--stone-800);
+  transition: border-color var(--transition);
+}
+.team-member:hover .team-photo { border-color: var(--gold); }
+.team-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.team-name {
+  font-weight: 700;
+  font-size: .95rem;
+  margin-bottom: 4px;
+}
+.team-role {
+  font-size: .8rem;
+  color: var(--gold-light);
+  letter-spacing: .5px;
+}
+
+@media (max-width: 768px) {
+  .about-story { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   CART SIDEBAR
+   ============================================ */
+.cart-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 2000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+.cart-overlay.open { opacity: 1; pointer-events: all; }
+.cart-drawer {
+  position: fixed;
+  top: 0; right: -420px;
+  width: 400px;
+  max-width: 90vw;
+  height: 100vh;
+  background: var(--white);
+  z-index: 2001;
+  transition: right .4s ease;
+  display: flex;
+  flex-direction: column;
+}
+.cart-drawer.open { right: 0; }
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  border-bottom: 1px solid var(--stone-200);
+}
+.cart-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+.cart-close {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--stone-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  transition: background var(--transition);
+}
+.cart-close:hover { background: var(--stone-400); color: var(--white); }
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+}
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--stone-200);
+}
+.cart-item-info { flex: 1; }
+.cart-item-name { font-weight: 600; font-size: .9rem; }
+.cart-item-price { font-size: .82rem; color: var(--stone-600); }
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.qty-btn {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--stone-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
+  transition: all var(--transition);
+}
+.qty-btn:hover { background: var(--charcoal); color: var(--white); }
+.qty-num { font-weight: 700; font-size: .95rem; min-width: 20px; text-align: center; }
+.cart-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--stone-400);
+}
+.cart-empty i { font-size: 3rem; margin-bottom: 16px; display: block; }
+
+.cart-footer {
+  padding: 20px 24px;
+  border-top: 1px solid var(--stone-200);
+  background: var(--cream);
+}
+.cart-subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: .9rem;
+  margin-bottom: 6px;
+}
+.cart-total {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: .5px;
+  margin-bottom: 16px;
+  padding-top: 10px;
+  border-top: 2px solid var(--charcoal);
+}
+.cart-checkout {
+  width: 100%;
+  padding: 16px;
+  background: var(--red);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: var(--radius);
+  transition: all var(--transition);
+  letter-spacing: .5px;
+}
+.cart-checkout:hover { background: var(--red-light); }
+
+/* Branch selector in cart */
+.cart-branch-select {
+  margin-bottom: 14px;
+}
+.cart-branch-select label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--stone-600);
+  display: block;
+  margin-bottom: 6px;
+}
+.cart-branch-select select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--stone-200);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: .85rem;
+  background: var(--white);
+}
+
+/* Payment method in cart */
+.cart-payment {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pay-option {
+  padding: 8px 4px;
+  border: 1px solid var(--stone-200);
+  border-radius: var(--radius);
+  text-align: center;
+  font-size: .7rem;
+  font-weight: 600;
+  color: var(--stone-600);
+  transition: all var(--transition);
+  background: var(--white);
+}
+.pay-option:hover, .pay-option.selected {
+  border-color: var(--red);
+  color: var(--red);
+  background: rgba(185,28,28,.05);
+}
+.pay-option i { display: block; font-size: 1rem; margin-bottom: 4px; }
+
+/* ============================================
+   ORDER SUCCESS MODAL
+   ============================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition);
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  max-width: 440px;
+  width: 90%;
+  text-align: center;
+  transform: scale(.9);
+  transition: transform var(--transition);
+}
+.modal-overlay.open .modal-box { transform: scale(1); }
+.modal-icon {
+  width: 72px;
+  height: 72px;
+  background: #16A34A;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  font-size: 2rem;
+  color: var(--white);
+}
+.modal-box h3 {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.modal-box p {
+  color: var(--stone-600);
+  font-size: .95rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.modal-order-nr {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--charcoal);
+  letter-spacing: 2px;
+  margin: 16px 0 24px;
+  padding: 10px;
+  background: var(--cream);
+  border-radius: var(--radius);
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.footer {
+  background: var(--charcoal);
+  color: rgba(255,255,255,.7);
+  padding: 64px 0 0;
+}
+.footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand-text {
+  font-size: .88rem;
+  line-height: 1.7;
+  margin-top: 16px;
+  max-width: 320px;
+}
+.footer h4 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--white);
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+.footer ul li { margin-bottom: 10px; }
+.footer ul li a {
+  font-size: .88rem;
+  transition: color var(--transition);
+}
+.footer ul li a:hover { color: var(--gold-light); }
+.footer-social {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.footer-social a {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,.06);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .95rem;
+  transition: all var(--transition);
+}
+.footer-social a:hover {
+  background: var(--gold);
+  color: var(--white);
+}
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 24px;
+  text-align: center;
+  font-size: .8rem;
+  color: rgba(255,255,255,.4);
+}
+
+@media (max-width: 768px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   SCROLL ANIMATIONS
+   ============================================ */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all .7s cubic-bezier(.4,0,.2,1);
+}
+.fade-up.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fade-up-delay-1 { transition-delay: .1s; }
+.fade-up-delay-2 { transition-delay: .2s; }
+.fade-up-delay-3 { transition-delay: .3s; }
+
+/* ============================================
+   NOTIFICATION TOAST
+   ============================================ */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--charcoal);
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: .88rem;
+  font-weight: 500;
+  z-index: 5000;
+  transition: transform .4s ease;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast i { color: var(--gold-light); }
+</style>
+</head>
+<body>
+
+<!-- ===================== NAVIGATION ===================== -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">BM</div>
+      <div class="nav-logo-text">BURGERMETRICS</div>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="#menu">Speisekarte</a>
+      <a href="#locations">Filialen</a>
+      <a href="#about">Über Uns</a>
+      <a href="#" class="nav-order-btn" onclick="openCart(); return false;">
+        <i class="fa-solid fa-bag-shopping"></i> Bestellen
+        <span class="cart-count" id="navCartCount">0</span>
+      </a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Menü öffnen">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <i class="fa-solid fa-fire-flame-curved"></i>
+      Jetzt neu: BM App mit 10% Willkommensrabatt
+    </div>
+    <h1 class="hero-title">
+      BURGER WIE<br>SIE SEIN <span>MÜSSEN</span>
+    </h1>
+    <p class="hero-tagline">"Flame-Grilled Since 2017"</p>
+    <p class="hero-desc">
+      100% Rindfleisch vom fränkischen Weiderind. Handgemachte Brioche-Buns
+      aus der Würzburger Backstube. Frische Zutaten, keine Kompromisse.
+    </p>
+    <div class="hero-buttons">
+      <a href="#menu" class="btn btn-primary">
+        <i class="fa-solid fa-utensils"></i> Jetzt bestellen
+      </a>
+      <a href="#about" class="btn btn-outline">Unsere Geschichte</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stats-inner">
+      <div>
+        <div class="hero-stat-num" data-count="8">0</div>
+        <div class="hero-stat-label">Filialen in Würzburg</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="50">0</div>
+        <div class="hero-stat-label">Produkte im Sortiment</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="100">0</div>
+        <div class="hero-stat-label">Tausend Kunden / Jahr</div>
+      </div>
+      <div>
+        <div class="hero-stat-num" data-count="4" data-suffix=".8">0</div>
+        <div class="hero-stat-label">Durchschnittsbewertung</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MARQUEE ===================== -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="marquee-dot"></span>FLAME-GRILLED</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>100% FRÄNKISCHES WEIDERIND</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>HANDGEMACHTE BUNS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>8 × IN WÜRZBURG</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>DRIVE-THROUGH</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>APP-BESTELLUNG</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>REGIONALE ZUTATEN</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SEIT 2017</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>FLAME-GRILLED</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>100% FRÄNKISCHES WEIDERIND</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>HANDGEMACHTE BUNS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>8 × IN WÜRZBURG</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>DRIVE-THROUGH</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>APP-BESTELLUNG</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>REGIONALE ZUTATEN</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SEIT 2017</span>
+  </div>
+</div>
+
+<!-- ===================== MENU ===================== -->
+<section class="menu section-pad" id="menu">
+  <div class="container text-center">
+    <span class="section-label">Unsere Speisekarte</span>
+    <h2 class="section-title">DAS VOLLE PROGRAMM</h2>
+    <p class="section-subtitle">
+      Vom saftigen Classic Burger bis zum Vegan Beyond — bei uns findet jeder
+      seinen Favoriten. Alle Nährwerte auf einen Blick.
+    </p>
+    <div class="menu-filters">
+      <button class="filter-btn active" data-filter="all">Alle</button>
+      <button class="filter-btn" data-filter="Burger">Burger</button>
+      <button class="filter-btn" data-filter="Side">Beilagen</button>
+      <button class="filter-btn" data-filter="Drink">Getränke</button>
+      <button class="filter-btn" data-filter="Dessert">Desserts</button>
+      <button class="filter-btn" data-filter="Breakfast">Frühstück</button>
+      <button class="filter-btn" data-filter="Extra">Extras</button>
+    </div>
+    <div class="menu-grid" id="menuGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== APP PROMO ===================== -->
+<section class="app-banner" id="app">
+  <div class="app-banner-inner">
+    <div class="app-banner-text fade-up">
+      <span class="section-label">Die BurgerMetrics App</span>
+      <h2>BESTELLEN. <span>SPAREN.</span> GENIESSEN.</h2>
+      <p>
+        Mit der BurgerMetrics App bestellst du vor, sammelst Treuepunkte
+        und genießt exklusive Angebote. Dein erster App-Einkauf?
+        10% Willkommensrabatt.
+      </p>
+      <div class="app-features">
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>10% Willkommensrabatt</span></div>
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>Treuepunkte sammeln</span></div>
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>Vorbestellen & abholen</span></div>
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>Exklusive Coupons</span></div>
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>Geburtstags-Special 25%</span></div>
+        <div class="app-feature"><i class="fa-solid fa-check"></i><span>Mobile Payment</span></div>
+      </div>
+      <a href="#" class="btn btn-gold" onclick="showToast('App-Download ist in dieser Demo nicht verfügbar'); return false;">
+        <i class="fa-solid fa-mobile-screen"></i> App herunterladen
+      </a>
+    </div>
+    <div class="app-mockup fade-up fade-up-delay-2">
+      <div class="phone-mockup">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-header">
+            <div class="phone-logo">BURGERMETRICS</div>
+            <div class="phone-promo">Deine aktuelle Bestellung</div>
+          </div>
+          <div class="phone-items">
+            <div class="phone-item">
+              <div class="phone-item-dot">🍔</div>
+              <div class="phone-item-info">
+                <div class="phone-item-name">Double Burger</div>
+                <div class="phone-item-price">€7,99</div>
+              </div>
+            </div>
+            <div class="phone-item">
+              <div class="phone-item-dot">🍟</div>
+              <div class="phone-item-info">
+                <div class="phone-item-name">Medium Fries</div>
+                <div class="phone-item-price">€2,99</div>
+              </div>
+            </div>
+            <div class="phone-item">
+              <div class="phone-item-dot">🥤</div>
+              <div class="phone-item-info">
+                <div class="phone-item-name">Cola 0.5l</div>
+                <div class="phone-item-price">€3,29</div>
+              </div>
+            </div>
+          </div>
+          <div class="phone-total">
+            <div class="phone-total-label">Gesamtsumme</div>
+            <div class="phone-total-amount">€14,27</div>
+          </div>
+          <div class="phone-cta">JETZT BESTELLEN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LOCATIONS ===================== -->
+<section class="locations section-pad" id="locations">
+  <div class="container text-center">
+    <span class="section-label">Unsere Filialen</span>
+    <h2 class="section-title">8 × IN WÜRZBURG</h2>
+    <p class="section-subtitle">
+      Immer in deiner Nähe. Ob Innenstadt, Uni-Viertel oder an der Autobahn —
+      finde deine nächste BurgerMetrics Filiale.
+    </p>
+    <div id="map" class="fade-up"></div>
+    <div class="locations-grid" id="locationsGrid">
+      <!-- populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="about section-pad" id="about">
+  <div class="container">
+    <div class="text-center">
+      <span class="section-label">Über Uns</span>
+      <h2 class="section-title">UNSERE GESCHICHTE</h2>
+      <p class="section-subtitle">
+        Was als Foodtruck auf dem Würzburger Marktplatz begann,
+        ist heute Frankens beliebteste Burger-Kette.
+      </p>
+    </div>
+
+    <div class="about-story fade-up">
+      <div class="about-story-img">
+        <img src="https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=800&q=80" alt="BurgerMetrics Restaurant" loading="lazy">
+      </div>
+      <div class="about-story-text">
+        <h3>VOM FOODTRUCK ZUR MARKE</h3>
+        <p>
+          2017 grillte Gründer Maximilian Hartmann seinen ersten Burger
+          auf dem Würzburger Wochenmarkt. Sein Rezept: fränkisches Weiderind
+          vom Hof Kramer aus Veitshöchheim, handgemachte Brioche-Buns
+          aus der Backstube Müller und Gemüse von regionalen Erzeugern.
+        </p>
+        <p>
+          Die Schlange an seinem Foodtruck wurde schnell länger als
+          die am Bratwurststand nebenan. 2018 eröffnete die erste
+          feste Filiale am Hauptbahnhof. Heute, mit acht Standorten
+          in Würzburg, steht BurgerMetrics für das, was Maximilian
+          schon immer wollte: ehrliche Burger, ohne Kompromisse.
+        </p>
+        <p>
+          Jede Filiale hat ihren eigenen Charakter — vom Drive-Through
+          am Europastern bis zum gemütlichen Diner-Feeling in der Zellerau.
+          Was sie alle verbindet: dieselbe Leidenschaft für Qualität.
+        </p>
+      </div>
+    </div>
+
+    <div class="text-center fade-up">
+      <h3 style="font-family:var(--font-display);font-size:2.2rem;color:var(--white);letter-spacing:1px;margin-bottom:40px;">UNSERE WERTE</h3>
+    </div>
+    <div class="values-grid">
+      <div class="value-card fade-up">
+        <div class="value-icon"><i class="fa-solid fa-leaf"></i></div>
+        <h4>REGIONALITÄT</h4>
+        <p>85% unserer Zutaten kommen aus einem Umkreis von 80 km. Wir kennen unsere Lieferanten persönlich — vom Metzger bis zum Gemüsebauern.</p>
+      </div>
+      <div class="value-card fade-up fade-up-delay-1">
+        <div class="value-icon"><i class="fa-solid fa-fire"></i></div>
+        <h4>HANDWERK</h4>
+        <p>Unsere Patties werden täglich frisch geformt, nie tiefgefroren. Die Buns kommen jeden Morgen aus der Bäckerei. Fast Food, aber handgemacht.</p>
+      </div>
+      <div class="value-card fade-up fade-up-delay-2">
+        <div class="value-icon"><i class="fa-solid fa-seedling"></i></div>
+        <h4>NACHHALTIGKEIT</h4>
+        <p>Verpackungen aus recyceltem Material, Ökostrom in allen Filialen und ein wachsendes veganes Angebot. Weil guter Geschmack auch Verantwortung braucht.</p>
+      </div>
+      <div class="value-card fade-up fade-up-delay-3">
+        <div class="value-icon"><i class="fa-solid fa-people-group"></i></div>
+        <h4>GEMEINSCHAFT</h4>
+        <p>188 Mitarbeiter, faire Löhne, echte Aufstiegschancen. Wir sponsern den lokalen Jugendsport und engagieren uns im Würzburger Stadtleben.</p>
+      </div>
+    </div>
+
+    <div class="team-section fade-up">
+      <h3>DAS FÜHRUNGSTEAM</h3>
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&q=80" alt="Maximilian Hartmann" loading="lazy">
+          </div>
+          <div class="team-name">Maximilian Hartmann</div>
+          <div class="team-role">Gründer & CEO</div>
+        </div>
+        <div class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&q=80" alt="Sarah Weber" loading="lazy">
+          </div>
+          <div class="team-name">Dr. Sarah Weber</div>
+          <div class="team-role">COO & Finanzen</div>
+        </div>
+        <div class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1583195764036-6dc248ac07d9?w=300&q=80" alt="Thomas Berger" loading="lazy">
+          </div>
+          <div class="team-name">Thomas Berger</div>
+          <div class="team-role">Head of Culinary</div>
+        </div>
+        <div class="team-member">
+          <div class="team-photo">
+            <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=300&q=80" alt="Lena Fischer" loading="lazy">
+          </div>
+          <div class="team-name">Lena Fischer</div>
+          <div class="team-role">Marketing & Digital</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <a href="#" class="nav-logo" style="display:inline-flex;margin-bottom:8px;">
+        <div class="nav-logo-icon">BM</div>
+        <div class="nav-logo-text">BURGERMETRICS</div>
+      </a>
+      <p class="footer-brand-text">
+        Würzburgs beliebteste Burger-Kette. 8 Filialen, 50 Produkte,
+        ein Versprechen: ehrlicher Geschmack aus der Region.
+      </p>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+      </div>
+    </div>
+    <div>
+      <h4>NAVIGATION</h4>
+      <ul>
+        <li><a href="#menu">Speisekarte</a></li>
+        <li><a href="#locations">Filialen</a></li>
+        <li><a href="#about">Über Uns</a></li>
+        <li><a href="#app">BM App</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>SERVICE</h4>
+      <ul>
+        <li><a href="#">Karriere</a></li>
+        <li><a href="#">Franchise</a></li>
+        <li><a href="#">Allergene & Nährwerte</a></li>
+        <li><a href="#">Nachhaltigkeit</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>RECHTLICHES</h4>
+      <ul>
+        <li><a href="#">Impressum</a></li>
+        <li><a href="#">Datenschutz</a></li>
+        <li><a href="#">AGB</a></li>
+        <li><a href="#">Cookie-Einstellungen</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    &copy; 2024 BurgerMetrics GmbH. Alle Rechte vorbehalten.
+    Bahnhofstraße 2, 97070 Würzburg | HRB 12345 AG Würzburg<br>
+    <span style="opacity:.5;font-size:.7rem;">Fiktives Unternehmen — erstellt für einen BI-Kurs an der THWS Würzburg</span>
+  </div>
+</footer>
+
+<!-- ===================== CART DRAWER ===================== -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <h3>DEINE BESTELLUNG</h3>
+    <button class="cart-close" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty" id="cartEmpty">
+      <i class="fa-solid fa-bag-shopping"></i>
+      <p>Dein Warenkorb ist leer.</p>
+      <p style="font-size:.82rem;margin-top:8px;">Stöbere in unserer Speisekarte!</p>
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-branch-select">
+      <label>Filiale auswählen</label>
+      <select id="cartBranch">
+        <option value="1">BM Hauptbahnhof — Bahnhofstraße 2</option>
+        <option value="2">BM Sanderring — Sanderring 8</option>
+        <option value="3">BM Europastern — Nürnberger Str. 102</option>
+        <option value="4">BM Mainfrankenpark — Mainfrankenpark 14</option>
+        <option value="5">BM Grombühl — Grombühlstr. 30</option>
+        <option value="6">BM Heuchelhof — Heuchelhofstr. 45</option>
+        <option value="7">BM Lengfeld — Lengfelder Str. 12</option>
+        <option value="8">BM Zellerau — Frankfurter Str. 55</option>
+      </select>
+    </div>
+    <label style="font-size:.8rem;font-weight:600;color:var(--stone-600);display:block;margin-bottom:8px;">Zahlungsart</label>
+    <div class="cart-payment">
+      <button class="pay-option" data-pay="cash" onclick="selectPay(this)"><i class="fa-solid fa-money-bill-wave"></i>Bar</button>
+      <button class="pay-option selected" data-pay="ec" onclick="selectPay(this)"><i class="fa-solid fa-credit-card"></i>EC</button>
+      <button class="pay-option" data-pay="credit" onclick="selectPay(this)"><i class="fa-brands fa-cc-visa"></i>Kredit</button>
+      <button class="pay-option" data-pay="mobile" onclick="selectPay(this)"><i class="fa-solid fa-mobile-screen"></i>Mobile</button>
+    </div>
+    <div class="cart-subtotal">
+      <span>Zwischensumme</span>
+      <span id="cartSubtotal">€0,00</span>
+    </div>
+    <div class="cart-subtotal" id="cartDiscountRow" style="display:none;color:#16A34A;">
+      <span>App-Rabatt (10%)</span>
+      <span id="cartDiscount">−€0,00</span>
+    </div>
+    <div class="cart-total">
+      <span>GESAMT</span>
+      <span id="cartTotal">€0,00</span>
+    </div>
+    <button class="cart-checkout" onclick="placeOrder()">
+      <i class="fa-solid fa-check"></i> Bestellung aufgeben
+    </button>
+  </div>
+</div>
+
+<!-- ===================== ORDER MODAL ===================== -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal-box">
+    <div class="modal-icon"><i class="fa-solid fa-check"></i></div>
+    <h3>BESTELLUNG AUFGEGEBEN!</h3>
+    <p>Deine Bestellung wird jetzt zubereitet.</p>
+    <p style="font-size:.85rem;">Geschätzte Wartezeit: <strong>8-12 Minuten</strong></p>
+    <div class="modal-order-nr" id="orderNr">BM-2024-000000</div>
+    <button class="btn btn-primary" onclick="closeModal()">Alles klar!</button>
+  </div>
+</div>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toastMsg"></span></div>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// =============================================================================
+// DATA
+// =============================================================================
+const PRODUCTS = [
+  {id:1,name:"Classic Burger",cat:"Burger",sub:"Beef",price:4.99,cal:540,img:"photo-1568901346375-23c9450c58cd",desc:"Saftiges Rindfleisch-Patty, frischer Salat, Tomate, Zwiebel, hauseigene Sauce.",tags:["popular"],allergens:"Gluten, Sesam"},
+  {id:2,name:"Cheeseburger",cat:"Burger",sub:"Beef",price:5.49,cal:620,img:"photo-1550547660-d9450f859349",desc:"Unser Classic mit geschmolzenem Cheddar. Der Liebling aller Gäste.",tags:["popular"],allergens:"Gluten, Sesam, Milch"},
+  {id:3,name:"Double Burger",cat:"Burger",sub:"Beef",price:7.99,cal:890,img:"photo-1586816001603-003ee0c0e681",desc:"Doppeltes Patty, doppelter Genuss. Für den großen Hunger.",tags:[],allergens:"Gluten, Sesam"},
+  {id:4,name:"Bacon King",cat:"Burger",sub:"Beef",price:8.99,cal:980,img:"photo-1553979459-d2229ba7433b",desc:"Smoky Bacon, karamellisierte Zwiebeln, BBQ-Sauce. Unser kräftigster Burger.",tags:["popular"],allergens:"Gluten, Sesam"},
+  {id:5,name:"Chicken Burger",cat:"Burger",sub:"Chicken",price:6.49,cal:510,img:"photo-1606755962773-d324e0a13086",desc:"Zartes Hähnchenbrustfilet, knusprig paniert, mit Coleslaw.",tags:[],allergens:"Gluten, Sesam"},
+  {id:6,name:"Crispy Chicken Deluxe",cat:"Burger",sub:"Chicken",price:7.49,cal:620,img:"photo-1562967914-608f82629710",desc:"Crispy Chicken mit Jalapeños, Avocado-Creme und Rucola.",tags:["new"],allergens:"Gluten, Sesam, Ei"},
+  {id:7,name:"Veggie Burger",cat:"Burger",sub:"Vegetarian",price:5.99,cal:420,img:"photo-1525059696034-4967a8e1dca2",desc:"Hausgemachtes Gemüse-Patty mit Röstzwiebeln und Kräuterquark.",tags:["veg"],allergens:"Gluten, Sesam, Soja"},
+  {id:8,name:"Vegan Beyond Burger",cat:"Burger",sub:"Vegan",price:8.49,cal:460,img:"photo-1585238342024-78d387f4a707",desc:"Plant-Based Patty, vegane Sauce, Avocado. 100% pflanzlich, 100% Geschmack.",tags:["vegan","new"],allergens:"Gluten, Sesam, Soja"},
+  {id:9,name:"Fish Burger",cat:"Burger",sub:"Fish",price:6.29,cal:480,img:"photo-1521305916504-4a1121188589",desc:"Atlantik-Kabeljau in Bierteig mit Remoulade und Eisbergsalat.",tags:[],allergens:"Gluten, Sesam, Fisch"},
+  {id:10,name:"Kids Burger",cat:"Burger",sub:"Kids",price:3.49,cal:320,img:"photo-1572802419224-296b0aeee0d9",desc:"Kleiner Burger für kleine Gäste. Mit Apfelsaft oder Milch.",tags:[],allergens:"Gluten, Sesam"},
+  {id:11,name:"Small Fries",cat:"Side",sub:"Fries",price:2.29,cal:230,img:"photo-1573080496219-bb080dd4f877",desc:"Knusprige Pommes, goldbraun frittiert.",tags:["veg","vegan"],allergens:"—"},
+  {id:12,name:"Medium Fries",cat:"Side",sub:"Fries",price:2.99,cal:340,img:"photo-1573080496219-bb080dd4f877",desc:"Die perfekte Beilage in der beliebten Größe.",tags:["popular","veg"],allergens:"—"},
+  {id:13,name:"Large Fries",cat:"Side",sub:"Fries",price:3.49,cal:480,img:"photo-1573080496219-bb080dd4f877",desc:"Für die, die nicht genug kriegen können.",tags:["veg","vegan"],allergens:"—"},
+  {id:14,name:"Chicken Nuggets 6pc",cat:"Side",sub:"Nuggets",price:3.99,cal:290,img:"photo-1562967916-eb82221dfb92",desc:"6 knusprige Nuggets mit Dip nach Wahl.",tags:["popular"],allergens:"Gluten, Ei"},
+  {id:15,name:"Chicken Nuggets 9pc",cat:"Side",sub:"Nuggets",price:5.49,cal:430,img:"photo-1562967916-eb82221dfb92",desc:"9 Nuggets — ideal zum Teilen oder ganz für dich.",tags:[],allergens:"Gluten, Ei"},
+  {id:16,name:"Onion Rings",cat:"Side",sub:"Fried",price:3.29,cal:350,img:"photo-1639024471283-03518883512d",desc:"Dicke Zwiebelringe in knuspriger Panade.",tags:["veg"],allergens:"Gluten, Milch"},
+  {id:17,name:"Side Salad",cat:"Side",sub:"Salad",price:3.49,cal:80,img:"photo-1512621776951-a57141f2eefd",desc:"Blattsalat mit Cherry-Tomaten und Vinaigrette.",tags:["veg","vegan"],allergens:"—"},
+  {id:18,name:"Mozzarella Sticks",cat:"Side",sub:"Fried",price:4.29,cal:420,img:"photo-1531749668029-2db88e4276c7",desc:"Panierte Mozzarella-Sticks mit Marinara-Dip.",tags:[],allergens:"Gluten, Milch"},
+  {id:19,name:"Loaded Fries",cat:"Side",sub:"Fries",price:4.99,cal:580,img:"photo-1585109649139-366815a0d713",desc:"Pommes mit Cheddar, Bacon-Bits und Sour Cream.",tags:["new"],allergens:"Gluten, Milch"},
+  {id:21,name:"Cola 0.3l",cat:"Drink",sub:"Soft Drink",price:2.49,cal:130,img:"photo-1622483767028-3f66f32aef97",desc:"Coca-Cola Classic, eiskalt serviert.",tags:["veg"],allergens:"—"},
+  {id:22,name:"Cola 0.5l",cat:"Drink",sub:"Soft Drink",price:3.29,cal:210,img:"photo-1622483767028-3f66f32aef97",desc:"Mehr Cola, mehr Erfrischung.",tags:["popular"],allergens:"—"},
+  {id:25,name:"Wasser 0.5l",cat:"Drink",sub:"Water",price:1.99,cal:0,img:"photo-1548839140-29a749e1cf4d",desc:"Stilles oder mit Kohlensäure.",tags:["veg","vegan"],allergens:"—"},
+  {id:27,name:"Kaffee",cat:"Drink",sub:"Hot Drink",price:2.29,cal:5,img:"photo-1509042239860-f550ce710b93",desc:"Frisch gebrühter Filterkaffee.",tags:["veg"],allergens:"—"},
+  {id:28,name:"Cappuccino",cat:"Drink",sub:"Hot Drink",price:3.29,cal:80,img:"photo-1572442388796-11668a67e53d",desc:"Espresso mit cremigem Milchschaum.",tags:["veg"],allergens:"Milch"},
+  {id:30,name:"Milkshake Vanilla",cat:"Drink",sub:"Milkshake",price:4.49,cal:420,img:"photo-1572490122747-3968b75cc699",desc:"Handgerührter Vanille-Milkshake. Thick & creamy.",tags:["popular"],allergens:"Milch"},
+  {id:31,name:"Milkshake Chocolate",cat:"Drink",sub:"Milkshake",price:4.49,cal:450,img:"photo-1572490122747-3968b75cc699",desc:"Schokolade pur. Für Chocoholics.",tags:[],allergens:"Milch"},
+  {id:34,name:"Bier 0.3l",cat:"Drink",sub:"Alcohol",price:3.99,cal:130,img:"photo-1535958636474-b021ee887b13",desc:"Würzburger Hofbräu Pilsner vom Fass.",tags:[],allergens:"Gluten"},
+  {id:35,name:"Soft Ice Vanilla",cat:"Dessert",sub:"Ice Cream",price:1.99,cal:180,img:"photo-1570197571499-166b36435e9f",desc:"Klassisches Softeis im Waffelbecher.",tags:["veg"],allergens:"Milch"},
+  {id:37,name:"Sundae Caramel",cat:"Dessert",sub:"Sundae",price:3.49,cal:340,img:"photo-1563805042-7684c019e1cb",desc:"Vanilleeis mit warmem Karamell und gerösteten Nüssen.",tags:[],allergens:"Milch, Nuss"},
+  {id:39,name:"Apple Pie",cat:"Dessert",sub:"Pastry",price:2.29,cal:250,img:"photo-1568571780765-9276ac8b75a2",desc:"Warmer Apfelkuchen mit Zimtzucker.",tags:["veg"],allergens:"Gluten, Milch"},
+  {id:40,name:"Cookie Chocolate",cat:"Dessert",sub:"Pastry",price:1.49,cal:200,img:"photo-1499636136210-6f4ee915583e",desc:"Soft-baked Cookie mit belgischer Schokolade.",tags:["popular"],allergens:"Gluten, Milch, Ei"},
+  {id:42,name:"Breakfast Burger",cat:"Breakfast",sub:"Burger",price:4.99,cal:450,img:"photo-1525351484163-7529414344d8",desc:"Spiegelei, Bacon und Cheddar auf dem Frühstücksbun.",tags:[],allergens:"Gluten, Ei"},
+  {id:43,name:"Pancakes",cat:"Breakfast",sub:"Sweet",price:4.49,cal:380,img:"photo-1567620905732-2d1ec7ab7445",desc:"Drei fluffige Pancakes mit Ahornsirup und Butter.",tags:["popular","veg"],allergens:"Gluten, Milch, Ei"},
+  {id:44,name:"Scrambled Eggs & Toast",cat:"Breakfast",sub:"Savory",price:3.99,cal:320,img:"photo-1528735602780-2552fd46c7af",desc:"Cremiges Rührei auf Vollkorn-Toast.",tags:["veg"],allergens:"Gluten, Ei, Milch"},
+  {id:46,name:"Breakfast Wrap",cat:"Breakfast",sub:"Wrap",price:5.49,cal:410,img:"photo-1626700051175-6818013e1d4f",desc:"Tortilla mit Rührei, Bacon, Käse und Avocado.",tags:["new"],allergens:"Gluten, Ei, Milch"},
+  {id:47,name:"Ketchup Extra",cat:"Extra",sub:"Sauce",price:0.50,cal:20,img:"photo-1472476443507-c7a5948772fc",desc:"Hauseigener Ketchup — extra Portion.",tags:["veg","vegan"],allergens:"—"},
+  {id:49,name:"BBQ Sauce",cat:"Extra",sub:"Sauce",price:0.50,cal:30,img:"photo-1472476443507-c7a5948772fc",desc:"Smoky BBQ Sauce — der perfekte Dip.",tags:["veg","vegan"],allergens:"—"},
+  {id:50,name:"Cheese Dip",cat:"Extra",sub:"Sauce",price:0.80,cal:80,img:"photo-1472476443507-c7a5948772fc",desc:"Cremiger Cheddar-Dip zum Dippen.",tags:["veg"],allergens:"Milch"},
+];
+
+const BRANCHES = [
+  {id:1,name:"BM Hauptbahnhof",address:"Bahnhofstraße 2, 97070 Würzburg",type:"City Center",lat:49.8019,lng:9.9358,dt:false,pg:false,park:0,hours:"Mo-Sa 6:00-23:00, So 8:00-22:00",directions:"Direkt am Hauptbahnhof, Ausgang Süd. 1 Min. Fußweg. Kein eigener Parkplatz — Tiefgarage Hauptbahnhof empfohlen."},
+  {id:2,name:"BM Sanderring",address:"Sanderring 8, 97070 Würzburg",type:"University",lat:49.7875,lng:9.931,dt:false,pg:false,park:10,hours:"Mo-Sa 7:00-23:00, So 9:00-22:00",directions:"Gegenüber der Uni am Sanderring, Straßenbahn-Haltestelle 'Sanderring'. 10 Parkplätze vor Ort."},
+  {id:3,name:"BM Europastern",address:"Nürnberger Str. 102, 97076 Würzburg",type:"Highway",lat:49.8103,lng:9.972,dt:true,pg:true,park:45,hours:"Mo-So 6:00-24:00",directions:"A3 Ausfahrt Würzburg-Heidingsfeld, Richtung Europastern. Großer Parkplatz, Drive-Through mit 2 Spuren."},
+  {id:4,name:"BM Mainfrankenpark",address:"Mainfrankenpark 14, 97078 Würzburg",type:"Shopping",lat:49.771,lng:9.895,dt:true,pg:true,park:40,hours:"Mo-Sa 9:00-22:00, So 10:00-21:00",directions:"Im Mainfrankenpark neben MediaMarkt. Direkte Zufahrt vom Parkplatz P3."},
+  {id:5,name:"BM Grombühl",address:"Grombühlstr. 30, 97080 Würzburg",type:"Hospital",lat:49.8095,lng:9.925,dt:false,pg:false,park:8,hours:"Mo-Fr 6:30-21:00, Sa 8:00-21:00, So 9:00-20:00",directions:"Nähe Uniklinikum Würzburg, 5 Min. zu Fuß von der Straßenbahn-Haltestelle 'Grombühlstraße'."},
+  {id:6,name:"BM Heuchelhof",address:"Heuchelhofstr. 45, 97084 Würzburg",type:"Residential",lat:49.762,lng:9.918,dt:true,pg:true,park:35,hours:"Mo-So 7:00-23:00",directions:"Im Heuchelhof-Center, Bus-Linie 14 Haltestelle 'Heuchelhof Mitte'. Großer Parkplatz, Spielplatz."},
+  {id:7,name:"BM Lengfeld",address:"Lengfelder Str. 12, 97076 Würzburg",type:"Commercial",lat:49.82,lng:9.96,dt:true,pg:false,park:25,hours:"Mo-Fr 6:00-22:00, Sa 7:00-22:00, So 8:00-21:00",directions:"Im Gewerbegebiet Lengfeld, neben dem Baumarkt. Gute Erreichbarkeit über B19."},
+  {id:8,name:"BM Zellerau",address:"Frankfurter Str. 55, 97082 Würzburg",type:"Mixed",lat:49.795,lng:9.908,dt:false,pg:false,park:12,hours:"Mo-Sa 8:00-22:00, So 9:00-21:00",directions:"In der Zellerau, 3 Min. von der Straßenbahn-Haltestelle 'Zellerau'. 12 Stellplätze direkt vor der Tür."},
+];
+
+// =============================================================================
+// CART STATE
+// =============================================================================
+let cart = [];
+let selectedPayment = 'ec';
+let appDiscount = false; // toggled randomly for demo
+
+// =============================================================================
+// RENDER MENU
+// =============================================================================
+const menuGrid = document.getElementById('menuGrid');
+let activeFilter = 'all';
+
+function renderMenu(filter) {
+  const items = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === filter);
+  menuGrid.innerHTML = items.map((p, i) => `
+    <div class="menu-card visible" style="animation-delay:${i * 40}ms">
+      <div class="menu-card-img">
+        <img src="https://images.unsplash.com/${p.img}?w=600&q=75" alt="${p.name}" loading="lazy">
+        <div class="menu-card-badges">
+          ${p.tags.includes('popular') ? '<span class="menu-badge badge-popular">Beliebt</span>' : ''}
+          ${p.tags.includes('new') ? '<span class="menu-badge badge-new">Neu</span>' : ''}
+          ${p.tags.includes('vegan') ? '<span class="menu-badge badge-vegan">Vegan</span>' : ''}
+          ${p.tags.includes('veg') && !p.tags.includes('vegan') ? '<span class="menu-badge badge-veg">Veggie</span>' : ''}
+        </div>
+      </div>
+      <div class="menu-card-body">
+        <div class="menu-card-cat">${p.sub}</div>
+        <div class="menu-card-name">${p.name}</div>
+        <div class="menu-card-desc">${p.desc}</div>
+        <div class="menu-card-nutrition">
+          <div class="nutrition-item"><div class="nutrition-val">${p.cal}</div><div class="nutrition-label">kcal</div></div>
+          <div class="nutrition-item"><div class="nutrition-val">${(p.cal * 0.042).toFixed(0)}g</div><div class="nutrition-label">Protein</div></div>
+          <div class="nutrition-item"><div class="nutrition-val">${(p.cal * 0.055).toFixed(0)}g</div><div class="nutrition-label">Carbs</div></div>
+          <div class="nutrition-item"><div class="nutrition-val">${(p.cal * 0.038).toFixed(0)}g</div><div class="nutrition-label">Fett</div></div>
+        </div>
+        <button class="allergen-toggle" onclick="this.nextElementSibling.classList.toggle('show')">Allergene anzeigen</button>
+        <div class="allergen-info"><i class="fa-solid fa-triangle-exclamation"></i> ${p.allergens}</div>
+        <div class="menu-card-footer" style="margin-top:12px;">
+          <div class="menu-card-price">€${p.price.toFixed(2).replace('.',',')} <small>inkl. MwSt.</small></div>
+          <button class="add-to-cart" onclick="addToCart(${p.id}, this)" title="In den Warenkorb">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderMenu(activeFilter);
+  });
+});
+
+renderMenu('all');
+
+// =============================================================================
+// CART LOGIC
+// =============================================================================
+function addToCart(productId, btnEl) {
+  const product = PRODUCTS.find(p => p.id === productId);
+  if (!product) return;
+
+  const existing = cart.find(c => c.id === productId);
+  if (existing) {
+    existing.qty++;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+
+  // Button animation
+  if (btnEl) {
+    btnEl.classList.add('added');
+    btnEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+    setTimeout(() => {
+      btnEl.classList.remove('added');
+      btnEl.innerHTML = '<i class="fa-solid fa-plus"></i>';
+    }, 800);
+  }
+
+  updateCartUI();
+  showToast(`${product.name} hinzugefügt`);
+}
+
+function removeFromCart(productId) {
+  const idx = cart.findIndex(c => c.id === productId);
+  if (idx > -1) {
+    if (cart[idx].qty > 1) {
+      cart[idx].qty--;
+    } else {
+      cart.splice(idx, 1);
+    }
+  }
+  updateCartUI();
+}
+
+function increaseQty(productId) {
+  const item = cart.find(c => c.id === productId);
+  if (item) item.qty++;
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const countEl = document.getElementById('navCartCount');
+  const itemsEl = document.getElementById('cartItems');
+  const emptyEl = document.getElementById('cartEmpty');
+  const footerEl = document.getElementById('cartFooter');
+  const subtotalEl = document.getElementById('cartSubtotal');
+  const totalEl = document.getElementById('cartTotal');
+  const discountRow = document.getElementById('cartDiscountRow');
+  const discountEl = document.getElementById('cartDiscount');
+
+  const totalItems = cart.reduce((s, c) => s + c.qty, 0);
+  countEl.textContent = totalItems;
+
+  if (cart.length === 0) {
+    emptyEl.style.display = 'block';
+    footerEl.style.display = 'none';
+    itemsEl.querySelectorAll('.cart-item').forEach(el => el.remove());
+    return;
+  }
+
+  emptyEl.style.display = 'none';
+  footerEl.style.display = 'block';
+
+  // Render items
+  const existingItems = itemsEl.querySelectorAll('.cart-item');
+  existingItems.forEach(el => el.remove());
+
+  cart.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <div class="cart-item-info">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-price">€${(item.price * item.qty).toFixed(2).replace('.',',')}</div>
+      </div>
+      <div class="cart-item-qty">
+        <button class="qty-btn" onclick="removeFromCart(${item.id})">−</button>
+        <span class="qty-num">${item.qty}</span>
+        <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
+      </div>
+    `;
+    itemsEl.insertBefore(div, emptyEl);
+  });
+
+  const subtotal = cart.reduce((s, c) => s + c.price * c.qty, 0);
+  subtotalEl.textContent = `€${subtotal.toFixed(2).replace('.',',')}`;
+
+  // Random app discount for demo
+  appDiscount = totalItems >= 3 && Math.random() > 0.5;
+  if (appDiscount) {
+    discountRow.style.display = 'flex';
+    const disc = subtotal * 0.1;
+    discountEl.textContent = `−€${disc.toFixed(2).replace('.',',')}`;
+    totalEl.textContent = `€${(subtotal - disc).toFixed(2).replace('.',',')}`;
+  } else {
+    discountRow.style.display = 'none';
+    totalEl.textContent = `€${subtotal.toFixed(2).replace('.',',')}`;
+  }
+}
+
+function selectPay(el) {
+  document.querySelectorAll('.pay-option').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPayment = el.dataset.pay;
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartDrawer').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function placeOrder() {
+  if (cart.length === 0) return;
+  const orderNr = `BM-2024-${String(Math.floor(Math.random() * 999999)).padStart(6, '0')}`;
+  document.getElementById('orderNr').textContent = orderNr;
+  document.getElementById('orderModal').classList.add('open');
+  closeCart();
+  cart = [];
+  updateCartUI();
+}
+
+function closeModal() {
+  document.getElementById('orderModal').classList.remove('open');
+}
+
+// =============================================================================
+// MAP
+// =============================================================================
+function initMap() {
+  const map = L.map('map', { scrollWheelZoom: false }).setView([49.792, 9.935], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  const redIcon = L.divIcon({
+    className: '',
+    html: `<div style="width:32px;height:32px;background:#B91C1C;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;">BM</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 16],
+    popupAnchor: [0, -20]
+  });
+
+  BRANCHES.forEach(b => {
+    L.marker([b.lat, b.lng], { icon: redIcon })
+      .addTo(map)
+      .bindPopup(`
+        <div style="font-family:'Inter',sans-serif;min-width:200px;">
+          <strong style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.5px;">${b.name}</strong><br>
+          <span style="font-size:.82rem;color:#57534E;">${b.address}</span><br>
+          <span style="font-size:.78rem;color:#57534E;">${b.hours}</span><br>
+          ${b.dt ? '<span style="font-size:.75rem;color:#16A34A;">✓ Drive-Through</span><br>' : ''}
+          ${b.pg ? '<span style="font-size:.75rem;color:#16A34A;">✓ Spielplatz</span><br>' : ''}
+          <a href="https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}" target="_blank"
+             style="display:inline-block;margin-top:6px;font-size:.8rem;color:#B91C1C;font-weight:600;">
+            Route planen →
+          </a>
+        </div>
+      `);
+  });
+}
+
+// Render location cards
+const locGrid = document.getElementById('locationsGrid');
+BRANCHES.forEach(b => {
+  locGrid.innerHTML += `
+    <div class="location-card fade-up" onclick="window.open('https://www.google.com/maps/dir/?api=1&destination=${b.lat},${b.lng}','_blank')">
+      <div class="location-card-header">
+        <div class="location-name">${b.name}</div>
+        <div class="location-type">${b.type}</div>
+      </div>
+      <div class="location-address">
+        ${b.address}<br>
+        <span style="font-size:.78rem;color:var(--stone-400);">${b.hours}</span>
+      </div>
+      <div class="location-features">
+        ${b.dt ? '<span class="loc-feature"><i class="fa-solid fa-car"></i> Drive-Through</span>' : ''}
+        ${b.pg ? '<span class="loc-feature"><i class="fa-solid fa-child-reaching"></i> Spielplatz</span>' : ''}
+        ${b.park > 0 ? `<span class="loc-feature"><i class="fa-solid fa-square-parking"></i> ${b.park} Plätze</span>` : ''}
+      </div>
+      <div style="font-size:.8rem;color:var(--stone-600);line-height:1.5;margin-bottom:12px;">${b.directions}</div>
+      <div class="location-directions">Route planen <i class="fa-solid fa-arrow-right"></i></div>
+    </div>
+  `;
+});
+
+// =============================================================================
+// NAVIGATION SCROLL
+// =============================================================================
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Mobile toggle
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+
+// =============================================================================
+// SCROLL ANIMATIONS
+// =============================================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('in-view');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// =============================================================================
+// COUNTER ANIMATION
+// =============================================================================
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      let current = 0;
+      const step = Math.max(1, Math.floor(target / 40));
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        el.textContent = current + suffix;
+      }, 30);
+      counterObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.hero-stat-num').forEach(el => counterObserver.observe(el));
+
+// =============================================================================
+// TOAST NOTIFICATIONS
+// =============================================================================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// =============================================================================
+// INIT
+// =============================================================================
+document.addEventListener('DOMContentLoaded', () => {
+  initMap();
+});
+</script>
+</body>
+</html>
