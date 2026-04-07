@@ -2124,6 +2124,150 @@ body.data-mode .data-event-log { display: flex; }
 .insight-stat-label { color: rgba(255,255,255,.75); }
 .insight-stat-value { color: #33FFA0; font-weight: 700; }
 
+/* ===== TABBED ANNOTATION PANELS (App Goldmine, Cart Analytics) ===== */
+.da-panel {
+  display: none;
+  position: absolute;
+  z-index: 100;
+  background: rgba(5,25,15,.97);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(0,255,136,.4);
+  border-radius: 14px;
+  max-width: 480px;
+  width: 480px;
+  max-height: 520px;
+  font-family: 'Courier New', monospace;
+  font-size: .92rem;
+  color: rgba(255,255,255,.95);
+  line-height: 1.7;
+  box-shadow: 0 12px 48px rgba(0,0,0,.6), 0 0 30px rgba(0,255,136,.15);
+  animation: annotationAppear .5s cubic-bezier(.4,0,.2,1) both;
+  flex-direction: column;
+  overflow: hidden;
+}
+body.data-mode .da-panel { display: flex; }
+.da-panel-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px;
+  border-bottom: 1px solid rgba(0,255,136,.25);
+  flex-shrink: 0;
+}
+.da-panel-header i { color: #33FFA0; font-size: 1.1rem; }
+.da-panel-header span {
+  color: #33FFA0; font-weight: 700; letter-spacing: .8px; font-size: .95rem;
+}
+.da-panel-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0,255,136,.15);
+  flex-shrink: 0;
+}
+.da-panel-tab {
+  flex: 1;
+  padding: 10px 8px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.da-panel-tab:hover { color: rgba(255,255,255,.8); }
+.da-panel-tab.active {
+  color: #33FFA0;
+  border-bottom-color: #33FFA0;
+  background: rgba(0,255,136,.05);
+}
+.da-panel-body {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 20px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,255,136,.3) transparent;
+}
+.da-panel-body::-webkit-scrollbar { width: 6px; }
+.da-panel-body::-webkit-scrollbar-thumb { background: rgba(0,255,136,.3); border-radius: 3px; }
+.da-panel-body.active { display: block; }
+/* Analytics method cards */
+.analytics-method {
+  background: rgba(0,255,136,.05);
+  border: 1px solid rgba(0,255,136,.18);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.analytics-method-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 8px;
+}
+.analytics-method-icon {
+  width: 28px; height: 28px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; flex-shrink: 0;
+}
+.am-icon-rfm { background: rgba(255,180,60,.15); color: #FFB43C; }
+.am-icon-clv { background: rgba(100,200,255,.15); color: #64C8FF; }
+.am-icon-churn { background: rgba(255,100,100,.15); color: #FF6464; }
+.am-icon-seg { background: rgba(160,120,255,.15); color: #A078FF; }
+.am-icon-ab { background: rgba(0,255,136,.15); color: #33FFA0; }
+.am-icon-basket { background: rgba(255,200,60,.15); color: #FFC83C; }
+.am-icon-funnel { background: rgba(100,200,255,.15); color: #64C8FF; }
+.am-icon-aov { background: rgba(0,255,136,.15); color: #33FFA0; }
+.am-icon-cohort { background: rgba(160,120,255,.15); color: #A078FF; }
+.am-icon-price { background: rgba(255,100,100,.15); color: #FF6464; }
+.am-icon-time { background: rgba(255,180,60,.15); color: #FFB43C; }
+.am-icon-geo { background: rgba(100,200,255,.15); color: #64C8FF; }
+.analytics-method-title {
+  font-size: .88rem; font-weight: 700; color: #fff;
+}
+.analytics-method p {
+  font-size: .85rem; color: rgba(255,255,255,.82); line-height: 1.6; margin: 0;
+}
+.analytics-method code {
+  background: rgba(0,191,255,.12); color: #7DE0FF;
+  padding: 2px 6px; border-radius: 3px; font-size: .78rem;
+  border: 1px solid rgba(0,191,255,.15);
+}
+.am-kpi-row {
+  display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;
+}
+.am-kpi {
+  background: rgba(0,0,0,.3);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: .78rem;
+  color: rgba(255,255,255,.7);
+  flex: 1; min-width: 100px;
+  text-align: center;
+}
+.am-kpi strong {
+  display: block; font-size: .95rem; color: #33FFA0; margin-bottom: 2px;
+}
+.am-formula {
+  background: rgba(0,0,0,.4);
+  border-left: 3px solid rgba(0,255,136,.4);
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: .8rem;
+  color: rgba(255,255,255,.75);
+  border-radius: 0 6px 6px 0;
+}
+/* Cart annotation panel: relative positioned */
+.da-panel.da-panel-cart {
+  position: relative;
+  top: auto; left: auto; right: auto;
+  max-width: 100%; width: 100%;
+  margin: 0 0 12px;
+  border-radius: 10px;
+  max-height: 400px;
+}
+@media (max-width: 768px) {
+  .da-panel { max-width: 340px; width: calc(100vw - 40px); max-height: 420px; }
+}
+
 /* Data mode enhancements on filter buttons */
 body.data-mode .filter-btn { position: relative; }
 body.data-mode .filter-btn::after {
@@ -3087,24 +3231,125 @@ body.data-mode .phone-mockup { animation: none; }
       </div>
     </div>
 
-    <!-- DATA ANNOTATIONS: APP -->
-    <div class="data-annotation" style="top:40px;left:50%;transform:translateX(-50%);animation-delay:.2s;">
-      <div class="data-annotation-header">
-        <div class="data-annotation-icon da-icon-collect"><i class="fa-solid fa-mobile-screen"></i></div>
-        <div class="data-annotation-title">APP = DATEN-GOLDMINE</div>
+    <!-- DATA PANEL: APP GOLDMINE (tabbed) -->
+    <div class="da-panel" style="top:40px;left:50%;transform:translateX(-50%);animation-delay:.2s;">
+      <div class="da-panel-header">
+        <i class="fa-solid fa-mobile-screen"></i>
+        <span>APP = DATEN-GOLDMINE</span>
       </div>
-      Die App ist der mächtigste Datenkanal:<br>
-      <span class="da-metric">customer_id</span>
-      <span class="da-metric">push_opt_in</span>
-      <span class="da-metric">gps_location</span>
-      <span class="da-metric">order_history</span>
-      <span class="da-metric">loyalty_tier</span>
-      <span class="da-metric">payment_method</span>
-      <span class="da-metric">visit_frequency</span><br><br>
-      → Füllt <code>dim_customer</code> mit <code>has_app=true</code>, <code>loyalty_tier</code>, <code>registered_date</code>. Ermöglicht personalisiertes Marketing und RFM-Analyse (Recency, Frequency, Monetary).
-      <span class="da-legal"><strong>⚖ DSGVO Art. 7:</strong> Einwilligung für Push, GPS und Profiling. Recht auf Löschung (Art. 17). Datenminimierung: nur erfassen, was für den Zweck nötig ist.</span>
-      <span class="da-advantage"><strong>▲ Online-Vorteil:</strong> Ohne App kennt man Laufkunden nicht. Mit App: vollständiges Kundenprofil, Cross-Visit-Tracking, personalisierte Angebote. Im Datensatz: App-Nutzer haben 44% Anteil und erhalten exklusive Promos.</span>
-      <span class="da-ethical"><strong>🔍 Ethik:</strong> 10% Willkommensrabatt = Anreiz zur Datenpreisgabe. Ist der Tausch „Daten gegen Rabatt" fair? Informierte Einwilligung essentiell. Kein Nachteil für Nicht-App-Nutzer!</span>
+      <div class="da-panel-tabs">
+        <button class="da-panel-tab active" onclick="switchDaTab(this,'appData')">Datenerfassung</button>
+        <button class="da-panel-tab" onclick="switchDaTab(this,'appAnalytics')">Analytics-Potenzial</button>
+        <button class="da-panel-tab" onclick="switchDaTab(this,'appEthics')">DSGVO &amp; Ethik</button>
+      </div>
+      <div class="da-panel-body active" id="dapAppData">
+        <p style="margin:0 0 10px;color:#33FFA0;font-weight:700;">Die App ist der mächtigste Datenkanal:</p>
+        <span class="da-metric">customer_id</span>
+        <span class="da-metric">push_opt_in</span>
+        <span class="da-metric">gps_location</span>
+        <span class="da-metric">order_history</span>
+        <span class="da-metric">loyalty_tier</span>
+        <span class="da-metric">payment_method</span>
+        <span class="da-metric">visit_frequency</span>
+        <span class="da-metric">app_registered_date</span>
+        <span class="da-metric">device_type</span>
+        <span class="da-metric">session_duration</span>
+        <p style="margin:12px 0 8px;">Füllt <code>dim_customer</code> mit:</p>
+        <div class="am-kpi-row">
+          <div class="am-kpi"><strong>has_app</strong>boolean</div>
+          <div class="am-kpi"><strong>loyalty_tier</strong>None→Gold</div>
+          <div class="am-kpi"><strong>registered_date</strong>timestamp</div>
+        </div>
+        <p style="margin:12px 0 0;">
+          <span class="da-advantage"><strong>▲ Online vs. Offline:</strong> Ohne App kennt man Laufkunden nicht. Mit App: vollständiges Kundenprofil, Cross-Visit-Tracking, personalisierte Angebote. Im Datensatz: App-Nutzer erhalten exklusive Promos (5, 6, 9, 10).</span>
+        </p>
+      </div>
+      <div class="da-panel-body" id="dapAppAnalytics">
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-rfm"><i class="fa-solid fa-chart-column"></i></div>
+            <div class="analytics-method-title">RFM-Analyse</div>
+          </div>
+          <p>Segmentierung nach Recency, Frequency, Monetary Value. Jeder Kunde erhält Score 1-5 pro Dimension → 125 mögliche Segmente.</p>
+          <div class="am-formula">R = Tage seit letztem Kauf<br>F = Anzahl Käufe in Periode<br>M = Ø Umsatz pro Kauf</div>
+          <div class="am-kpi-row">
+            <div class="am-kpi"><strong>Champions</strong>R5-F5-M5</div>
+            <div class="am-kpi"><strong>At Risk</strong>R1-F4-M4</div>
+            <div class="am-kpi"><strong>Lost</strong>R1-F1-M1</div>
+          </div>
+        </div>
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-clv"><i class="fa-solid fa-coins"></i></div>
+            <div class="analytics-method-title">Customer Lifetime Value (CLV)</div>
+          </div>
+          <p>Prognostiziert den Gesamtumsatz eines Kunden über die gesamte Beziehung. Basis: <code>order_history</code>, <code>visit_frequency</code>, <code>loyalty_tier</code>.</p>
+          <div class="am-formula">CLV = (Ø Warenkorb × Kauffrequenz × Kundenlebensdauer) − Akquisekosten</div>
+          <p style="margin-top:8px;">Gold-Kunden: CLV im Datensatz ~3-5× höher als Nicht-App-Nutzer.</p>
+        </div>
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-churn"><i class="fa-solid fa-person-walking-arrow-right"></i></div>
+            <div class="analytics-method-title">Churn Prediction</div>
+          </div>
+          <p>Vorhersage der Abwanderungswahrscheinlichkeit mittels Logistic Regression oder Random Forest. Features: <code>visit_frequency</code>, <code>days_since_last_order</code>, <code>satisfaction_score</code>.</p>
+          <div class="am-kpi-row">
+            <div class="am-kpi"><strong>Feature 1</strong>Recency ↑</div>
+            <div class="am-kpi"><strong>Feature 2</strong>Frequency ↓</div>
+            <div class="am-kpi"><strong>Feature 3</strong>Satisfaction ↓</div>
+          </div>
+        </div>
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-seg"><i class="fa-solid fa-users-viewfinder"></i></div>
+            <div class="analytics-method-title">Kundensegmentierung</div>
+          </div>
+          <p>K-Means Clustering auf <code>age_group</code>, <code>home_district</code>, <code>visit_frequency</code>, <code>avg_order_value</code>. Ergebnis: Personas wie „Uni-Studenten", „Familien-Stammgäste", „Premium-Gourmet".</p>
+        </div>
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-ab"><i class="fa-solid fa-flask-vial"></i></div>
+            <div class="analytics-method-title">A/B-Testing & Push-Optimierung</div>
+          </div>
+          <p>Push-Kampagnen messbar über <code>promo_id</code> → <code>order_channel='App Order'</code>. Conversion Rate, Zeitfenster-Optimierung (wann öffnen Nutzer Push?), Rabatt-Elastizität.</p>
+        </div>
+        <div class="analytics-method">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon am-icon-geo"><i class="fa-solid fa-location-crosshairs"></i></div>
+            <div class="analytics-method-title">Geo-Analyse & Standort-Affinität</div>
+          </div>
+          <p>Welche Filialen besuchen App-Nutzer aus welchem <code>home_district</code>? Kannibalisierungs-Analyse, optimale Standortwahl für Filiale 9, Einzugsgebiet-Visualisierung.</p>
+        </div>
+      </div>
+      <div class="da-panel-body" id="dapAppEthics">
+        <div class="analytics-method" style="border-color:rgba(255,100,100,.25);background:rgba(255,60,60,.05);">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon" style="background:rgba(255,100,100,.15);color:#FF8080;"><i class="fa-solid fa-scale-balanced"></i></div>
+            <div class="analytics-method-title" style="color:#FF8080;">DSGVO-Pflichten</div>
+          </div>
+          <p><strong style="color:#FF8080;">Art. 7</strong> — Einwilligung für Push, GPS und Profiling muss freiwillig, informiert und widerrufbar sein.</p>
+          <p style="margin-top:6px;"><strong style="color:#FF8080;">Art. 13</strong> — Informationspflicht: Welche Daten, zu welchem Zweck, wie lange gespeichert?</p>
+          <p style="margin-top:6px;"><strong style="color:#FF8080;">Art. 17</strong> — Recht auf Löschung: Nutzer kann vollständige Datenlöschung verlangen.</p>
+          <p style="margin-top:6px;"><strong style="color:#FF8080;">Art. 22</strong> — Automatisierte Einzelentscheidungen (Scoring, Profiling) nur mit Einwilligung.</p>
+        </div>
+        <div class="analytics-method" style="border-color:rgba(160,120,255,.25);background:rgba(160,120,255,.05);">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon" style="background:rgba(160,120,255,.15);color:#D8A0FF;"><i class="fa-solid fa-eye"></i></div>
+            <div class="analytics-method-title" style="color:#D8A0FF;">Ethische Betrachtung</div>
+          </div>
+          <p>10% Willkommensrabatt = Anreiz zur Datenpreisgabe. Ist der Tausch „Daten gegen Rabatt" <em>fair</em>?</p>
+          <p style="margin-top:6px;">Informierte Einwilligung essentiell. Kein Nachteil für Nicht-App-Nutzer! Preise dürfen offline nicht höher sein.</p>
+          <p style="margin-top:6px;">Loyalty-Programme können zu <em>Lock-in-Effekten</em> führen: Wechselkosten steigen, weil Punkte verfallen. Transparency by Design!</p>
+        </div>
+        <div class="analytics-method" style="border-color:rgba(255,200,60,.25);background:rgba(255,200,60,.05);">
+          <div class="analytics-method-head">
+            <div class="analytics-method-icon" style="background:rgba(255,200,60,.15);color:#FFC83C;"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="analytics-method-title" style="color:#FFC83C;">Datenminimierung</div>
+          </div>
+          <p>GPS nur bei aktiver Nutzung, nicht im Hintergrund. Session-Dauer ja, Bildschirm-Recording nein. Push-Tokens getrennt von Profildaten speichern.</p>
+          <p style="margin-top:6px;">Anonymisierung für BI-Analysen: <code>customer_id</code> pseudonymisieren, Kohortenanalyse statt Einzelprofile.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -3401,26 +3646,140 @@ body.data-mode .phone-mockup { animation: none; }
     <h3>DEINE BESTELLUNG</h3>
     <button class="cart-close" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
   </div>
-  <!-- DATA ANNOTATION: CART -->
-  <div class="data-annotation" style="position:relative;top:auto;left:auto;right:auto;max-width:100%;margin:0 16px 12px;animation-delay:.1s;">
-    <div class="data-annotation-header">
-      <div class="data-annotation-icon da-icon-collect"><i class="fa-solid fa-cart-shopping"></i></div>
-      <div class="data-annotation-title">TRANSAKTIONSDATEN (DAS HERZSTÜCK)</div>
+  <!-- DATA PANEL: CART ANALYTICS (tabbed) -->
+  <div class="da-panel da-panel-cart" style="animation-delay:.1s;">
+    <div class="da-panel-header">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <span>TRANSAKTIONSDATEN (HERZSTÜCK)</span>
     </div>
-    Jede Bestellung erzeugt einen <code>fact_orders</code>-Datensatz:<br>
-    <span class="da-metric">order_id</span>
-    <span class="da-metric">branch_id</span>
-    <span class="da-metric">customer_id</span>
-    <span class="da-metric">payment_id</span>
-    <span class="da-metric">promo_id</span>
-    <span class="da-metric">order_channel</span>
-    <span class="da-metric">net_total</span>
-    <span class="da-metric">satisfaction_score</span><br><br>
-    Zahlungsart-Auswahl → <code>dim_payment_method</code><br>
-    Filial-Auswahl → <code>dim_branch</code><br>
-    Rabatt → <code>dim_promotion</code>
-    <span class="da-legal"><strong>⚖ DSGVO Art. 6(1)b:</strong> Vertragserfüllung — Transaktionsdaten dürfen für die Bestellabwicklung verarbeitet werden. Für Analytics-Zwecke: Anonymisierung oder Consent nötig!</span>
-    <span class="da-advantage"><strong>▲ Online-Vorteil:</strong> Warenkorbabbruch-Rate messbar (ø 70% im E-Commerce). Im Laden: Kunde geht einfach — kein Signal. Online: Retargeting, Exit-Intent-Popups, Follow-Up-Mails möglich.</span>
+    <div class="da-panel-tabs">
+      <button class="da-panel-tab active" onclick="switchDaTab(this,'cartData')">Star Schema</button>
+      <button class="da-panel-tab" onclick="switchDaTab(this,'cartAnalytics')">Analytics</button>
+      <button class="da-panel-tab" onclick="switchDaTab(this,'cartLegal')">DSGVO</button>
+    </div>
+    <div class="da-panel-body active" id="dapCartData">
+      <p style="margin:0 0 8px;color:#33FFA0;font-weight:700;">Jede Bestellung erzeugt Einträge in zwei Fact-Tabellen:</p>
+      <p style="margin:0 0 6px;font-weight:700;color:#7DE0FF;">fact_orders (1 Zeile pro Bestellung):</p>
+      <span class="da-metric">order_id</span>
+      <span class="da-metric">date</span>
+      <span class="da-metric">time</span>
+      <span class="da-metric">branch_id</span>
+      <span class="da-metric">customer_id</span>
+      <span class="da-metric">payment_id</span>
+      <span class="da-metric">promo_id</span>
+      <span class="da-metric">order_channel</span>
+      <span class="da-metric">gross_total</span>
+      <span class="da-metric">discount_amount</span>
+      <span class="da-metric">net_total</span>
+      <span class="da-metric">satisfaction_score</span>
+      <p style="margin:10px 0 6px;font-weight:700;color:#7DE0FF;">fact_order_items (1 Zeile pro Artikel):</p>
+      <span class="da-metric">order_item_id</span>
+      <span class="da-metric">order_id</span>
+      <span class="da-metric">product_id</span>
+      <span class="da-metric">quantity</span>
+      <span class="da-metric">unit_price</span>
+      <span class="da-metric">line_total</span>
+      <p style="margin:10px 0 6px;font-weight:700;color:#FFC060;">Dimension-Verknüpfungen:</p>
+      <div class="am-kpi-row">
+        <div class="am-kpi"><strong>→</strong>dim_branch</div>
+        <div class="am-kpi"><strong>→</strong>dim_customer</div>
+        <div class="am-kpi"><strong>→</strong>dim_payment</div>
+        <div class="am-kpi"><strong>→</strong>dim_promotion</div>
+      </div>
+      <div class="am-kpi-row" style="margin-top:4px;">
+        <div class="am-kpi"><strong>→</strong>dim_product</div>
+        <div class="am-kpi"><strong>→</strong>dim_date</div>
+        <div class="am-kpi"><strong>→</strong>dim_time_slot</div>
+      </div>
+    </div>
+    <div class="da-panel-body" id="dapCartAnalytics">
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-basket"><i class="fa-solid fa-cart-shopping"></i></div>
+          <div class="analytics-method-title">Market Basket Analysis</div>
+        </div>
+        <p>Apriori-Algorithmus auf <code>fact_order_items</code>: Welche Produkte werden zusammen gekauft?</p>
+        <div class="am-formula">Support(A→B) = P(A∩B)<br>Confidence(A→B) = P(B|A)<br>Lift(A→B) = P(B|A) / P(B)</div>
+        <div class="am-kpi-row">
+          <div class="am-kpi"><strong>Burger→Fries</strong>Conf: 65%</div>
+          <div class="am-kpi"><strong>Burger→Cola</strong>Conf: 55%</div>
+          <div class="am-kpi"><strong>Nuggets→BBQ</strong>Conf: 40%</div>
+        </div>
+      </div>
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-funnel"><i class="fa-solid fa-filter"></i></div>
+          <div class="analytics-method-title">Conversion Funnel</div>
+        </div>
+        <p>Messung der Abbruchrate in jedem Schritt:</p>
+        <div class="am-kpi-row">
+          <div class="am-kpi"><strong>100%</strong>Seite besucht</div>
+          <div class="am-kpi"><strong>~45%</strong>Produkt angesehen</div>
+          <div class="am-kpi"><strong>~25%</strong>In Warenkorb</div>
+          <div class="am-kpi"><strong>~12%</strong>Bestellt</div>
+        </div>
+        <p style="margin-top:8px;">Online-Vorteil: Warenkorbabbruch messbar (ø 70% im E-Commerce). Im Laden: Kunde geht einfach — kein Signal.</p>
+      </div>
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-aov"><i class="fa-solid fa-arrow-trend-up"></i></div>
+          <div class="analytics-method-title">Average Order Value (AOV)</div>
+        </div>
+        <p>Ø Warenkorbwert nach Dimensionen aufschlüsseln: Filiale, Tageszeit, Kanal, Kundengruppe. Basis für Upselling-Strategien.</p>
+        <div class="am-formula">AOV = SUM(net_total) / COUNT(order_id)<br>GROUP BY branch_id, hour, order_channel</div>
+      </div>
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-price"><i class="fa-solid fa-tags"></i></div>
+          <div class="analytics-method-title">Preiselastizität & Promos</div>
+        </div>
+        <p>Wie verändert sich <code>item_count</code> bei Aktionen? Vergleich <code>promo_id=0</code> vs. aktive Promos. Margin-Impact: <code>gross_total − discount_amount</code> vs. Volumeneffekt.</p>
+      </div>
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-time"><i class="fa-solid fa-clock"></i></div>
+          <div class="analytics-method-title">Zeitreihenanalyse</div>
+        </div>
+        <p>Saisonalität in <code>net_total</code> über <code>dim_date</code>: Wochentags-Muster, Monatszyklen, Feiertagseffekte, COVID-Einbruch 2020, Erholung 2021.</p>
+        <div class="am-kpi-row">
+          <div class="am-kpi"><strong>Fr/Sa</strong>+25% Umsatz</div>
+          <div class="am-kpi"><strong>Sommer</strong>+15% Peak</div>
+          <div class="am-kpi"><strong>Kiliani</strong>+25% Event</div>
+        </div>
+      </div>
+      <div class="analytics-method">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon am-icon-cohort"><i class="fa-solid fa-layer-group"></i></div>
+          <div class="analytics-method-title">Kohortenanalyse</div>
+        </div>
+        <p>Kunden nach <code>first_visit_year</code> gruppieren und Retention über Monate tracken. Wie viele Neukunden aus 2022 bestellen auch 2023 noch?</p>
+      </div>
+    </div>
+    <div class="da-panel-body" id="dapCartLegal">
+      <div class="analytics-method" style="border-color:rgba(255,100,100,.25);background:rgba(255,60,60,.05);">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon" style="background:rgba(255,100,100,.15);color:#FF8080;"><i class="fa-solid fa-scale-balanced"></i></div>
+          <div class="analytics-method-title" style="color:#FF8080;">Rechtsgrundlage</div>
+        </div>
+        <p><strong style="color:#FF8080;">Art. 6(1)b DSGVO</strong> — Vertragserfüllung: Transaktionsdaten dürfen für die Bestellabwicklung verarbeitet werden.</p>
+        <p style="margin-top:6px;"><strong style="color:#FF8080;">Art. 6(1)f DSGVO</strong> — Berechtigtes Interesse: Aggregierte Umsatzanalysen ohne Personenbezug zulässig.</p>
+        <p style="margin-top:6px;"><strong style="color:#FF8080;">Für personalisierte Analysen:</strong> Einwilligung (Art. 6(1)a) oder Anonymisierung/Pseudonymisierung erforderlich.</p>
+      </div>
+      <div class="analytics-method" style="border-color:rgba(255,200,60,.25);background:rgba(255,200,60,.05);">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon" style="background:rgba(255,200,60,.15);color:#FFC83C;"><i class="fa-solid fa-database"></i></div>
+          <div class="analytics-method-title" style="color:#FFC83C;">Aufbewahrungsfristen</div>
+        </div>
+        <p>Transaktionsdaten: 10 Jahre (§ 147 AO, § 257 HGB). Personenbezogene Auswertungen: nur so lange wie Zweck erforderlich. Regelmäßige Löschprüfung!</p>
+      </div>
+      <div class="analytics-method" style="border-color:rgba(160,120,255,.25);background:rgba(160,120,255,.05);">
+        <div class="analytics-method-head">
+          <div class="analytics-method-icon" style="background:rgba(160,120,255,.15);color:#D8A0FF;"><i class="fa-solid fa-eye"></i></div>
+          <div class="analytics-method-title" style="color:#D8A0FF;">Ethik: Retargeting</div>
+        </div>
+        <p>Warenkorbabbruch → Retargeting-Mail? Nur mit Consent! Exit-Intent-Popups können als <em>Dark Pattern</em> gelten. Transparenz gegenüber dem Kunden wahren.</p>
+      </div>
+    </div>
   </div>
   <div class="cart-items" id="cartItems">
     <div class="cart-empty" id="cartEmpty">
@@ -4003,6 +4362,19 @@ function switchLogTab(tab, btn) {
   document.querySelectorAll('.data-log-panel').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById(tab === 'events' ? 'logPanelEvents' : 'logPanelInsights').classList.add('active');
+}
+
+// Generic tab switcher for da-panel tabs
+function switchDaTab(btn, panelId) {
+  const panel = btn.closest('.da-panel');
+  panel.querySelectorAll('.da-panel-tab').forEach(t => t.classList.remove('active'));
+  panel.querySelectorAll('.da-panel-body').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  // Find the matching body: tabs and bodies are in order
+  const tabs = Array.from(panel.querySelectorAll('.da-panel-tab'));
+  const bodies = Array.from(panel.querySelectorAll('.da-panel-body'));
+  const idx = tabs.indexOf(btn);
+  if (idx >= 0 && idx < bodies.length) bodies[idx].classList.add('active');
 }
 
 // --- CLICK TRACKING ---
