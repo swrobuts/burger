@@ -45,7 +45,7 @@
    RESET & BASE
    ============================================ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { font-size: 16px; }
 body {
   font-family: var(--font-body);
   color: var(--charcoal);
@@ -983,38 +983,7 @@ ul { list-style: none; }
   color: var(--gold-light);
   margin-bottom: 20px;
 }
-.value-icon-premium {
-  width: 72px;
-  height: 72px;
-  background: rgba(217,119,6,.06);
-  border: 1px solid rgba(217,119,6,.12);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 24px;
-  transition: all .4s ease;
-  position: relative;
-}
-.value-icon-premium::after {
-  content: '';
-  position: absolute;
-  inset: -1px;
-  border-radius: 20px;
-  background: linear-gradient(135deg, rgba(245,158,11,.2), transparent 60%);
-  opacity: 0;
-  transition: opacity .4s ease;
-}
-.value-card:hover .value-icon-premium {
-  background: rgba(217,119,6,.1);
-  border-color: rgba(217,119,6,.25);
-  transform: scale(1.05);
-}
-.value-card:hover .value-icon-premium::after { opacity: 1; }
-.value-icon-premium svg {
-  position: relative;
-  z-index: 1;
-}
+/* Icons entfernt – Typografie wirkt allein */
 .value-stat {
   margin-top: 16px;
   padding-top: 14px;
@@ -1488,12 +1457,11 @@ ul { list-style: none; }
   position: fixed;
   top: 0; left: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--red), var(--gold-light), var(--red));
-  background-size: 200% 100%;
-  animation: gradientShift 3s linear infinite;
+  background: linear-gradient(90deg, var(--red), var(--gold-light));
   z-index: 1001;
   width: 0%;
-  transition: width .1s linear;
+  will-change: width;
+  contain: layout style;
 }
 @keyframes gradientShift {
   0% { background-position: 0% 50%; }
@@ -1672,13 +1640,7 @@ ul { list-style: none; }
   text-shadow: 0 0 20px rgba(253,230,138,.3);
 }
 
-/* ============================================
-   PARALLAX IMAGES
-   ============================================ */
-.parallax-img {
-  transition: transform .1s linear;
-  will-change: transform;
-}
+/* Parallax removed — was causing scroll jitter */
 
 /* ============================================
    VALUE CARDS HOVER GLOW
@@ -1999,52 +1961,168 @@ body.data-mode .menu-card.data-flash::after {
   position: fixed;
   bottom: 90px;
   left: 32px;
-  width: 380px;
-  max-height: 240px;
-  overflow-y: auto;
+  width: 440px;
+  max-height: 520px;
+  overflow-y: hidden;
   background: rgba(5,25,15,.97);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(0,255,136,.3);
-  border-radius: 10px;
-  padding: 16px;
+  border-radius: 14px;
+  padding: 0;
   font-family: 'Courier New', monospace;
-  font-size: .85rem;
+  font-size: .9rem;
   z-index: 1500;
-  box-shadow: 0 8px 32px rgba(0,0,0,.5);
+  box-shadow: 0 12px 48px rgba(0,0,0,.6);
+  display: none;
+  flex-direction: column;
 }
-body.data-mode .data-event-log { display: block; }
+body.data-mode .data-event-log { display: flex; }
 .data-event-log-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  padding-bottom: 8px;
+  padding: 14px 18px;
   border-bottom: 1px solid rgba(0,255,136,.25);
+  flex-shrink: 0;
 }
 .data-event-log-header span {
   color: #00FF88;
   font-weight: 700;
   letter-spacing: 1px;
-  font-size: .9rem;
+  font-size: .95rem;
 }
 .data-event-log-header small {
   color: rgba(255,255,255,.6);
+  font-size: .82rem;
+}
+/* Tab bar */
+.data-log-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0,255,136,.15);
+  flex-shrink: 0;
+}
+.data-log-tab {
+  flex: 1;
+  padding: 10px 12px;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,.5);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all .2s;
+}
+.data-log-tab:hover { color: rgba(255,255,255,.8); }
+.data-log-tab.active {
+  color: #33FFA0;
+  border-bottom-color: #33FFA0;
+  background: rgba(0,255,136,.05);
+}
+/* Tab panels */
+.data-log-panel {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 18px;
+}
+.data-log-panel.active { display: block; }
+/* Event entries */
+.event-line {
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  color: rgba(255,255,255,.92);
+  border-radius: 6px;
+  background: rgba(255,255,255,.03);
+  animation: eventFlash .4s ease;
+  font-size: .88rem;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.event-line:hover { background: rgba(0,255,136,.06); }
+.ev-icon {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: .8rem;
 }
-.event-line {
-  padding: 5px 0;
-  color: rgba(255,255,255,.85);
-  border-bottom: 1px solid rgba(255,255,255,.08);
-  animation: eventFlash .3s ease;
-  font-size: .85rem;
+.ev-icon-cart { background: rgba(0,255,136,.15); color: #33FFA0; }
+.ev-icon-filter { background: rgba(0,191,255,.15); color: #7DE0FF; }
+.ev-icon-nav { background: rgba(191,90,242,.15); color: #D8A0FF; }
+.ev-icon-scroll { background: rgba(255,149,0,.15); color: #FFC060; }
+.ev-icon-pay { background: rgba(255,59,59,.15); color: #FF8080; }
+.ev-icon-loc { background: rgba(0,191,255,.15); color: #7DE0FF; }
+.ev-icon-view { background: rgba(253,230,138,.15); color: #FDE68A; }
+.ev-icon-chat { background: rgba(217,119,6,.15); color: #F59E0B; }
+.ev-icon-hero { background: rgba(191,90,242,.15); color: #D8A0FF; }
+.ev-body { flex: 1; min-width: 0; }
+.ev-title {
+  font-weight: 700;
+  font-size: .88rem;
+  color: rgba(255,255,255,.95);
+  margin-bottom: 2px;
 }
-.event-line .ev-time { color: rgba(255,255,255,.6); margin-right: 8px; }
-.event-line .ev-type { color: #33FFA0; font-weight: 700; margin-right: 6px; }
-.event-line .ev-detail { color: rgba(255,255,255,.9); }
+.ev-meta {
+  font-size: .8rem;
+  color: rgba(255,255,255,.6);
+}
+.ev-time-stamp {
+  font-size: .75rem;
+  color: rgba(255,255,255,.4);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
 @keyframes eventFlash {
-  from { background: rgba(0,255,136,.1); }
-  to { background: transparent; }
+  from { background: rgba(0,255,136,.12); }
+  to { background: rgba(255,255,255,.03); }
 }
+/* Insights panel */
+.insight-card {
+  background: rgba(0,255,136,.06);
+  border: 1px solid rgba(0,255,136,.2);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+.insight-card h5 {
+  font-size: .9rem;
+  color: #33FFA0;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.insight-card p {
+  font-size: .88rem;
+  color: rgba(255,255,255,.88);
+  line-height: 1.6;
+  margin: 0;
+}
+.insight-card code {
+  background: rgba(0,191,255,.12);
+  color: #7DE0FF;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: .82rem;
+  border: 1px solid rgba(0,191,255,.2);
+}
+.insight-stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: .88rem;
+}
+.insight-stat-label { color: rgba(255,255,255,.75); }
+.insight-stat-value { color: #33FFA0; font-weight: 700; }
 
 /* Data mode enhancements on filter buttons */
 body.data-mode .filter-btn { position: relative; }
@@ -2339,7 +2417,7 @@ body.data-mode #cursorGlow { display: none !important; }
 body.data-mode .value-card::before { display: none; }
 body.data-mode .team-member:hover .team-photo img { transform: none; }
 body.data-mode .team-photo::after { display: none; }
-body.data-mode .parallax-img { transform: none !important; }
+/* parallax removed */
 body.data-mode .nav-links a:hover { transform: none; }
 body.data-mode .img-reveal::after { transform: scaleX(0); }
 body.data-mode .location-card { transition: none !important; }
@@ -2632,10 +2710,45 @@ body.data-mode .phone-mockup { animation: none; }
 <!-- ===================== DATA EVENT LOG ===================== -->
 <div class="data-event-log" id="dataEventLog">
   <div class="data-event-log-header">
-    <span>EVENT STREAM</span>
-    <small>live</small>
+    <span>📡 EVENT STREAM</span>
+    <small id="eventCounter">0 Events</small>
   </div>
-  <div id="eventLogEntries"></div>
+  <div class="data-log-tabs">
+    <button class="data-log-tab active" onclick="switchLogTab('events',this)">Live-Events</button>
+    <button class="data-log-tab" onclick="switchLogTab('insights',this)">Analyse-Potenzial</button>
+  </div>
+  <div class="data-log-panel active" id="logPanelEvents">
+    <div id="eventLogEntries"></div>
+  </div>
+  <div class="data-log-panel" id="logPanelInsights">
+    <div class="insight-card">
+      <h5>🛒 Warenkorbanalyse</h5>
+      <p>Aus den <code>ADD_TO_CART</code>-Events lassen sich berechnen:</p>
+      <div class="insight-stat"><span class="insight-stat-label">Warenkorbgröße (Ø)</span><span class="insight-stat-value" id="insightCartSize">—</span></div>
+      <div class="insight-stat"><span class="insight-stat-label">Beliebtestes Produkt</span><span class="insight-stat-value" id="insightTopProduct">—</span></div>
+      <div class="insight-stat"><span class="insight-stat-label">Abbruchrate (Cart → Checkout)</span><span class="insight-stat-value" id="insightAbandon">—</span></div>
+      <p style="margin-top:8px;">→ <strong>Market Basket Analysis</strong> mit Apriori: Welche Produkte werden zusammen gekauft? (Support, Confidence, Lift)</p>
+    </div>
+    <div class="insight-card">
+      <h5>👁️ Aufmerksamkeitsanalyse</h5>
+      <p>Scroll- und Verweildauer-Daten zeigen:</p>
+      <div class="insight-stat"><span class="insight-stat-label">Meistgesehener Bereich</span><span class="insight-stat-value" id="insightTopSection">—</span></div>
+      <div class="insight-stat"><span class="insight-stat-label">Ø Verweildauer Hero</span><span class="insight-stat-value" id="insightHeroDwell">—</span></div>
+      <p style="margin-top:8px;">→ <strong>Heatmap-Analyse:</strong> Welche Seitenbereiche werden am längsten betrachtet? Wo springen Nutzer ab?</p>
+    </div>
+    <div class="insight-card">
+      <h5>🔍 Filterverhalten</h5>
+      <p>Klick-Muster auf Kategorie-Filter zeigen Nachfrage-Signale. Korrelation mit <code>dim_product.category</code> möglich für Sortiments-Optimierung.</p>
+    </div>
+    <div class="insight-card">
+      <h5>📍 Standort-Interesse</h5>
+      <p>Welche Filialen werden am häufigsten angeklickt? Verknüpft mit <code>dim_branch</code> ergibt das Standort-Performance-KPIs und Kannibalisierungs-Analyse.</p>
+    </div>
+    <div class="insight-card">
+      <h5>💬 Chatbot-Nutzung</h5>
+      <p>Häufige Fragen zeigen Informationslücken auf der Website. NLP-Clustering der Chat-Nachrichten → automatische FAQ-Generierung.</p>
+    </div>
+  </div>
 </div>
 
 <!-- ===================== DATA MODE TOGGLE ===================== -->
@@ -3114,75 +3227,21 @@ body.data-mode .phone-mockup { animation: none; }
     </div>
     <div class="values-grid">
       <div class="value-card fade-up">
-        <div class="value-icon-premium">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="23" stroke="url(#grad1)" stroke-width="2" opacity=".3"/>
-            <path d="M24 8C18 8 14 12 14 16c0 3 2 5 4 6l-2 14h16l-2-14c2-1 4-3 4-6 0-4-4-8-10-8z" fill="url(#grad1)" opacity=".15"/>
-            <path d="M20 20c-1 2-2 6-1 10m9-10c1 2 2 6 1 10" stroke="url(#grad1)" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M24 8c-4 0-7 3-7 6s3 5 7 5 7-2 7-5-3-6-7-6z" fill="none" stroke="url(#grad1)" stroke-width="2"/>
-            <circle cx="21" cy="13" r="1.5" fill="#16A34A"/>
-            <circle cx="27" cy="12" r="1" fill="#16A34A"/>
-            <circle cx="24" cy="15" r="1.2" fill="#22C55E"/>
-            <path d="M15 38h18" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round"/>
-            <defs><linearGradient id="grad1" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs>
-          </svg>
-        </div>
         <h4>REGIONALITÄT</h4>
         <p>85% unserer Zutaten kommen aus einem Umkreis von 80 km. Wir kennen unsere Lieferanten persönlich — vom Metzger bis zum Gemüsebauern.</p>
         <div class="value-stat"><span class="value-stat-num">85%</span> regionale Zutaten</div>
       </div>
       <div class="value-card fade-up fade-up-delay-1">
-        <div class="value-icon-premium">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="23" stroke="url(#grad2)" stroke-width="2" opacity=".3"/>
-            <path d="M24 6c-2 4-6 8-6 14 0 6 3 10 6 12 3-2 6-6 6-12 0-6-4-10-6-14z" fill="url(#grad2)" opacity=".15"/>
-            <path d="M24 10c-1.5 3-4.5 6.5-4.5 11s2 7.5 4.5 9.5c2.5-2 4.5-5 4.5-9.5S25.5 13 24 10z" fill="none" stroke="url(#grad2)" stroke-width="2"/>
-            <path d="M24 16v10" stroke="url(#grad2)" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M21 22c1 1 2 2 3 2s2-1 3-2" stroke="url(#grad2)" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M16 36h16c0 0-2-4-8-4s-8 4-8 4z" fill="url(#grad2)" opacity=".2" stroke="url(#grad2)" stroke-width="1.5"/>
-            <path d="M18 40h12" stroke="url(#grad2)" stroke-width="2" stroke-linecap="round"/>
-            <defs><linearGradient id="grad2" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#DC2626"/></linearGradient></defs>
-          </svg>
-        </div>
         <h4>HANDWERK</h4>
         <p>Unsere Patties werden täglich frisch geformt, nie tiefgefroren. Die Buns kommen jeden Morgen aus der Bäckerei. Fast Food, aber handgemacht.</p>
         <div class="value-stat"><span class="value-stat-num">100%</span> täglich frisch</div>
       </div>
       <div class="value-card fade-up fade-up-delay-2">
-        <div class="value-icon-premium">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="23" stroke="url(#grad3)" stroke-width="2" opacity=".3"/>
-            <circle cx="24" cy="24" r="14" fill="url(#grad3)" opacity=".1"/>
-            <path d="M24 10v4m0 20v4M10 24h4m20 0h4" stroke="url(#grad3)" stroke-width="2" stroke-linecap="round"/>
-            <path d="M16 16l2.8 2.8m10.4 10.4l2.8 2.8M32 16l-2.8 2.8M15.8 29.2L13 32" stroke="url(#grad3)" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
-            <circle cx="24" cy="24" r="6" fill="none" stroke="url(#grad3)" stroke-width="2"/>
-            <circle cx="24" cy="24" r="2.5" fill="url(#grad3)"/>
-            <path d="M18 36c0-2 3-4 6-4s6 2 6 4" stroke="url(#grad3)" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
-            <path d="M20 40c0-1 2-2.5 4-2.5s4 1.5 4 2.5" stroke="url(#grad3)" stroke-width="1.5" stroke-linecap="round" opacity=".3"/>
-            <defs><linearGradient id="grad3" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#22C55E"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>
-          </svg>
-        </div>
         <h4>NACHHALTIGKEIT</h4>
         <p>Verpackungen aus recyceltem Material, Ökostrom in allen Filialen und ein wachsendes veganes Angebot. Weil guter Geschmack auch Verantwortung braucht.</p>
         <div class="value-stat"><span class="value-stat-num">100%</span> Ökostrom</div>
       </div>
       <div class="value-card fade-up fade-up-delay-3">
-        <div class="value-icon-premium">
-          <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="23" stroke="url(#grad4)" stroke-width="2" opacity=".3"/>
-            <circle cx="17" cy="18" r="4" fill="none" stroke="url(#grad4)" stroke-width="2"/>
-            <circle cx="31" cy="18" r="4" fill="none" stroke="url(#grad4)" stroke-width="2"/>
-            <circle cx="24" cy="16" r="5" fill="none" stroke="url(#grad4)" stroke-width="2"/>
-            <circle cx="24" cy="16" r="5" fill="url(#grad4)" opacity=".1"/>
-            <path d="M14 30c0-3 2.5-5 5-5h10c2.5 0 5 2 5 5v2H14v-2z" fill="url(#grad4)" opacity=".12" stroke="url(#grad4)" stroke-width="1.5"/>
-            <path d="M10 34c0-2 1.5-3.5 3.5-3.5h21c2 0 3.5 1.5 3.5 3.5" stroke="url(#grad4)" stroke-width="1.5" stroke-linecap="round" opacity=".5"/>
-            <path d="M18 38h12" stroke="url(#grad4)" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="17" cy="18" r="1.5" fill="url(#grad4)" opacity=".3"/>
-            <circle cx="31" cy="18" r="1.5" fill="url(#grad4)" opacity=".3"/>
-            <circle cx="24" cy="16" r="2" fill="url(#grad4)" opacity=".3"/>
-            <defs><linearGradient id="grad4" x1="0" y1="0" x2="48" y2="48"><stop stop-color="#F59E0B"/><stop offset="1" stop-color="#EF4444"/></linearGradient></defs>
-          </svg>
-        </div>
         <h4>GEMEINSCHAFT</h4>
         <p>188 Mitarbeiter, faire Löhne, echte Aufstiegschancen. Wir sponsern den lokalen Jugendsport und engagieren uns im Würzburger Stadtleben.</p>
         <div class="value-stat"><span class="value-stat-num">188</span> im Team</div>
@@ -3809,11 +3868,15 @@ function toggleDataMode() {
   if (dataMode) {
     showToast('🔬 Datenperspektive aktiviert — Willkommen, Data Expert!');
     startEventCounter();
+    // Start section visibility tracking
+    document.querySelectorAll('section[id]').forEach(sec => sectionObserver.observe(sec));
     // Pause carousel in data mode — less distraction
     if (typeof slideInterval !== 'undefined') clearInterval(slideInterval);
   } else {
     showToast('🍔 Zurück zur Kundenansicht');
     stopEventCounter();
+    // Stop section tracking
+    sectionObserver.disconnect();
     // Resume carousel
     if (typeof resetSlideTimer === 'function') resetSlideTimer();
   }
@@ -3833,44 +3896,228 @@ function stopEventCounter() {
   clearInterval(eventInterval);
 }
 
-// Track real interactions for the event counter and log
-function logEvent(type, detail) {
+// =============================================================================
+// RICH EVENT TRACKING SYSTEM
+// =============================================================================
+const eventStats = {
+  cartAdds: {},      // product -> count
+  filters: {},       // category -> count
+  sections: {},      // section id -> time spent (ms)
+  locations: {},     // branch -> count
+  payments: {},      // method -> count
+  cartOpened: 0,
+  checkoutStarted: 0,
+  totalEvents: 0,
+};
+let currentVisibleSection = null;
+let sectionEnteredAt = null;
+
+const EVENT_CONFIG = {
+  ADD_CART:   { icon: 'ev-icon-cart',   emoji: '🛒' },
+  REMOVE:    { icon: 'ev-icon-cart',   emoji: '🗑️' },
+  CART_OPEN: { icon: 'ev-icon-cart',   emoji: '🧺' },
+  CHECKOUT:  { icon: 'ev-icon-cart',   emoji: '💳' },
+  FILTER:    { icon: 'ev-icon-filter', emoji: '🔍' },
+  NAV:       { icon: 'ev-icon-nav',    emoji: '🧭' },
+  SECTION:   { icon: 'ev-icon-scroll', emoji: '📜' },
+  PAY_SELECT:{ icon: 'ev-icon-pay',    emoji: '💰' },
+  LOC_CLICK: { icon: 'ev-icon-loc',    emoji: '📍' },
+  HOVER:     { icon: 'ev-icon-view',   emoji: '👆' },
+  CAROUSEL:  { icon: 'ev-icon-hero',   emoji: '🎠' },
+  CHATBOT:   { icon: 'ev-icon-chat',   emoji: '💬' },
+  VIEW:      { icon: 'ev-icon-view',   emoji: '👁️' },
+};
+
+function logEvent(type, title, detail) {
   if (!dataMode) return;
-  eventCount++;
-  const el = document.getElementById('dhbEvents');
-  if (el) { el.textContent = eventCount; el.style.color = '#00FF88'; setTimeout(() => el.style.color = '', 200); }
+  eventStats.totalEvents++;
+
+  // Update header counter
+  const counter = document.getElementById('eventCounter');
+  if (counter) counter.textContent = eventStats.totalEvents + ' Events';
+  const dhb = document.getElementById('dhbEvents');
+  if (dhb) { dhb.textContent = eventStats.totalEvents; dhb.style.color = '#00FF88'; setTimeout(() => dhb.style.color = '', 200); }
 
   const log = document.getElementById('eventLogEntries');
   if (!log) return;
+
   const now = new Date();
-  const time = now.toTimeString().slice(0,8);
+  const time = now.toLocaleTimeString('de-DE', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const cfg = EVENT_CONFIG[type] || { icon: 'ev-icon-view', emoji: '📊' };
+
   const line = document.createElement('div');
   line.className = 'event-line';
-  line.innerHTML = `<span class="ev-time">${time}</span><span class="ev-type">${type}</span><span class="ev-detail">${detail}</span>`;
+  line.innerHTML = `
+    <div class="ev-icon ${cfg.icon}">${cfg.emoji}</div>
+    <div class="ev-body">
+      <div class="ev-title">${title}</div>
+      ${detail ? `<div class="ev-meta">${detail}</div>` : ''}
+    </div>
+    <div class="ev-time-stamp">${time}</div>
+  `;
   log.insertBefore(line, log.firstChild);
-  // Keep max 30 entries
-  while (log.children.length > 30) log.removeChild(log.lastChild);
+  while (log.children.length > 40) log.removeChild(log.lastChild);
+
+  // Update live insights
+  updateInsights();
 }
 
+function updateInsights() {
+  // Top product
+  const topProd = Object.entries(eventStats.cartAdds).sort((a,b) => b[1]-a[1])[0];
+  const el1 = document.getElementById('insightTopProduct');
+  if (el1 && topProd) el1.textContent = `${topProd[0]} (${topProd[1]}×)`;
+
+  // Cart size
+  const totalAdds = Object.values(eventStats.cartAdds).reduce((a,b) => a+b, 0);
+  const el2 = document.getElementById('insightCartSize');
+  if (el2 && totalAdds > 0) el2.textContent = totalAdds + ' Produkte';
+
+  // Abandon rate
+  const el3 = document.getElementById('insightAbandon');
+  if (el3 && eventStats.cartOpened > 0) {
+    const rate = eventStats.checkoutStarted > 0
+      ? Math.round((1 - eventStats.checkoutStarted / eventStats.cartOpened) * 100)
+      : 100;
+    el3.textContent = rate + '%';
+  }
+
+  // Top section
+  const topSec = Object.entries(eventStats.sections).sort((a,b) => b[1]-a[1])[0];
+  const el4 = document.getElementById('insightTopSection');
+  if (el4 && topSec) {
+    const names = {hero:'Hero',menu:'Speisekarte',app:'App',locations:'Standorte',about:'Über uns'};
+    el4.textContent = names[topSec[0]] || topSec[0];
+  }
+
+  // Hero dwell
+  const el5 = document.getElementById('insightHeroDwell');
+  if (el5 && eventStats.sections.hero) {
+    const s = Math.round(eventStats.sections.hero / 1000);
+    el5.textContent = s + 's';
+  }
+}
+
+function switchLogTab(tab, btn) {
+  document.querySelectorAll('.data-log-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.data-log-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tab === 'events' ? 'logPanelEvents' : 'logPanelInsights').classList.add('active');
+}
+
+// --- CLICK TRACKING ---
 document.addEventListener('click', (e) => {
   if (!dataMode) return;
+
+  // Filter button
   const btn = e.target.closest('.filter-btn');
-  if (btn) logEvent('FILTER', `category="${btn.dataset.filter}"`);
+  if (btn) {
+    const cat = btn.dataset.filter;
+    eventStats.filters[cat] = (eventStats.filters[cat] || 0) + 1;
+    logEvent('FILTER', `Kategorie-Filter: ${cat === 'all' ? 'Alle Produkte' : cat}`,
+      `SQL: SELECT * FROM dim_product WHERE category = '${cat}'`);
+  }
+
+  // Add to cart
   const addBtn = e.target.closest('.add-to-cart');
   if (addBtn) {
     const card = addBtn.closest('.menu-card');
     const name = card?.querySelector('.menu-card-name')?.textContent || '?';
-    logEvent('ADD_CART', `product="${name}"`);
+    const price = card?.querySelector('.menu-card-price')?.textContent || '';
+    eventStats.cartAdds[name] = (eventStats.cartAdds[name] || 0) + 1;
+    logEvent('ADD_CART', `${name} in den Warenkorb`,
+      `Preis: ${price} · Gesamt: ${eventStats.cartAdds[name]}× · INSERT INTO fact_order_items`);
     if (card) { card.classList.add('data-flash'); setTimeout(() => card.classList.remove('data-flash'), 600); }
   }
+
+  // Cart drawer open
+  const cartBtn = e.target.closest('.nav-order-btn');
+  if (cartBtn) {
+    eventStats.cartOpened++;
+    logEvent('CART_OPEN', 'Warenkorb geöffnet',
+      `${eventStats.cartOpened}. Öffnung · Conversion-Funnel: Browse → Cart → Checkout`);
+  }
+
+  // Checkout / Place order
+  const orderBtn = e.target.closest('.checkout-btn, .place-order');
+  if (orderBtn) {
+    eventStats.checkoutStarted++;
+    logEvent('CHECKOUT', 'Bestellung aufgegeben',
+      `INSERT INTO fact_orders · Checkout-Rate: ${eventStats.cartOpened > 0 ? Math.round(eventStats.checkoutStarted/eventStats.cartOpened*100) : 0}%`);
+  }
+
+  // Location card
   const locCard = e.target.closest('.location-card');
-  if (locCard) logEvent('LOC_CLICK', `branch="${locCard.dataset.branch || '?'}"`);
+  if (locCard) {
+    const branch = locCard.dataset.branch || '?';
+    const name = locCard.querySelector('.location-name')?.textContent || branch;
+    eventStats.locations[name] = (eventStats.locations[name] || 0) + 1;
+    logEvent('LOC_CLICK', `Filiale: ${name}`,
+      `branch_id=${branch} · Klick #${eventStats.locations[name]} · JOIN dim_branch ON branch_id`);
+  }
+
+  // Payment method
   const payBtn = e.target.closest('.pay-option');
-  if (payBtn) logEvent('PAY_SELECT', `method="${payBtn.dataset.pay}"`);
+  if (payBtn) {
+    const method = payBtn.dataset.pay;
+    const names = {cash:'Barzahlung',ec:'EC-Karte',credit:'Kreditkarte',mobile:'Mobile Payment'};
+    eventStats.payments[method] = (eventStats.payments[method] || 0) + 1;
+    logEvent('PAY_SELECT', `Zahlung: ${names[method] || method}`,
+      `payment_method_id → dim_payment_method · Trend: Mobile steigt von 17% auf 27%`);
+  }
+
+  // Navigation
   const navLink = e.target.closest('.nav-links a');
-  if (navLink) logEvent('NAV', `href="${navLink.getAttribute('href')}"`);
+  if (navLink) {
+    const href = navLink.getAttribute('href');
+    const text = navLink.textContent.trim();
+    logEvent('NAV', `Navigation: ${text}`,
+      `Klick auf "${href}" · User Journey: wohin navigieren Nutzer zuerst?`);
+  }
+
+  // Menu card click (product detail interest)
+  const menuCard = e.target.closest('.menu-card');
+  if (menuCard && !addBtn) {
+    const name = menuCard.querySelector('.menu-card-name')?.textContent || '?';
+    logEvent('VIEW', `Produkt angesehen: ${name}`,
+      `Interesse-Signal ohne Kauf · Verhältnis View:Cart = Conversion-Rate`);
+  }
 });
-// Data mode scroll logging is now handled in the unified scroll handler above.
+
+// --- HOVER TRACKING (throttled) ---
+let lastHoverLog = 0;
+document.addEventListener('mouseover', (e) => {
+  if (!dataMode) return;
+  const now = Date.now();
+  if (now - lastHoverLog < 2000) return; // Max every 2 seconds
+
+  const menuCard = e.target.closest('.menu-card');
+  if (menuCard) {
+    const name = menuCard.querySelector('.menu-card-name')?.textContent || '?';
+    lastHoverLog = now;
+    logEvent('HOVER', `Hover: ${name}`,
+      `Mausbewegung = Aufmerksamkeit · Heatmap-Daten für UX-Optimierung`);
+  }
+});
+
+// --- SECTION VISIBILITY TRACKING ---
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    const id = entry.target.getAttribute('id');
+    if (entry.isIntersecting) {
+      // User entered this section
+      if (currentVisibleSection && sectionEnteredAt) {
+        const duration = Date.now() - sectionEnteredAt;
+        eventStats.sections[currentVisibleSection] = (eventStats.sections[currentVisibleSection] || 0) + duration;
+      }
+      currentVisibleSection = id;
+      sectionEnteredAt = Date.now();
+      const names = {hero:'Hero-Bereich',menu:'Speisekarte',app:'App-Bereich',locations:'Standorte',about:'Über uns'};
+      logEvent('SECTION', `Bereich sichtbar: ${names[id] || id}`,
+        `Verweildauer wird gemessen · Scroll-Tiefe für Engagement-Analyse`);
+    }
+  });
+}, { threshold: 0.3 });
 
 // =============================================================================
 // PAGE LOADER
@@ -3883,62 +4130,69 @@ window.addEventListener('load', () => {
 });
 
 // =============================================================================
-// REFS NEEDED BY UNIFIED SCROLL HANDLER
+// REFS NEEDED BY SCROLL HANDLER
 // =============================================================================
 const backToTop = document.getElementById('backToTop');
 const sections = document.querySelectorAll('section[id]');
-
-// =============================================================================
-// UNIFIED SCROLL HANDLER (prevents jitter from multiple listeners)
-// =============================================================================
 const scrollProgress = document.getElementById('scrollProgress');
-let scrollTicking = false;
+const navLinksAll = document.querySelectorAll('.nav-links a[href^="#"]');
+
+// Cache section offsets (recalc on resize)
+let sectionOffsets = [];
+function cacheSectionOffsets() {
+  sectionOffsets = Array.from(sections).map(sec => ({
+    id: sec.getAttribute('id'),
+    top: sec.offsetTop - 150
+  }));
+}
+cacheSectionOffsets();
+window.addEventListener('resize', cacheSectionOffsets);
+
+// =============================================================================
+// MINIMAL SCROLL HANDLER — only cheap ops, no DOM queries, no layout thrash
+// =============================================================================
+let lastScrollY = 0;
+let navScrolled = false;
+let backToTopVisible = false;
+let currentNavSection = '';
+
 window.addEventListener('scroll', () => {
-  if (!scrollTicking) {
-    requestAnimationFrame(() => {
-      const h = document.documentElement;
-      const scrollY = window.scrollY;
-      const maxScroll = h.scrollHeight - h.clientHeight;
-      const pct = maxScroll > 0 ? (h.scrollTop / maxScroll) * 100 : 0;
+  const sy = window.scrollY;
+  lastScrollY = sy;
 
-      // Scroll progress bar
-      scrollProgress.style.width = pct + '%';
+  // 1. Nav background — only toggle when crossing threshold
+  const shouldScroll = sy > 60;
+  if (shouldScroll !== navScrolled) {
+    navScrolled = shouldScroll;
+    nav.classList.toggle('scrolled', navScrolled);
+  }
 
-      // Nav scroll state
-      nav.classList.toggle('scrolled', scrollY > 60);
+  // 2. Back to top — only toggle when crossing threshold
+  const shouldShow = sy > 600;
+  if (shouldShow !== backToTopVisible) {
+    backToTopVisible = shouldShow;
+    backToTop.classList.toggle('visible', backToTopVisible);
+  }
 
-      // Back to top button
-      backToTop.classList.toggle('visible', scrollY > 600);
+  // 3. Scroll progress bar — cheap write, no read
+  const h = document.documentElement;
+  const pct = h.scrollHeight > h.clientHeight
+    ? (sy / (h.scrollHeight - h.clientHeight)) * 100 : 0;
+  scrollProgress.style.width = pct + '%';
 
-      // Scroll spy (active nav link)
-      let current = '';
-      sections.forEach(sec => {
-        const top = sec.offsetTop - 150;
-        if (scrollY >= top) current = sec.getAttribute('id');
-      });
-      document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
-        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold-light)' : '';
-      });
-
-      // Parallax images
-      document.querySelectorAll('.parallax-img').forEach(img => {
-        const rect = img.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
-          const progress = (rect.top + rect.height) / (window.innerHeight + rect.height);
-          const offset = (progress - .5) * 30;
-          img.style.transform = `translateY(${offset}px) scale(1.08)`;
-        }
-      });
-
-      // Data mode scroll logging
-      if (dataMode) {
-        const pctRound = Math.round(pct);
-        if (pctRound % 25 === 0 && pctRound > 0) logEvent('SCROLL', `depth=${pctRound}%`);
-      }
-
-      scrollTicking = false;
+  // 4. Scroll spy — use cached offsets, only update on change
+  let current = '';
+  for (let i = sectionOffsets.length - 1; i >= 0; i--) {
+    if (sy >= sectionOffsets[i].top) {
+      current = sectionOffsets[i].id;
+      break;
+    }
+  }
+  if (current !== currentNavSection) {
+    currentNavSection = current;
+    navLinksAll.forEach(a => {
+      a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold-light)' : '';
     });
-    scrollTicking = true;
   }
 }, { passive: true });
 
@@ -4010,7 +4264,7 @@ function goToSlide(index) {
 
   // Log in data mode
   if (typeof logEvent === 'function' && dataMode) {
-    logEvent('CAROUSEL', `slide=${index}`);
+    logEvent('CAROUSEL', 'Hero-Slide gewechselt', `Slide ${index+1} von 3 · Verweildauer-Analyse möglich`);
   }
 }
 
@@ -4524,7 +4778,7 @@ async function sendChatMessage() {
 
   // Log to data mode event stream
   if (typeof logEvent === 'function') {
-    logEvent('CHATBOT', `mode=${chatMode} msg="${text.substring(0,25)}..."`);
+    logEvent('CHATBOT', 'Chat-Nachricht gesendet', `Modus: ${chatMode === 'gpt' ? 'GPT' : 'Lokal'} · "${text.substring(0,30)}"`);
   }
 
   if (chatMode === 'gpt' && chatApiKey) {
