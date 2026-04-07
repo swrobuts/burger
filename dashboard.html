@@ -111,9 +111,10 @@
     /* ── Chart Cards (gray bg, transparent chart area) ── */
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
     .chart-card {
-      background: var(--card); padding: 20px 24px; border-radius: var(--radius);
+      background: transparent; padding: 20px 24px; border-radius: var(--radius);
       border: 1px solid var(--card-border); margin-bottom: 14px;
     }
+    .chart-card.table-card { background: var(--card); }
     .chart-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
     .chart-title { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.35; }
     .chart-sub { font-size: 10px; color: var(--muted); margin-top: 1px; }
@@ -136,7 +137,7 @@
 
     /* ── Interpretation Text (below each chart) ── */
     .interpretation {
-      margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--card-border);
+      margin-top: 16px; padding: 14px 16px; background: var(--card); border-radius: var(--radius);
       font-size: 12px; color: var(--ink-light); line-height: 1.6;
     }
     .interpretation strong { color: var(--ink); font-weight: 600; }
@@ -155,7 +156,12 @@
 
     /* ── Data Table ── */
     .data-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .data-table th { text-align: left; padding: 8px 10px; font-weight: 600; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 2px solid var(--card-border); }
+    .data-table th { text-align: left; padding: 8px 10px; font-weight: 600; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 2px solid var(--card-border); cursor: pointer; user-select: none; position: relative; white-space: nowrap; }
+    .data-table th:hover { color: var(--ink); }
+    .data-table th .sort-icon { display: inline-block; width: 12px; margin-left: 3px; font-size: 9px; color: var(--subtle); vertical-align: middle; }
+    .data-table th.sort-asc .sort-icon::after { content: '▲'; color: var(--blue); }
+    .data-table th.sort-desc .sort-icon::after { content: '▼'; color: var(--blue); }
+    .data-table th:not(.sort-asc):not(.sort-desc) .sort-icon::after { content: '⇅'; }
     .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--card-border); color: var(--ink-light); }
     .data-table tr:last-child td { border-bottom: none; }
     .data-table td:first-child { font-weight: 500; color: var(--ink); }
@@ -163,6 +169,26 @@
     .text-pos { color: var(--green); font-weight: 600; }
     .text-neg { color: var(--red); font-weight: 600; }
     .text-muted { color: var(--muted); }
+
+    /* ── Table Toolbar (Search + Group) ── */
+    .table-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .table-search {
+      flex: 1; min-width: 160px; max-width: 280px; padding: 6px 10px 6px 30px;
+      font-family: var(--font); font-size: 11px; border: 1px solid var(--card-border);
+      border-radius: 5px; background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6' r='4.5'/%3E%3Cline x1='9.5' y1='9.5' x2='13' y2='13'/%3E%3C/svg%3E") 9px center no-repeat;
+      color: var(--ink); outline: none; transition: border-color .12s;
+    }
+    .table-search:focus { border-color: var(--blue); }
+    .table-search::placeholder { color: var(--subtle); }
+    .group-select {
+      padding: 5px 8px; font-family: var(--font); font-size: 11px; font-weight: 500;
+      border: 1px solid var(--card-border); border-radius: 5px; background: var(--bg);
+      color: var(--ink); cursor: pointer; outline: none;
+    }
+    .group-select:focus { border-color: var(--blue); }
+    .group-label { font-size: 10px; color: var(--muted); font-weight: 500; }
+    .group-header td { background: rgba(127,149,182,.08); font-weight: 600 !important; color: var(--ink) !important; font-size: 11px; letter-spacing: 0.2px; }
+    .table-count { font-size: 10px; color: var(--subtle); margin-left: auto; font-family: var(--mono); }
 
     /* ── Detail Panel ── */
     .detail-panel { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px; display: none; }
@@ -293,7 +319,11 @@
     </div>
 
     <div class="detail-panel" id="detailRevenue">
-      <table class="data-table">
+      <div class="table-toolbar">
+        <input class="table-search" type="text" placeholder="Suchen…" oninput="filterTable('tblYears',this.value)">
+        <span class="table-count" id="tblYears_count">9 Zeilen</span>
+      </div>
+      <table class="data-table" id="tblYears">
         <thead><tr><th>Jahr</th><th>Umsatz</th><th>YoY</th><th>Bestellungen</th><th>YoY</th><th>AOV</th><th>YoY</th></tr></thead>
         <tbody>
           <tr><td>2017</td><td class="mono">€189.699</td><td class="text-muted">—</td><td class="mono">13.086</td><td class="text-muted">—</td><td class="mono">€14,50</td><td class="text-muted">—</td></tr>
@@ -428,10 +458,19 @@
       </div>
     </div>
 
-    <div class="chart-card" style="overflow-x:auto">
-      <div class="chart-title" style="margin-bottom:12px">Filial-Scorecard</div>
-      <div class="chart-sub" style="margin-bottom:12px">Alle KPIs je Standort · sortiert nach Umsatz</div>
-      <table class="data-table">
+    <div class="chart-card table-card" style="overflow-x:auto">
+      <div class="chart-title" style="margin-bottom:4px">Filial-Scorecard</div>
+      <div class="chart-sub" style="margin-bottom:10px">Alle KPIs je Standort · sortiert nach Umsatz</div>
+      <div class="table-toolbar">
+        <input class="table-search" type="text" placeholder="Suchen…" oninput="filterTable('tblBranch',this.value)">
+        <span class="group-label">Gruppieren:</span>
+        <select class="group-select" onchange="groupTable('tblBranch',this.value)">
+          <option value="">— keine —</option>
+          <option value="1">Typ</option>
+        </select>
+        <span class="table-count" id="tblBranch_count">8 Zeilen</span>
+      </div>
+      <table class="data-table" id="tblBranch">
         <thead><tr><th>Filiale</th><th>Typ</th><th>Eröffnet</th><th>Umsatz</th><th>Bestellungen</th><th>AOV</th><th>Rating</th></tr></thead>
         <tbody>
           <tr><td>BM Europastern</td><td>Highway</td><td class="mono">03/2017</td><td class="mono">€3.391.529</td><td class="mono">182.120</td><td class="mono text-neg">€18,62</td><td>3,81 ★</td></tr>
@@ -540,10 +579,14 @@
       </div>
     </div>
 
-    <div class="chart-card" style="overflow-x:auto">
+    <div class="chart-card table-card" style="overflow-x:auto">
       <div class="chart-title" style="margin-bottom:4px">Stärkste Produktkombinationen — Grundlage für Bundle-Pricing</div>
-      <div class="chart-sub" style="margin-bottom:14px">Top 10 Warenkörbe · Market-Basket-Analyse · Support & Confidence</div>
-      <table class="data-table">
+      <div class="chart-sub" style="margin-bottom:10px">Top 10 Warenkörbe · Market-Basket-Analyse · Support & Confidence</div>
+      <div class="table-toolbar">
+        <input class="table-search" type="text" placeholder="Suchen…" oninput="filterTable('tblBasket',this.value)">
+        <span class="table-count" id="tblBasket_count">10 Zeilen</span>
+      </div>
+      <table class="data-table" id="tblBasket">
         <thead><tr><th>Produktkombination</th><th>Häufigkeit</th><th>Support</th><th>Confidence</th></tr></thead>
         <tbody>
           <tr><td>Medium Fries + Cola 0.5l</td><td class="mono">155.282</td><td class="mono">20,6%</td><td class="mono text-pos">77,3%</td></tr>
@@ -1208,6 +1251,128 @@ createDowChart();
 createHourChart();
 createDowRevenueChart();
 buildHeatmap();
+
+/* ═══════════ INTERACTIVE TABLES ═══════════ */
+
+/* --- Sort Icons einbauen --- */
+document.querySelectorAll('.data-table thead th').forEach(function(th){
+  var icon = document.createElement('span');
+  icon.className = 'sort-icon';
+  th.appendChild(icon);
+});
+
+/* --- Parse-Helfer: extrahiert Zahlenwert aus formatiertem Text --- */
+function parseNum(txt){
+  if(!txt) return NaN;
+  var s = txt.replace(/[€★\s]/g,'').replace(/\./g,'').replace(',','.');
+  var m = s.match(/-?[\d.]+/);
+  return m ? parseFloat(m[0]) : NaN;
+}
+
+/* --- Sortieren per Klick auf Spaltenheader --- */
+document.querySelectorAll('.data-table').forEach(function(table){
+  var headers = table.querySelectorAll('thead th');
+  headers.forEach(function(th, colIdx){
+    th.addEventListener('click', function(){
+      var tbody = table.querySelector('tbody');
+      var rows = Array.from(tbody.querySelectorAll('tr:not(.group-header)'));
+      var dir = th.classList.contains('sort-asc') ? 'desc' : 'asc';
+
+      // Reset alle Header dieser Tabelle
+      headers.forEach(function(h){ h.classList.remove('sort-asc','sort-desc'); });
+      th.classList.add('sort-' + dir);
+
+      rows.sort(function(a, b){
+        var aText = a.cells[colIdx] ? a.cells[colIdx].textContent.trim() : '';
+        var bText = b.cells[colIdx] ? b.cells[colIdx].textContent.trim() : '';
+        var aNum = parseNum(aText);
+        var bNum = parseNum(bText);
+        var result;
+        if(!isNaN(aNum) && !isNaN(bNum)){
+          result = aNum - bNum;
+        } else {
+          result = aText.localeCompare(bText, 'de');
+        }
+        return dir === 'desc' ? -result : result;
+      });
+
+      // Gruppierungszeilen entfernen
+      tbody.querySelectorAll('.group-header').forEach(function(r){ r.remove(); });
+      rows.forEach(function(r){ tbody.appendChild(r); });
+    });
+  });
+});
+
+/* --- Suche / Filter --- */
+function filterTable(tableId, query){
+  var table = document.getElementById(tableId);
+  if(!table) return;
+  var tbody = table.querySelector('tbody');
+  var rows = tbody.querySelectorAll('tr:not(.group-header)');
+  var q = query.toLowerCase().trim();
+  var visible = 0;
+
+  rows.forEach(function(row){
+    var text = row.textContent.toLowerCase();
+    var show = !q || text.indexOf(q) !== -1;
+    row.style.display = show ? '' : 'none';
+    if(show) visible++;
+  });
+
+  var counter = document.getElementById(tableId + '_count');
+  if(counter) counter.textContent = visible + ' von ' + rows.length + ' Zeilen';
+}
+
+/* --- Gruppierung --- */
+function groupTable(tableId, colIdx){
+  var table = document.getElementById(tableId);
+  if(!table) return;
+  var tbody = table.querySelector('tbody');
+  var rows = Array.from(tbody.querySelectorAll('tr:not(.group-header)'));
+  var colCount = table.querySelectorAll('thead th').length;
+
+  // Alte Gruppenzeilen entfernen
+  tbody.querySelectorAll('.group-header').forEach(function(r){ r.remove(); });
+
+  if(!colIdx && colIdx !== 0){
+    // Keine Gruppierung: einfach alle rows zurück
+    rows.forEach(function(r){ tbody.appendChild(r); });
+    return;
+  }
+
+  colIdx = parseInt(colIdx);
+
+  // Nach Gruppenwert sortieren, dann innerhalb Gruppe original-Reihenfolge
+  var groups = {};
+  var groupOrder = [];
+  rows.forEach(function(row){
+    var val = row.cells[colIdx] ? row.cells[colIdx].textContent.trim() : '—';
+    if(!groups[val]){ groups[val] = []; groupOrder.push(val); }
+    groups[val].push(row);
+  });
+
+  // Tabelle neu aufbauen mit Gruppen-Headern
+  tbody.innerHTML = '';
+  groupOrder.forEach(function(groupName){
+    var headerRow = document.createElement('tr');
+    headerRow.className = 'group-header';
+    var td = document.createElement('td');
+    td.colSpan = colCount;
+    td.textContent = groupName + ' (' + groups[groupName].length + ')';
+    headerRow.appendChild(td);
+    tbody.appendChild(headerRow);
+    groups[groupName].forEach(function(row){ tbody.appendChild(row); });
+  });
+}
+
+/* --- Init: Sortier-Icons und Zeilenzähler --- */
+['tblYears','tblBranch','tblBasket'].forEach(function(id){
+  var table = document.getElementById(id);
+  if(!table) return;
+  var rows = table.querySelectorAll('tbody tr');
+  var counter = document.getElementById(id + '_count');
+  if(counter) counter.textContent = rows.length + ' Zeilen';
+});
 </script>
 </body>
 </html>
