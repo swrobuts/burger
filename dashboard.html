@@ -134,6 +134,7 @@
     .chart-area { position: relative; height: 280px; }
     .chart-area.tall { height: 360px; }
     .chart-area.short { height: 220px; }
+    .chart-area.xtall { height: 520px; }
 
     /* ── Interpretation Text (below each chart) ── */
     .interpretation {
@@ -280,6 +281,9 @@
       <button data-tab="trends">Trends</button>
       <button data-tab="datamining">Data Mining</button>
       <button data-tab="simulation">Simulation</button>
+      <button data-tab="wetter">Wetter</button>
+      <button data-tab="personal">Personal</button>
+      <button data-tab="promotions">Promotions</button>
     </nav>
   </div>
 </div>
@@ -1051,7 +1055,7 @@
           <div class="kpi-context" id="simDBCtx">pro Burger · Basis: €5,94</div>
         </div>
       </div>
-      <div class="chart-area tall"><canvas id="simChart"></canvas></div>
+      <div class="chart-area xtall"><canvas id="simChart"></canvas></div>
       <div class="interpretation">
         <strong>Interpretation:</strong> Die Simulation modelliert den Trade-off zwischen Preiserhöhung und Nachfragerückgang. Bei einer Preiselastizität von ε = −1,2 (typisch für Fast Food) führt eine 10%-Preiserhöhung zu einem 12%-Volumenrückgang, aber einem Netto-Umsatzeffekt von ca. −3,2%. Der „Sweet Spot" liegt bei moderaten Erhöhungen von 3–5%, wo die Marge steigt ohne signifikanten Volumenverlust.
         <div class="recommendation"><strong>Handlungsempfehlung:</strong> Die Schieberegler nutzen, um verschiedene Szenarien durchzuspielen. Besonders aufschlussreich: Premium-Produkte (Truffle Deluxe, Beyond Burger) haben typischerweise niedrigere Elastizität (ε ≈ −0,8) als Basis-Produkte (Classic Burger: ε ≈ −1,5). Eine selektive Preiserhöhung von 5% nur auf Premium-Burger könnte €85k Mehrumsatz generieren.</div>
@@ -1088,6 +1092,176 @@
           <tr><td style="color:var(--red)">Expansiv</td><td class="mono">+15% p.a.</td><td class="mono">€3,44M</td><td class="mono">€3,96M</td><td class="mono">€4,55M</td><td class="mono">€800k</td><td class="mono text-pos">1,9×</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAB: WETTER ═══════════ -->
+<div id="wetter" class="tab-content" style="display:none">
+
+  <!-- Sub: Temperatur-Impact -->
+  <div id="sub_wetter_temp" class="tab-section">
+    <div class="chart-card">
+      <div><div class="chart-title">Temperatur bestimmt den Tagesumsatz — Sommer-Boost ab 15 °C</div>
+      <div class="chart-sub">Ø Tagesumsatz & Bestellungen nach 5°C-Intervallen · 3.304 Betriebstage · 2017–2026</div></div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">WÄRMSTE TAGE (25–30°C)</div><div class="kpi-value" style="font-size:22px">Ø €6.210</div><div class="kpi-delta pos">+43% vs. Ø</div><div class="kpi-context">317 Bestellungen/Tag · 27 Tage</div></div>
+        <div class="kpi-card"><div class="kpi-label">KÄLTESTE TAGE (&lt;-5°C)</div><div class="kpi-value" style="font-size:22px">Ø €3.854</div><div class="kpi-delta neg">-11% vs. Ø</div><div class="kpi-context">196 Bestellungen/Tag · 25 Tage</div></div>
+        <div class="kpi-card"><div class="kpi-label">SONNIG VS. SCHNEE</div><div class="kpi-value" style="font-size:22px">+21,6%</div><div class="kpi-context">€4.624 vs. €3.804 Ø Tagesumsatz</div></div>
+        <div class="kpi-card"><div class="kpi-label">KORRELATION TEMP↔UMSATZ</div><div class="kpi-value" style="font-size:22px">r = 0,056</div><div class="kpi-context">Schwacher linearer Zusammenhang</div></div>
+      </div>
+      <div class="chart-area tall"><canvas id="tempBinChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Der Temperatur-Effekt zeigt einen klaren U-förmigen Verlauf: Extrem kalte Tage (&lt;-10°C) und extrem warme Tage (&gt;25°C) haben beide überdurchschnittliche Umsätze — letztere sind jedoch die klaren Gewinner. Der Sweet Spot liegt bei 15–20°C mit stabilen €4.686 Tagesumsatz. Die niedrige Korrelation (r=0,056) zeigt, dass Temperatur allein den Umsatz nicht erklärt — der Wachstumstrend über die Jahre überlagert den Wettereffekt.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Saisonale Personalplanung an Wetterdaten koppeln: An Sommertagen (+25°C) 15% mehr Schichtpersonal einplanen. Kälteaktionen (&lt;0°C) wie „Winter Warmer Deals" könnten den Umsatz an Frost-Tagen stabilisieren.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Wetterlage beeinflusst Besuchsfrequenz stärker als Zufriedenheit</div>
+      <div class="chart-sub">Ø Tagesumsatz nach Wetterkondition · 5 Kategorien</div></div>
+      <div class="chart-area short"><canvas id="weatherCondChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Sub: Scatter & Niederschlag -->
+  <div id="sub_wetter_scatter" class="tab-section" style="display:none">
+    <div class="chart-card">
+      <div><div class="chart-title">Temperatur vs. Tagesumsatz — Wachstumstrend dominiert Wettereffekt</div>
+      <div class="chart-sub">1.102 Datenpunkte (jeder 3. Tag) · Farbe = Umsatzhöhe</div></div>
+      <div class="chart-area xtall"><canvas id="weatherScatterChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Der Scatter-Plot enthüllt den eigentlichen Grund für die niedrige Korrelation: Die vertikale Streuung zeigt, dass identische Temperaturen 2017 vs. 2025 völlig unterschiedliche Umsätze erzeugen — der Wachstumstrend dominiert. Innerhalb eines Jahres wäre die Temperatur-Korrelation deutlich stärker.</div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Niederschlag zeigt keinen klaren negativen Effekt</div>
+      <div class="chart-sub">Ø Tagesumsatz nach Niederschlagsmenge · 5 Klassen</div></div>
+      <div class="chart-area short"><canvas id="rainChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Überraschenderweise sinkt der Umsatz nicht mit steigendem Regen. Die Kategorie &gt;10mm zeigt sogar den höchsten Wert — allerdings basierend auf nur 7 Tagen. Regen treibt vermutlich Drive-Through-Nutzung, was den Counter-Verlust kompensiert.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAB: PERSONAL ═══════════ -->
+<div id="personal" class="tab-content" style="display:none">
+
+  <!-- Sub: Produktivität -->
+  <div id="sub_personal_prod" class="tab-section">
+    <div class="chart-card">
+      <div><div class="chart-title">Europastern und Hauptbahnhof liefern doppelte Produktivität pro Mitarbeiter</div>
+      <div class="chart-sub">Umsatz pro Mitarbeiter (kum. 2017–2026) · 8 Filialen · 188 Mitarbeiter</div></div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">TOP: EUROPASTERN</div><div class="kpi-value" style="font-size:22px">€113.051</div><div class="kpi-context">pro MA · 30 Mitarbeiter · Highway</div></div>
+        <div class="kpi-card"><div class="kpi-label">BOTTOM: ZELLERAU</div><div class="kpi-value" style="font-size:22px">€35.820</div><div class="kpi-context">pro MA · 21 Mitarbeiter · Mixed</div></div>
+        <div class="kpi-card"><div class="kpi-label">Ø WARTEZEIT ↔ ZUFRIEDENHEIT</div><div class="kpi-value" style="font-size:22px">r = −0,48</div><div class="kpi-context">Mittlere negative Korrelation</div></div>
+        <div class="kpi-card"><div class="kpi-label">GESAMT MITARBEITER</div><div class="kpi-value" style="font-size:22px">188</div><div class="kpi-context">13 Manager · 58 Kassierer · 57 Köche</div></div>
+      </div>
+      <div class="chart-area xtall"><canvas id="empProdChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Die Produktivitätsunterschiede sind enorm: Europastern (Highway) erwirtschaftet €113k pro MA — dreimal so viel wie Zellerau (€36k). Treiber sind Standort-Traffic und Filialtyp, nicht Personalkosten (Lohnspanne nur €11,1–12,1/h). Die negative Korrelation Wartezeit↔Zufriedenheit (r=−0,48) zeigt: Schnellere Bedienung = zufriedenere Kunden.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Zellerau und Grombühl auf Teilzeit-Optimierung prüfen — hohe MA-Zahl bei niedrigem Volumen deutet auf Überstaffing hin. Best Practices von Europastern (kürzeste Wartezeit: 5,4 min) auf andere Filialen übertragen.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Rollenverteilung & Vergütung — Kassierer und Köche bilden das Rückgrat</div>
+      <div class="chart-sub">5 Rollen · Ø-Stundenlohn · Vollzeitquote</div></div>
+      <div class="chart-area short"><canvas id="empRoleChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Sub: Zufriedenheit -->
+  <div id="sub_personal_sat" class="tab-section" style="display:none">
+    <div class="chart-card">
+      <div><div class="chart-title">App-Bestellungen generieren signifikant höhere Zufriedenheit</div>
+      <div class="chart-sub">Ø Satisfaction Score (1–5) nach Bestellkanal · 754.513 Bestellungen</div></div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">GESAMT Ø ZUFRIEDENHEIT</div><div class="kpi-value" style="font-size:22px">3,80</div><div class="kpi-context">von 5,0 · 754.513 Bestellungen</div></div>
+        <div class="kpi-card"><div class="kpi-label">APP ORDER</div><div class="kpi-value" style="font-size:22px">4,00</div><div class="kpi-delta pos">+5,3% vs. Ø</div><div class="kpi-context">44.454 Bestellungen</div></div>
+        <div class="kpi-card"><div class="kpi-label">COUNTER (SCHLECHTESTER)</div><div class="kpi-value" style="font-size:22px">3,77</div><div class="kpi-delta neg">−0,8% vs. Ø</div><div class="kpi-context">396.362 Bestellungen</div></div>
+        <div class="kpi-card"><div class="kpi-label">KORR. DAUER ↔ SAT.</div><div class="kpi-value" style="font-size:22px">r = −0,061</div><div class="kpi-context">Schwach negativ (aggregiert stärker)</div></div>
+      </div>
+      <div class="chart-area"><canvas id="satChannelChart"></canvas></div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Wartezeit ist der stärkste Zufriedenheitstreiber — ab 10 Min. kippt es</div>
+      <div class="chart-sub">Ø Satisfaction Score nach Bearbeitungsdauer · 6 Klassen</div></div>
+      <div class="chart-area"><canvas id="satDurationChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Die Zufriedenheit sinkt monoton mit der Wartezeit: 1–3 Min. → 3,86, aber 15+ Min. → 3,47. Der stärkste Sprung nach unten liegt bei 10–15 Min. (3,69). Die Tageszeit zeigt ein klares Mittagstief (12–13 Uhr: 3,77–3,78) — genau wenn Rush Hour und Wartezeiten zusammentreffen.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Zielgröße „Bestelldauer &lt;5 Min." für alle Filialen einführen. Mittagspeak (12–13h) mit Express-Lane oder Vorbestellfunktion entlasten. App-Zufriedenheit (4,0) als Benchmark für alle Kanäle nutzen.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Zufriedenheit nach Tageszeit — Mittagstief bei 12–13 Uhr</div>
+      <div class="chart-sub">Ø Satisfaction Score pro Stunde · 06:00–23:00</div></div>
+      <div class="chart-area"><canvas id="satHourChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ TAB: PROMOTIONS ═══════════ -->
+<div id="promotions" class="tab-content" style="display:none">
+
+  <!-- Sub: Promo-Effektivität -->
+  <div id="sub_promo_effekt" class="tab-section">
+    <div class="chart-card">
+      <div><div class="chart-title">Nur 8,2% der Bestellungen nutzen Promotions — aber mit höherer Zufriedenheit</div>
+      <div class="chart-sub">9 Aktionstypen · ROI & Uplift vs. Baseline (€19,45 Ø ohne Promo)</div></div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">PROMO-BESTELLUNGEN</div><div class="kpi-value" style="font-size:22px">62.023</div><div class="kpi-delta">8,2% aller Bestellungen</div><div class="kpi-context">Baseline Ø €19,45 netto</div></div>
+        <div class="kpi-card"><div class="kpi-label">GESAMTRABATT</div><div class="kpi-value" style="font-size:22px">€156.408</div><div class="kpi-context">Ø 1,1% Discount-Rate</div></div>
+        <div class="kpi-card"><div class="kpi-label">BESTER ROI</div><div class="kpi-value" style="font-size:22px">Student 8%</div><div class="kpi-delta pos">ROI 11,5x</div><div class="kpi-context">1.643 Bestellungen · Ø €18,45</div></div>
+        <div class="kpi-card"><div class="kpi-label">HÖCHSTE ZUFRIEDENHEIT</div><div class="kpi-value" style="font-size:22px">Birthday 25%</div><div class="kpi-delta pos">Sat. 3,98</div><div class="kpi-context">454 Bestellungen</div></div>
+      </div>
+      <div class="chart-area xtall"><canvas id="promoROIChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Alle Promotions zeigen negative Uplift-Werte vs. Baseline — das ist methodisch korrekt, denn Promotions reduzieren per Definition den Netto-Preis. Der ROI zeigt, wie viel Umsatz pro Rabatt-Euro generiert wird: Student Discount (11,5x) und App Welcome (9,0x) sind am effizientesten. Grand Opening hat den niedrigsten Netto-AOV (€13,39) — hier dominieren Neukunden mit kleinen Erstbestellungen.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Student Discount ausweiten (8% Rabatt bei 11,5x ROI ist hochprofitabel). Birthday Offer trotz niedrigem ROI (3,0x) beibehalten — höchste Zufriedenheit (3,98) bindet Kunden langfristig. COVID Delivery einfrieren — niedrigster Sat-Score (3,77) bei mäßigem Uplift.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Promo-Zufriedenheit liegt überall über Baseline — außer COVID Delivery</div>
+      <div class="chart-sub">Ø Satisfaction Score pro Promotion vs. Baseline (3,79)</div></div>
+      <div class="chart-area tall"><canvas id="promoSatChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Sub: Kohorten & Standorte -->
+  <div id="sub_promo_kohorten" class="tab-section" style="display:none">
+    <div class="chart-card">
+      <div><div class="chart-title">Kohortenanalyse — Retention liegt bei 98–100% über alle Jahrgänge</div>
+      <div class="chart-sub">Anteil aktiver Kunden pro Kohorte (Erstbesuchsjahr) · 24.992 Kunden</div></div>
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">GRÖSSTE KOHORTE</div><div class="kpi-value" style="font-size:22px">2023</div><div class="kpi-context">3.494 Neukunden</div></div>
+        <div class="kpi-card"><div class="kpi-label">Ø RETENTION (VOLLE JAHRE)</div><div class="kpi-value" style="font-size:22px">99,4%</div><div class="kpi-context">Exkl. 2026 (unvollständig)</div></div>
+        <div class="kpi-card"><div class="kpi-label">2026 BISHER AKTIV</div><div class="kpi-value" style="font-size:22px">~71%</div><div class="kpi-context">Jan.–Apr. (Jahr läuft noch)</div></div>
+        <div class="kpi-card"><div class="kpi-label">KUNDEN GESAMT</div><div class="kpi-value" style="font-size:22px">24.992</div><div class="kpi-context">10 Kohorten · 2017–2026</div></div>
+      </div>
+      <div class="chart-area xtall"><canvas id="cohortChart"></canvas></div>
+      <div class="interpretation"><strong>Interpretation:</strong> Die extrem hohe Retention (98–100%) zeigt eine sehr loyale Kundenbasis. Der 2026-Wert von ~71% ist kein Warnsignal — das Jahr ist erst zu 27% vorbei (April). Die 2020-Kohorte zeigt einen leichten Dip auf 98,5% — vermutlich COVID-bedingte Verhaltensänderung. Erst wenn eine Kohorte dauerhaft unter 90% fällt, besteht Handlungsbedarf.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Monitoring der 2026-Kohorte im Quartalsrhythmus. Wenn die Retention bis Q3 nicht auf 95%+ steigt, gezielte Reaktivierungskampagne für inaktive Kunden starten.</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div><div class="chart-title">Filial-Scorecard — Europastern dominiert, Zellerau hat besten AOV</div>
+      <div class="chart-sub">8 Standorte · Umsatz, Effizienz, Miete · Lat/Lon Würzburg</div></div>
+      <div class="chart-card table-card">
+        <table class="data-table" id="tblGeo">
+          <thead><tr><th>Filiale</th><th>Typ</th><th>Umsatz</th><th>€/m²</th><th>Mietquote</th><th>AOV</th><th>Sat.</th><th>Sitze</th><th>Drive-Thr.</th></tr></thead>
+          <tbody>
+            <tr><td>BM Europastern</td><td>Highway</td><td class="mono">€3.391.529</td><td class="mono">9.690</td><td class="mono">2,4%</td><td class="mono">€18,62</td><td class="mono">3,81</td><td class="mono">130</td><td>Ja</td></tr>
+            <tr><td>BM Hauptbahnhof</td><td>City Center</td><td class="mono">€2.205.646</td><td class="mono">12.254</td><td class="mono">4,6%</td><td class="mono">€17,80</td><td class="mono">3,77</td><td class="mono">60</td><td>Nein</td></tr>
+            <tr><td>BM Mainfrankenpark</td><td>Shopping</td><td class="mono">€2.158.128</td><td class="mono">7.708</td><td class="mono">4,0%</td><td class="mono">€21,03</td><td class="mono">3,82</td><td class="mono">115</td><td>Ja</td></tr>
+            <tr><td>BM Heuchelhof</td><td>Residential</td><td class="mono">€2.029.699</td><td class="mono">8.457</td><td class="mono">2,8%</td><td class="mono">€20,14</td><td class="mono">3,81</td><td class="mono">115</td><td>Ja</td></tr>
+            <tr><td>BM Sanderring</td><td>University</td><td class="mono">€1.683.541</td><td class="mono">7.652</td><td class="mono">3,7%</td><td class="mono">€18,84</td><td class="mono">3,76</td><td class="mono">100</td><td>Nein</td></tr>
+            <tr><td>BM Lengfeld</td><td>Commercial</td><td class="mono">€1.359.198</td><td class="mono">6.796</td><td class="mono">4,9%</td><td class="mono">€18,82</td><td class="mono">3,81</td><td class="mono">85</td><td>Ja</td></tr>
+            <tr><td>BM Grombühl</td><td>Hospital</td><td class="mono">€942.419</td><td class="mono">5.890</td><td class="mono">5,7%</td><td class="mono">€19,74</td><td class="mono">3,83</td><td class="mono">60</td><td>Nein</td></tr>
+            <tr><td>BM Zellerau</td><td>Mixed</td><td class="mono">€752.219</td><td class="mono">3.959</td><td class="mono">6,4%</td><td class="mono">€21,05</td><td class="mono">3,82</td><td class="mono">85</td><td>Nein</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="interpretation"><strong>Interpretation:</strong> Hauptbahnhof hat die höchste Raumproduktivität (€12.254/m²) — trotz kleinster Fläche (180m²) und fehlendem Drive-Through. Zellerau hat den höchsten AOV (€21,05) aber die schlechteste Mietquote (6,4%). Nur 5,1% der Bestellungen kommen aus dem „Heimat-Stadtteil" der Kunden — die Filialen bedienen großräumige Einzugsgebiete, nicht nur lokale Anwohner.</div>
     </div>
   </div>
 </div>
@@ -1412,7 +1586,10 @@ const subNavConfig={
   zeitanalyse:[{id:'sub_zeit_wochentag',label:'Wochentag & Stunde'},{id:'sub_zeit_heatmap',label:'Heatmap & Umsatz'}],
   trends:[{id:'sub_trends_zahlung',label:'Zahlungsarten'},{id:'sub_trends_kanal',label:'Verkaufskanäle'}],
   datamining:[{id:'sub_dm_rfm',label:'RFM-Segmentierung'},{id:'sub_dm_assoc',label:'Assoziationsregeln'}],
-  simulation:[{id:'sub_sim_preis',label:'Preissimulation'},{id:'sub_sim_prognose',label:'Wachstumsprognose'}]
+  simulation:[{id:'sub_sim_preis',label:'Preissimulation'},{id:'sub_sim_prognose',label:'Wachstumsprognose'}],
+  wetter:[{id:'sub_wetter_temp',label:'Temperatur-Impact'},{id:'sub_wetter_scatter',label:'Scatter & Niederschlag'}],
+  personal:[{id:'sub_personal_prod',label:'Produktivität'},{id:'sub_personal_sat',label:'Zufriedenheit'}],
+  promotions:[{id:'sub_promo_effekt',label:'Promo-Effektivität'},{id:'sub_promo_kohorten',label:'Kohorten & Standorte'}]
 };
 
 function renderSubNav(tabId){
@@ -1563,11 +1740,11 @@ function updatePriceSim(){
   simChart=new Chart(document.getElementById('simChart'),{type:'bar',
     data:{labels:prodResults.map(function(p){return p.name}),
       datasets:[
-        {label:'Basis',data:prodResults.map(function(p){return p.oldRev}),backgroundColor:barLight,borderRadius:2,maxBarThickness:18},
-        {label:'Simulation',data:prodResults.map(function(p){return p.newRev}),backgroundColor:prodResults.map(function(p){return p.newRev>=p.oldRev?'#16a34a':'#dc2626'}),borderRadius:2,maxBarThickness:18}
+        {label:'Basis',data:prodResults.map(function(p){return p.oldRev}),backgroundColor:barLight,borderRadius:2,maxBarThickness:22},
+        {label:'Simulation',data:prodResults.map(function(p){return p.newRev}),backgroundColor:prodResults.map(function(p){return p.newRev>=p.oldRev?'#16a34a':'#dc2626'}),borderRadius:2,maxBarThickness:22}
       ]},
-    options:mkOpts({legend:{display:true,position:'bottom',labels:{padding:10,usePointStyle:true,pointStyle:'circle',font:{size:10}}},datalabels:{display:false}},
-      {x:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),y:xScale({ticks:{font:{size:9}}})},{indexAxis:'y'})
+    options:mkOpts({legend:{display:true,position:'bottom',labels:{padding:10,usePointStyle:true,pointStyle:'circle',font:{size:10}}},datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:9},color:'#475569',formatter:function(v){return fmtShort(v)}}},
+      {x:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}}),grace:'8%'}),y:xScale({ticks:{font:{size:10}}})},{indexAxis:'y'})
   });
 }
 
@@ -1591,6 +1768,147 @@ function createForecastChart(){
     ]},
     options:mkOpts({legend:{display:false},datalabels:{display:false}},
       {y:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),x:xScale({})})
+  });
+}
+
+/* ═══════════ WETTER DATA & CHARTS ═══════════ */
+const tempBins=["-15\u2013-10","-10\u2013-5","-5\u20130","0\u20135","5\u201310","10\u201315","15\u201320","20\u201325","25\u201330"];
+const tempRevAvg=[8899,3854,4355,4177,4346,4279,4686,4481,6210];
+const tempOrdAvg=[409,196,222,216,221,223,247,240,317];
+const tempDays=[1,25,312,727,576,610,698,328,27];
+const weatherConds=["Sunny","Overcast","Rainy","Cloudy","Snowy"];
+const weatherRev=[4624,4449,4317,4240,3804];
+const weatherOrd=[239,231,224,222,202];
+const rainBins=["0mm","0-2mm","2-5mm","5-10mm",">10mm"];
+const rainRev=[4396,4217,4767,4214,6912];
+const weatherScatter=[{"x":8.4,"y":290},{"x":5.0,"y":443},{"x":2.1,"y":295},{"x":10.3,"y":382},{"x":11.1,"y":318},{"x":8.2,"y":233},{"x":9.1,"y":456},{"x":16.5,"y":313},{"x":7.3,"y":449},{"x":12.3,"y":372},{"x":13.5,"y":474},{"x":20.9,"y":364},{"x":12.9,"y":582},{"x":19.6,"y":502},{"x":17.5,"y":724},{"x":14.4,"y":764},{"x":17.8,"y":472},{"x":18.2,"y":435},{"x":20.1,"y":574},{"x":18.3,"y":992},{"x":20.3,"y":664},{"x":17.2,"y":1076},{"x":16.6,"y":777},{"x":22.2,"y":857},{"x":24.3,"y":1277},{"x":14.0,"y":918},{"x":19.1,"y":849},{"x":21.9,"y":1022},{"x":21.0,"y":788},{"x":21.7,"y":1020},{"x":23.2,"y":820},{"x":18.1,"y":775},{"x":18.2,"y":946},{"x":21.8,"y":642},{"x":15.0,"y":879},{"x":22.3,"y":831},{"x":15.2,"y":695},{"x":18.6,"y":708},{"x":21.1,"y":735},{"x":13.4,"y":509},{"x":16.6,"y":561},{"x":20.2,"y":696},{"x":5.9,"y":657},{"x":9.8,"y":654},{"x":7.2,"y":724},{"x":7.7,"y":869},{"x":10.5,"y":596},{"x":9.6,"y":768},{"x":3.0,"y":688},{"x":5.3,"y":806},{"x":5.5,"y":855},{"x":3.4,"y":826},{"x":7.1,"y":835},{"x":1.3,"y":502},{"x":10.3,"y":933},{"x":5.0,"y":940},{"x":1.6,"y":800},{"x":1.1,"y":1155},{"x":2.0,"y":706},{"x":0.2,"y":813},{"x":0.5,"y":777},{"x":1.3,"y":644},{"x":5.1,"y":704},{"x":0.4,"y":963},{"x":2.7,"y":785},{"x":7.0,"y":861},{"x":3.1,"y":977},{"x":6.9,"y":996},{"x":11.2,"y":749},{"x":4.5,"y":924},{"x":6.8,"y":960},{"x":13.9,"y":536},{"x":12.6,"y":735},{"x":9.2,"y":768},{"x":10.6,"y":1138},{"x":16.1,"y":673},{"x":16.8,"y":987},{"x":13.3,"y":906},{"x":18.3,"y":675},{"x":14.8,"y":840},{"x":15.3,"y":1076},{"x":13.8,"y":1562},{"x":17.8,"y":1684},{"x":18.4,"y":1109},{"x":13.2,"y":1352},{"x":16.4,"y":1339},{"x":14.4,"y":1236},{"x":23.7,"y":1828},{"x":21.1,"y":1522},{"x":20.7,"y":1446},{"x":24.3,"y":1638},{"x":24.9,"y":2236},{"x":21.0,"y":1564},{"x":24.9,"y":1254},{"x":21.4,"y":1452},{"x":22.3,"y":1220},{"x":15.6,"y":1788},{"x":22.2,"y":1431},{"x":19.8,"y":1367},{"x":13.9,"y":1310},{"x":21.1,"y":1533},{"x":20.2,"y":1703},{"x":19.6,"y":1717},{"x":18.6,"y":1387},{"x":16.6,"y":1460},{"x":11.0,"y":1977},{"x":18.2,"y":1557},{"x":13.0,"y":1440},{"x":13.0,"y":1792},{"x":12.1,"y":1867},{"x":6.4,"y":1235},{"x":6.5,"y":1275},{"x":6.9,"y":1176},{"x":13.3,"y":1577},{"x":2.2,"y":1453},{"x":6.9,"y":1161},{"x":4.5,"y":1158},{"x":3.4,"y":1791},{"x":1.4,"y":1218},{"x":5.9,"y":1333},{"x":-1.8,"y":1504},{"x":0.4,"y":1673},{"x":0.7,"y":1463},{"x":9.5,"y":1563},{"x":1.7,"y":1257},{"x":0.4,"y":1622},{"x":2.7,"y":1435},{"x":-1.5,"y":1224},{"x":0.6,"y":1462},{"x":-2.5,"y":1230},{"x":3.1,"y":1356},{"x":-5.4,"y":1324},{"x":3.1,"y":1462},{"x":-1.8,"y":1292},{"x":0.7,"y":1419},{"x":-1.9,"y":1754},{"x":0.8,"y":1390},{"x":6.4,"y":1694},{"x":1.0,"y":1860},{"x":0.0,"y":1503},{"x":0.3,"y":1496},{"x":2.6,"y":1636},{"x":8.7,"y":1971},{"x":5.6,"y":2132},{"x":0.6,"y":1667},{"x":-0.6,"y":1761},{"x":3.6,"y":1882},{"x":4.5,"y":2097},{"x":3.2,"y":2103},{"x":11.4,"y":1673},{"x":10.2,"y":2033},{"x":13.7,"y":2070},{"x":15.4,"y":1844},{"x":13.6,"y":2507},{"x":8.0,"y":1977},{"x":7.1,"y":2966},{"x":11.0,"y":2110},{"x":8.2,"y":2183},{"x":9.1,"y":2393},{"x":14.4,"y":2502},{"x":19.7,"y":2588},{"x":16.5,"y":2049},{"x":12.3,"y":2282},{"x":11.5,"y":2614},{"x":14.8,"y":2565},{"x":19.5,"y":2322},{"x":20.0,"y":2679},{"x":22.6,"y":2715},{"x":20.4,"y":2850},{"x":21.1,"y":3250},{"x":18.2,"y":2375},{"x":22.9,"y":2633},{"x":22.5,"y":3496},{"x":25.1,"y":2489},{"x":18.8,"y":2917},{"x":25.0,"y":2360},{"x":18.9,"y":2015},{"x":18.9,"y":2436},{"x":20.8,"y":2079},{"x":24.0,"y":2149},{"x":14.9,"y":2514},{"x":15.4,"y":2236},{"x":15.7,"y":2560},{"x":14.2,"y":2471},{"x":17.8,"y":2975},{"x":16.6,"y":2916},{"x":16.7,"y":2455},{"x":19.5,"y":2398},{"x":17.5,"y":3143},{"x":12.2,"y":3390},{"x":7.6,"y":2440},{"x":9.3,"y":2567},{"x":8.5,"y":3044},{"x":14.6,"y":2621},{"x":11.2,"y":3133},{"x":11.5,"y":2688},{"x":2.1,"y":3004},{"x":4.1,"y":3124},{"x":1.6,"y":2633},{"x":3.2,"y":2970},{"x":2.7,"y":2747},{"x":3.9,"y":2789},{"x":2.8,"y":2809},{"x":8.4,"y":3506},{"x":-0.6,"y":3569},{"x":1.1,"y":2621},{"x":1.7,"y":3030},{"x":-3.5,"y":2547},{"x":-3.8,"y":3300},{"x":-2.0,"y":2806},{"x":-4.6,"y":2435},{"x":3.3,"y":3214},{"x":1.7,"y":2546},{"x":-5.8,"y":2138},{"x":2.5,"y":3017},{"x":2.3,"y":2648},{"x":2.0,"y":2526},{"x":1.0,"y":2835},{"x":1.1,"y":3220},{"x":5.8,"y":2845},{"x":2.2,"y":2695},{"x":7.4,"y":2818},{"x":6.3,"y":2463},{"x":-0.6,"y":3242},{"x":10.2,"y":822},{"x":10.3,"y":1043},{"x":12.5,"y":1491},{"x":11.2,"y":1287},{"x":18.9,"y":1350},{"x":19.3,"y":1653},{"x":11.5,"y":1237},{"x":18.5,"y":1720},{"x":14.8,"y":2158},{"x":18.6,"y":2636},{"x":25.9,"y":2140},{"x":12.9,"y":3038},{"x":22.7,"y":2086},{"x":15.4,"y":2702},{"x":22.6,"y":2622},{"x":16.6,"y":3159},{"x":23.7,"y":2473},{"x":21.8,"y":2802},{"x":14.4,"y":2251},{"x":18.4,"y":1586},{"x":18.9,"y":2573},{"x":19.0,"y":2594},{"x":17.5,"y":2463},{"x":15.5,"y":2115},{"x":18.1,"y":2705},{"x":19.9,"y":2504},{"x":15.3,"y":3449},{"x":15.9,"y":2728},{"x":12.3,"y":3264},{"x":12.7,"y":3432},{"x":14.6,"y":2966},{"x":8.6,"y":3657},{"x":16.8,"y":3671},{"x":15.2,"y":2866},{"x":10.8,"y":1844},{"x":14.0,"y":1815},{"x":5.7,"y":2107},{"x":11.5,"y":1650},{"x":12.1,"y":2314},{"x":2.1,"y":1930},{"x":3.1,"y":1834},{"x":12.4,"y":2051},{"x":6.8,"y":2125},{"x":1.9,"y":1376},{"x":0.8,"y":1462},{"x":-1.0,"y":1063},{"x":1.3,"y":1517},{"x":1.0,"y":1580},{"x":-2.9,"y":1442},{"x":5.5,"y":1589},{"x":-6.6,"y":1407},{"x":-8.2,"y":1632},{"x":-4.9,"y":1350},{"x":0.2,"y":1391},{"x":1.5,"y":2039},{"x":2.4,"y":1647},{"x":-6.6,"y":1212},{"x":3.8,"y":1941},{"x":6.3,"y":2463},{"x":-0.3,"y":1994},{"x":10.7,"y":2152},{"x":0.5,"y":1948},{"x":4.8,"y":2202},{"x":0.7,"y":2373},{"x":9.7,"y":1926},{"x":12.9,"y":2986},{"x":10.3,"y":2478},{"x":9.0,"y":2691},{"x":9.8,"y":3185},{"x":11.2,"y":2857},{"x":7.4,"y":2504},{"x":22.9,"y":3216},{"x":17.9,"y":2754},{"x":22.1,"y":3734},{"x":10.5,"y":3772},{"x":18.5,"y":2945},{"x":14.4,"y":3573},{"x":15.9,"y":2953},{"x":14.1,"y":3916},{"x":23.6,"y":3146},{"x":19.8,"y":4218},{"x":14.5,"y":4037},{"x":25.2,"y":4202},{"x":19.3,"y":3901},{"x":17.3,"y":4709},{"x":23.9,"y":4552},{"x":15.9,"y":4648},{"x":18.9,"y":5308},{"x":17.6,"y":4554},{"x":24.0,"y":7200},{"x":16.9,"y":5799},{"x":19.5,"y":3206},{"x":20.2,"y":3964},{"x":13.9,"y":3196},{"x":25.0,"y":5414},{"x":19.0,"y":4503},{"x":19.3,"y":4022},{"x":15.1,"y":5155},{"x":22.2,"y":5474},{"x":23.3,"y":4774},{"x":15.5,"y":3529},{"x":15.7,"y":4253},{"x":10.9,"y":5014},{"x":20.9,"y":4560},{"x":12.9,"y":3838},{"x":13.8,"y":4721},{"x":6.8,"y":5348},{"x":8.8,"y":4652},{"x":11.2,"y":4260},{"x":8.8,"y":4909},{"x":7.8,"y":4033},{"x":10.3,"y":5065},{"x":7.2,"y":4620},{"x":5.8,"y":4434},{"x":4.2,"y":4911},{"x":1.6,"y":5102},{"x":2.5,"y":3660},{"x":4.5,"y":4141},{"x":6.4,"y":4616},{"x":4.2,"y":5740},{"x":-1.6,"y":5042},{"x":-2.3,"y":4033},{"x":7.6,"y":4898},{"x":-4.5,"y":5841},{"x":1.0,"y":4214},{"x":1.9,"y":4819},{"x":-3.0,"y":4594},{"x":-3.5,"y":5866},{"x":-4.7,"y":4579},{"x":-2.6,"y":4164},{"x":-0.3,"y":5214},{"x":-2.4,"y":5563},{"x":6.5,"y":5309},{"x":3.7,"y":4666},{"x":2.4,"y":5093},{"x":6.2,"y":5735},{"x":6.4,"y":5101},{"x":5.8,"y":5979},{"x":7.9,"y":5695},{"x":3.7,"y":6730},{"x":1.7,"y":6162},{"x":2.7,"y":5293},{"x":8.0,"y":5500},{"x":11.5,"y":5901},{"x":12.2,"y":6986},{"x":7.3,"y":5138},{"x":11.4,"y":6535},{"x":15.6,"y":6057},{"x":17.6,"y":5276},{"x":16.0,"y":6702},{"x":11.9,"y":6138},{"x":21.9,"y":5964},{"x":17.9,"y":6240},{"x":16.9,"y":6474},{"x":13.6,"y":8312},{"x":18.6,"y":7411},{"x":20.6,"y":6582},{"x":21.7,"y":8385},{"x":20.7,"y":7993},{"x":25.5,"y":5620},{"x":22.5,"y":8094},{"x":16.8,"y":7198},{"x":17.3,"y":6522},{"x":12.1,"y":6105},{"x":15.5,"y":7059},{"x":16.0,"y":6585},{"x":18.8,"y":5714},{"x":25.1,"y":4878},{"x":17.8,"y":6671},{"x":11.5,"y":5869},{"x":15.2,"y":6638},{"x":11.8,"y":5076},{"x":17.1,"y":7048},{"x":15.0,"y":7091},{"x":12.3,"y":5327},{"x":13.0,"y":6040},{"x":16.7,"y":6572},{"x":10.4,"y":6544},{"x":11.1,"y":5196},{"x":12.6,"y":5573},{"x":0.7,"y":6920},{"x":0.2,"y":5867},{"x":6.3,"y":5211},{"x":4.6,"y":5658},{"x":-0.5,"y":6809},{"x":4.1,"y":6357},{"x":-2.1,"y":4837},{"x":2.0,"y":6206},{"x":1.8,"y":6858},{"x":-5.9,"y":4388},{"x":0.5,"y":6285},{"x":1.7,"y":6569},{"x":2.2,"y":6652},{"x":1.5,"y":5787},{"x":2.6,"y":6640},{"x":-1.7,"y":7262},{"x":0.7,"y":6799},{"x":-1.5,"y":5617},{"x":0.2,"y":5956},{"x":4.4,"y":7158},{"x":2.5,"y":6191},{"x":3.9,"y":6208},{"x":6.0,"y":7371},{"x":12.9,"y":8180},{"x":7.8,"y":7135},{"x":4.6,"y":6547},{"x":8.4,"y":6598},{"x":10.0,"y":8403},{"x":13.8,"y":8172},{"x":11.7,"y":6827},{"x":10.3,"y":7269},{"x":11.5,"y":8269},{"x":12.3,"y":7811},{"x":14.8,"y":6365},{"x":17.5,"y":7321},{"x":19.2,"y":8639},{"x":14.4,"y":7748},{"x":13.6,"y":8210},{"x":18.7,"y":10120},{"x":18.8,"y":7301},{"x":21.8,"y":9477},{"x":22.2,"y":8848},{"x":15.2,"y":9045},{"x":18.5,"y":8810},{"x":10.4,"y":8914},{"x":19.6,"y":7978},{"x":17.4,"y":9869},{"x":17.6,"y":11478},{"x":18.7,"y":12091},{"x":17.0,"y":7999},{"x":21.3,"y":8277},{"x":25.1,"y":6941},{"x":13.6,"y":9810},{"x":21.9,"y":8544},{"x":15.0,"y":7013},{"x":23.2,"y":8058},{"x":17.8,"y":7267},{"x":16.8,"y":8921},{"x":10.9,"y":7887},{"x":21.0,"y":7013},{"x":16.9,"y":7966},{"x":11.4,"y":8705},{"x":14.4,"y":7992},{"x":19.5,"y":6770},{"x":9.9,"y":7189},{"x":9.2,"y":8398},{"x":9.7,"y":8278},{"x":7.1,"y":6341},{"x":13.1,"y":7943},{"x":11.3,"y":7654},{"x":6.4,"y":8625},{"x":7.4,"y":7049},{"x":2.0,"y":7677},{"x":5.0,"y":8233},{"x":3.7,"y":8389},{"x":1.3,"y":7983},{"x":-8.7,"y":8353},{"x":4.9,"y":7864},{"x":0.1,"y":6811},{"x":-2.7,"y":7006},{"x":-1.7,"y":7409},{"x":-1.9,"y":7536},{"x":0.5,"y":6449},{"x":-2.7,"y":6115},{"x":0.6,"y":7822},{"x":6.1,"y":7453},{"x":1.9,"y":6399},{"x":3.6,"y":6893},{"x":3.1,"y":8787},{"x":4.1,"y":7082},{"x":3.5,"y":6758},{"x":5.1,"y":9619},{"x":1.0,"y":8673},{"x":5.3,"y":7630},{"x":7.3,"y":7897},{"x":9.2,"y":7585},{"x":3.1,"y":9247},{"x":4.0,"y":9991},{"x":6.1,"y":7220},{"x":15.1,"y":8791},{"x":13.2,"y":8802},{"x":11.7,"y":9004},{"x":10.3,"y":8476},{"x":9.9,"y":8509},{"x":16.2,"y":9092},{"x":16.6,"y":8765},{"x":9.5,"y":9117},{"x":11.3,"y":9438},{"x":13.6,"y":8308},{"x":16.8,"y":7790},{"x":17.5,"y":9199},{"x":22.7,"y":8973},{"x":17.1,"y":11234},{"x":25.5,"y":10951},{"x":24.1,"y":9411},{"x":16.3,"y":9263},{"x":26.4,"y":12457},{"x":19.4,"y":11051},{"x":27.7,"y":7650},{"x":23.3,"y":8667},{"x":18.9,"y":9914},{"x":21.6,"y":8689},{"x":20.2,"y":8468},{"x":21.6,"y":9239},{"x":22.8,"y":9401},{"x":24.6,"y":7469},{"x":14.1,"y":7717},{"x":11.6,"y":9086},{"x":14.4,"y":8744},{"x":14.9,"y":7438},{"x":15.5,"y":8386},{"x":17.5,"y":10766},{"x":15.6,"y":7960},{"x":7.9,"y":7909},{"x":9.5,"y":9239},{"x":10.1,"y":8824},{"x":13.9,"y":7465},{"x":7.8,"y":7638},{"x":2.2,"y":9433},{"x":4.5,"y":8156},{"x":8.3,"y":7620},{"x":3.3,"y":8196},{"x":4.7,"y":9222},{"x":-1.6,"y":8610},{"x":0.3,"y":7027},{"x":5.4,"y":8015},{"x":-2.9,"y":10022},{"x":1.4,"y":7437},{"x":-0.1,"y":6584},{"x":6.1,"y":6946},{"x":-5.9,"y":8608},{"x":-2.9,"y":8257},{"x":-3.3,"y":7044},{"x":1.3,"y":8191},{"x":-0.3,"y":8908},{"x":-0.2,"y":7927},{"x":-5.2,"y":5944},{"x":0.5,"y":7602},{"x":-2.8,"y":8576},{"x":4.4,"y":7904},{"x":5.7,"y":7577},{"x":4.6,"y":8684},{"x":11.7,"y":10429},{"x":11.9,"y":9705},{"x":6.5,"y":7906},{"x":6.2,"y":8071},{"x":11.8,"y":9512},{"x":5.6,"y":9665},{"x":7.2,"y":8490},{"x":10.2,"y":9891},{"x":12.5,"y":9624},{"x":18.9,"y":7028},{"x":15.7,"y":7561},{"x":17.7,"y":9765},{"x":14.3,"y":9347},{"x":17.4,"y":8957},{"x":15.2,"y":8869},{"x":19.0,"y":12304},{"x":21.0,"y":11010},{"x":23.4,"y":11430},{"x":21.5,"y":10317},{"x":15.4,"y":9807},{"x":20.3,"y":11856},{"x":18.7,"y":11054},{"x":20.1,"y":11225},{"x":25.9,"y":10633},{"x":17.0,"y":11573},{"x":19.0,"y":7352},{"x":18.8,"y":8245},{"x":14.4,"y":7729},{"x":17.1,"y":9581},{"x":24.1,"y":10939},{"x":18.2,"y":9495},{"x":16.4,"y":10533},{"x":16.0,"y":8536},{"x":12.5,"y":10642},{"x":16.9,"y":10423},{"x":17.4,"y":8983},{"x":9.7,"y":8922},{"x":9.8,"y":9520},{"x":6.7,"y":8986},{"x":9.6,"y":7874},{"x":11.1,"y":8410},{"x":0.8,"y":11467},{"x":0.6,"y":9299},{"x":5.5,"y":8027},{"x":3.5,"y":8778},{"x":6.9,"y":10096},{"x":0.1,"y":9662},{"x":1.0,"y":9229},{"x":5.3,"y":9440},{"x":3.0,"y":9412},{"x":5.1,"y":8055},{"x":-1.2,"y":8014},{"x":2.8,"y":9986},{"x":1.6,"y":8180},{"x":-4.8,"y":6854},{"x":-3.5,"y":7817},{"x":5.1,"y":8981},{"x":1.9,"y":8389},{"x":5.4,"y":7796},{"x":-0.8,"y":9756},{"x":0.6,"y":8042},{"x":5.5,"y":8707},{"x":8.8,"y":10277},{"x":1.8,"y":8857},{"x":3.0,"y":8097},{"x":4.2,"y":9014},{"x":7.4,"y":9725},{"x":-1.3,"y":6960}];
+
+function createTempBinChart(){
+  mkVBar('tempBinChart',tempBins,[
+    {label:'\u00d8 Tagesumsatz (€)',data:tempRevAvg,backgroundColor:bar,borderRadius:3,maxBarThickness:32}
+  ],{datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:9},color:ink,formatter:function(v){return fmtDE(v)+' €'}}},
+  {y:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),x:xScale({title:{display:true,text:'Temperaturbereich (°C)',font:{size:10}}})});
+}
+function createWeatherCondChart(){
+  mkVBar('weatherCondChart',weatherConds,[
+    {label:'\u00d8 Tagesumsatz',data:weatherRev,backgroundColor:['#d97706','#94a3b8','#5b7a9d','#a8bdd0','#e2e8f0'],borderRadius:3,maxBarThickness:40}
+  ],{datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:10},color:ink,formatter:function(v){return fmtDE(v)+' €'}}},
+  {y:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),x:xScale({})});
+}
+function createWeatherScatterChart(){
+  new Chart(document.getElementById('weatherScatterChart'),{type:'scatter',
+    data:{datasets:[{label:'Tagesumsatz',data:weatherScatter,backgroundColor:'rgba(127,149,182,0.3)',borderColor:'rgba(127,149,182,0.6)',pointRadius:2.5,pointHoverRadius:5}]},
+    options:mkOpts({legend:{display:false},datalabels:{display:false}},
+      {y:yScale({beginAtZero:true,title:{display:true,text:'Tagesumsatz (€)',font:{size:10}},ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),
+       x:xScale({title:{display:true,text:'Temperatur (°C)',font:{size:10}},ticks:monoTicks})})
+  });
+}
+function createRainChart(){
+  mkVBar('rainChart',rainBins,[
+    {label:'\u00d8 Tagesumsatz',data:rainRev,backgroundColor:['#5b7a9d','#7F95B6','#a8bdd0','#5b7a9d','#16a34a'],borderRadius:3,maxBarThickness:40}
+  ],{datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:10},color:ink,formatter:function(v){return fmtDE(v)+' €'}}},
+  {y:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),x:xScale({title:{display:true,text:'Niederschlag',font:{size:10}}})});
+}
+
+/* ═══════════ PERSONAL DATA & CHARTS ═══════════ */
+const empBranches=["BM Zellerau","BM Gromb\u00fchl","BM Lengfeld","BM Sanderring","BM Heuchelhof","BM Mainfrankenpark","BM Hauptbahnhof","BM Europastern"];
+const empRevPerEmp=[35820,55436,61782,67342,78065,79931,110282,113051];
+const empOrdPerEmp=[1702,2808,3283,3575,3876,3801,6196,6071];
+const empAvgDuration=[6.2,6.3,5.6,6.4,5.5,5.7,6.5,5.4];
+const empAvgSat=[3.82,3.83,3.81,3.76,3.81,3.82,3.77,3.81];
+const empCount=[21,17,22,25,26,27,20,30];
+const empTypes=["Mixed","Hospital","Commercial","University","Residential","Shopping","City Center","Highway"];
+const empRoles=["Branch Manager","Cashier","Cook","Shift Manager","Trainee"];
+const empRoleCount=[13,58,57,32,28];
+const empRoleWage=[20.0,10.5,11.0,14.0,9.0];
+
+const satChannels=["App Order","Drive-Through","Kiosk","Counter"];
+const satChannelVal=[4.001,3.792,3.783,3.768];
+const satChannelN=[44454,190599,123098,396362];
+const satDurBins=["1-3","3-5","5-7","7-10","10-15","15+"];
+const satDurVal=[3.859,3.797,3.784,3.788,3.692,3.472];
+const satHours=[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23];
+const satHourVal=[3.806,3.807,3.816,3.811,3.809,3.831,3.770,3.780,3.815,3.822,3.821,3.809,3.805,3.811,3.806,3.822,3.796,3.803];
+
+function createEmpProdChart(){
+  mkHBar('empProdChart',empBranches,empRevPerEmp,
+    empTypes.map(function(t){return t==='Highway'||t==='City Center'?'#16a34a':bar}),
+    {datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:9},color:ink,formatter:function(v){return '€'+fmtDE(v)}}},
+    {x:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),y:xScale({ticks:{font:{size:9}}})});
+}
+function createEmpRoleChart(){
+  mkVBar('empRoleChart',empRoles,[
+    {label:'Anzahl',data:empRoleCount,backgroundColor:bar,borderRadius:3,maxBarThickness:32,yAxisID:'y'},
+    {label:'\u00d8 Stundenlohn (€)',data:empRoleWage,backgroundColor:'#d97706',borderRadius:3,maxBarThickness:32,yAxisID:'y1'}
+  ],{datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:9},color:ink,formatter:function(v,ctx){return ctx.datasetIndex===0?v:'€'+v.toFixed(0)}}},
+  {y:yScale({beginAtZero:true,position:'left',title:{display:true,text:'Anzahl MA',font:{size:9}}}),
+   y1:yScale({beginAtZero:true,position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'€/Stunde',font:{size:9}}}),
+   x:xScale({ticks:{font:{size:9}}})});
+}
+function createSatChannelChart(){
+  mkVBar('satChannelChart',satChannels,[
+    {label:'Ø Zufriedenheit',data:satChannelVal,backgroundColor:satChannelVal.map(function(v){return v>=4?'#16a34a':v>=3.79?bar:'#dc2626'}),borderRadius:3,maxBarThickness:40}
+  ],{datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:11,weight:'bold'},color:ink,formatter:function(v){return v.toFixed(2).replace('.',',')}}},
+  {y:yScale({min:3.6,max:4.1,ticks:monoTicks}),x:xScale({})});
+}
+function createSatDurationChart(){
+  mkVBar('satDurationChart',satDurBins.map(function(b){return b+' Min.'}),
+  [{label:'Ø Zufriedenheit',data:satDurVal,backgroundColor:satDurVal.map(function(v){return v>=3.8?'#16a34a':v>=3.7?'#d97706':'#dc2626'}),borderRadius:3,maxBarThickness:40}],
+  {datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:10},color:ink,formatter:function(v){return v.toFixed(3).replace('.',',')}}},
+  {y:yScale({min:3.3,max:3.95,ticks:monoTicks}),x:xScale({title:{display:true,text:'Bearbeitungsdauer',font:{size:10}}})});
+}
+function createSatHourChart(){
+  new Chart(document.getElementById('satHourChart'),{type:'line',
+    data:{labels:satHours.map(function(h){return h+':00'}),datasets:[
+      {label:'Ø Zufriedenheit',data:satHourVal,borderColor:bar,backgroundColor:'rgba(127,149,182,0.1)',fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:satHourVal.map(function(v){return v<3.79?'#dc2626':bar})}
+    ]},
+    options:mkOpts({legend:{display:false},datalabels:{display:false}},
+      {y:yScale({min:3.74,max:3.85,ticks:monoTicks}),x:xScale({})})
+  });
+}
+
+/* ═══════════ PROMOTIONS DATA & CHARTS ═══════════ */
+const promoNames=["Birthday Offer 25%","Student Discount 8%","Grand Opening 15%","Happy Hour 15%","Combo Saver 15%","COVID Delivery 10%","Loyalty Gold 20%","Weekend Deal 10%","App Welcome 10%"];
+const promoOrders=[454,1643,2632,6511,6553,8427,9433,13572,12798];
+const promoTotalRev=[7386,30320,35230,109146,117084,124113,153862,234310,241915];
+const promoROI=[3.0,11.5,5.7,5.7,5.7,9.0,4.0,9.0,9.0];
+const promoAvgSat=[3.98,3.97,3.93,3.95,3.94,3.77,3.97,3.90,3.95];
+const promoBaselineNet=19.45;
+
+const cohortLabels=[2017,2018,2019,2020,2021,2022,2023,2024,2025,2026];
+const cohortSizes=[1502,1999,3033,2538,3003,3452,3494,2990,1959,1022];
+const cohortMatrix=[[86.3,97.7,99.9,98.5,99.8,100.0,99.7,99.5,99.8,71.4],[null,97.0,99.7,98.4,99.7,99.8,99.9,99.8,99.4,71.9],[null,null,99.6,98.3,99.4,100.0,99.8,99.9,99.7,71.3],[null,null,null,98.6,99.6,99.9,99.8,99.8,99.9,71.6],[null,null,null,null,99.6,100.0,100.0,99.8,99.4,70.6],[null,null,null,null,null,99.9,99.9,99.8,99.7,70.1],[null,null,null,null,null,null,99.9,99.6,99.8,69.3],[null,null,null,null,null,null,null,99.7,99.7,72.4],[null,null,null,null,null,null,null,null,99.5,72.7],[null,null,null,null,null,null,null,null,null,72.0]];
+
+function createPromoROIChart(){
+  var colors=promoROI.map(function(r){return r>=9?'#16a34a':r>=5?'#d97706':'#dc2626'});
+  mkHBar('promoROIChart',promoNames,promoROI,colors,
+    {datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:10,weight:'bold'},color:ink,formatter:function(v){return v.toFixed(1)+'x'}}},
+    {x:yScale({beginAtZero:true,title:{display:true,text:'ROI (Umsatz pro Rabatt-€)',font:{size:10}},ticks:monoTicks}),y:xScale({ticks:{font:{size:9}}})});
+}
+function createPromoSatChart(){
+  var baselineVal=3.785;
+  mkHBar('promoSatChart',promoNames,promoAvgSat,
+    promoAvgSat.map(function(v){return v>=3.95?'#16a34a':v>=3.85?bar:'#dc2626'}),
+    {datalabels:{display:true,anchor:'end',align:'end',font:{family:mono,size:9},color:ink,formatter:function(v){return v.toFixed(2).replace('.',',')}},
+     annotation:{annotations:{baseline:{type:'line',xMin:baselineVal,xMax:baselineVal,borderColor:'#dc2626',borderWidth:1.5,borderDash:[4,3],
+       label:{display:true,content:'Baseline 3,79',position:'start',font:{size:9},backgroundColor:'rgba(220,38,38,.85)',color:'#fff',padding:3}}}}},
+    {x:yScale({min:3.7,max:4.05,ticks:monoTicks}),y:xScale({ticks:{font:{size:9}}})});
+}
+function createCohortChart(){
+  var datasets=[];
+  var cohortColors=['#1e293b','#475569','#5b7a9d','#7F95B6','#a8bdd0','#16a34a','#d97706','#dc2626','#94a3b8','#e2e8f0'];
+  cohortLabels.forEach(function(cohort,i){
+    var data=[];
+    cohortMatrix[i].forEach(function(val,j){
+      if(val!==null) data.push({x:cohortLabels[j],y:val});
+    });
+    datasets.push({label:''+cohort+' (n='+cohortSizes[i]+')',data:data,borderColor:cohortColors[i],backgroundColor:cohortColors[i],borderWidth:1.5,pointRadius:3,tension:0.2,fill:false});
+  });
+  new Chart(document.getElementById('cohortChart'),{type:'line',
+    data:{datasets:datasets},
+    options:mkOpts({legend:{display:true,position:'bottom',labels:{padding:8,usePointStyle:true,pointStyle:'circle',font:{size:8}}},datalabels:{display:false}},
+      {y:yScale({min:60,max:102,title:{display:true,text:'Aktive Kunden (%)',font:{size:10}},ticks:monoTicks}),
+       x:{type:'linear',min:2017,max:2026,ticks:Object.assign({},monoTicks,{stepSize:1,callback:function(v){return v}})}})
   });
 }
 
@@ -1632,6 +1950,18 @@ createRFMValueChart();
 createLiftChart();
 updatePriceSim();
 createForecastChart();
+createTempBinChart();
+createWeatherCondChart();
+createWeatherScatterChart();
+createRainChart();
+createEmpProdChart();
+createEmpRoleChart();
+createSatChannelChart();
+createSatDurationChart();
+createSatHourChart();
+createPromoROIChart();
+createPromoSatChart();
+createCohortChart();
 
 /* ═══════════ INTERACTIVE TABLES ═══════════ */
 
@@ -1747,7 +2077,7 @@ function groupTable(tableId, colIdx){
 }
 
 /* --- Init: Sortier-Icons und Zeilenzähler --- */
-['tblYears','tblBranch','tblBasket','tblRFM','tblAssoc','tblForecast'].forEach(function(id){
+['tblYears','tblBranch','tblBasket','tblRFM','tblAssoc','tblForecast','tblGeo'].forEach(function(id){
   var table = document.getElementById(id);
   if(!table) return;
   var rows = table.querySelectorAll('tbody tr');
