@@ -1764,10 +1764,10 @@ body:hover #cursorGlow { opacity: 1; }
 }
 .data-toggle-label {
   font-family: 'Courier New', monospace;
-  font-size: .75rem;
+  font-size: .85rem;
   font-weight: 700;
   letter-spacing: 1px;
-  color: rgba(255,255,255,.6);
+  color: rgba(255,255,255,.85);
   text-transform: uppercase;
   transition: color .3s;
 }
@@ -1828,17 +1828,17 @@ body.data-mode::after {
   display: none;
   position: absolute;
   z-index: 100;
-  background: rgba(5,25,15,.96);
+  background: rgba(5,25,15,.97);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(0,255,136,.3);
+  border: 1px solid rgba(0,255,136,.4);
   border-radius: 12px;
-  padding: 22px 24px;
-  max-width: 380px;
+  padding: 24px 28px;
+  max-width: 420px;
   font-family: 'Courier New', monospace;
-  font-size: .82rem;
-  color: rgba(255,255,255,.92);
-  line-height: 1.75;
-  box-shadow: 0 12px 48px rgba(0,0,0,.6), 0 0 30px rgba(0,255,136,.1), inset 0 1px 0 rgba(0,255,136,.1);
+  font-size: .95rem;
+  color: rgba(255,255,255,.95);
+  line-height: 1.8;
+  box-shadow: 0 12px 48px rgba(0,0,0,.6), 0 0 30px rgba(0,255,136,.15), inset 0 1px 0 rgba(0,255,136,.15);
   animation: annotationAppear .5s cubic-bezier(.4,0,.2,1) both;
 }
 body.data-mode .data-annotation { display: block; }
@@ -1855,13 +1855,13 @@ body.data-mode .data-annotation { display: block; }
   border-bottom: 1px solid rgba(0,255,136,.15);
 }
 .data-annotation-icon {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .8rem;
+  font-size: .95rem;
   flex-shrink: 0;
 }
 .da-icon-collect { background: rgba(0,255,136,.15); color: #00FF88; }
@@ -1872,67 +1872,67 @@ body.data-mode .data-annotation { display: block; }
 
 .data-annotation-title {
   font-weight: 700;
-  font-size: .82rem;
+  font-size: .95rem;
   color: #00FF88;
   letter-spacing: .5px;
 }
 .data-annotation code {
-  background: rgba(0,255,136,.12);
-  color: #00FF88;
-  padding: 2px 8px;
+  background: rgba(0,255,136,.15);
+  color: #33FFA0;
+  padding: 3px 10px;
   border-radius: 4px;
-  font-size: .76rem;
+  font-size: .88rem;
   font-weight: 700;
-  border: 1px solid rgba(0,255,136,.15);
+  border: 1px solid rgba(0,255,136,.25);
 }
 .data-annotation .da-metric {
   display: inline-block;
-  background: rgba(0,191,255,.12);
-  color: #5CD6FF;
-  padding: 3px 10px;
+  background: rgba(0,191,255,.15);
+  color: #7DE0FF;
+  padding: 4px 12px;
   border-radius: 4px;
-  font-size: .72rem;
+  font-size: .85rem;
   font-weight: 700;
   margin: 3px 2px;
   letter-spacing: .3px;
-  border: 1px solid rgba(0,191,255,.15);
+  border: 1px solid rgba(0,191,255,.25);
 }
 .data-annotation .da-legal {
   display: block;
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(255,59,59,.1);
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: rgba(255,59,59,.12);
   border-left: 3px solid #FF3B3B;
   border-radius: 0 8px 8px 0;
-  font-size: .76rem;
-  color: rgba(255,255,255,.82);
-  line-height: 1.65;
+  font-size: .9rem;
+  color: rgba(255,255,255,.92);
+  line-height: 1.7;
 }
-.data-annotation .da-legal strong { color: #FF6B6B; }
+.data-annotation .da-legal strong { color: #FF8080; }
 .data-annotation .da-ethical {
   display: block;
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(191,90,242,.1);
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: rgba(191,90,242,.12);
   border-left: 3px solid #BF5AF2;
   border-radius: 0 8px 8px 0;
-  font-size: .76rem;
-  color: rgba(255,255,255,.82);
-  line-height: 1.65;
+  font-size: .9rem;
+  color: rgba(255,255,255,.92);
+  line-height: 1.7;
 }
-.data-annotation .da-ethical strong { color: #D28BFF; }
+.data-annotation .da-ethical strong { color: #D8A0FF; }
 .data-annotation .da-advantage {
   display: block;
-  margin-top: 14px;
-  padding: 12px 14px;
-  background: rgba(255,149,0,.1);
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: rgba(255,149,0,.12);
   border-left: 3px solid #FF9500;
   border-radius: 0 8px 8px 0;
-  font-size: .76rem;
-  color: rgba(255,255,255,.82);
-  line-height: 1.65;
+  font-size: .9rem;
+  color: rgba(255,255,255,.92);
+  line-height: 1.7;
 }
-.data-annotation .da-advantage strong { color: #FFB340; }
+.data-annotation .da-advantage strong { color: #FFC060; }
 
 /* Live event flash on interacted elements */
 body.data-mode .menu-card { position: relative; }
@@ -1957,16 +1957,16 @@ body.data-mode .menu-card.data-flash::after {
   position: fixed;
   bottom: 90px;
   left: 32px;
-  width: 340px;
-  max-height: 200px;
+  width: 380px;
+  max-height: 240px;
   overflow-y: auto;
-  background: rgba(5,25,15,.95);
+  background: rgba(5,25,15,.97);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(0,255,136,.2);
+  border: 1px solid rgba(0,255,136,.3);
   border-radius: 10px;
-  padding: 14px;
+  padding: 16px;
   font-family: 'Courier New', monospace;
-  font-size: .68rem;
+  font-size: .85rem;
   z-index: 1500;
   box-shadow: 0 8px 32px rgba(0,0,0,.5);
 }
@@ -1975,29 +1975,30 @@ body.data-mode .data-event-log { display: block; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid rgba(0,255,136,.15);
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0,255,136,.25);
 }
 .data-event-log-header span {
   color: #00FF88;
   font-weight: 700;
   letter-spacing: 1px;
-  font-size: .72rem;
+  font-size: .9rem;
 }
 .data-event-log-header small {
-  color: rgba(255,255,255,.35);
-  font-size: .65rem;
+  color: rgba(255,255,255,.6);
+  font-size: .8rem;
 }
 .event-line {
-  padding: 3px 0;
-  color: rgba(255,255,255,.55);
-  border-bottom: 1px solid rgba(255,255,255,.04);
+  padding: 5px 0;
+  color: rgba(255,255,255,.85);
+  border-bottom: 1px solid rgba(255,255,255,.08);
   animation: eventFlash .3s ease;
+  font-size: .85rem;
 }
-.event-line .ev-time { color: rgba(255,255,255,.3); margin-right: 6px; }
-.event-line .ev-type { color: #00FF88; font-weight: 700; margin-right: 4px; }
-.event-line .ev-detail { color: rgba(255,255,255,.65); }
+.event-line .ev-time { color: rgba(255,255,255,.6); margin-right: 8px; }
+.event-line .ev-type { color: #33FFA0; font-weight: 700; margin-right: 6px; }
+.event-line .ev-detail { color: rgba(255,255,255,.9); }
 @keyframes eventFlash {
   from { background: rgba(0,255,136,.1); }
   to { background: transparent; }
@@ -2008,16 +2009,16 @@ body.data-mode .filter-btn { position: relative; }
 body.data-mode .filter-btn::after {
   content: attr(data-filter);
   position: absolute;
-  top: -18px;
+  top: -22px;
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Courier New', monospace;
-  font-size: .55rem;
-  color: #00FF88;
-  background: rgba(5,25,15,.9);
-  padding: 1px 6px;
-  border-radius: 3px;
-  border: 1px solid rgba(0,255,136,.2);
+  font-size: .78rem;
+  color: #33FFA0;
+  background: rgba(5,25,15,.95);
+  padding: 3px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,255,136,.3);
   white-space: nowrap;
   opacity: 0;
   transition: opacity .2s;
@@ -2036,12 +2037,12 @@ body.data-mode .pay-option { position: relative; }
 body.data-mode .pay-option::after {
   content: '';
   position: absolute;
-  bottom: -14px;
+  bottom: -18px;
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Courier New', monospace;
-  font-size: .5rem;
-  color: #00BFFF;
+  font-size: .75rem;
+  color: #7DE0FF;
   white-space: nowrap;
 }
 body.data-mode .pay-option[data-pay="cash"]::after { content: 'payment_id=1'; }
@@ -2054,13 +2055,13 @@ body.data-mode .add-to-cart { position: relative; }
 body.data-mode .add-to-cart::after {
   content: 'EVENT';
   position: absolute;
-  top: -8px; right: -8px;
+  top: -10px; right: -10px;
   font-family: 'Courier New', monospace;
-  font-size: .5rem;
+  font-size: .7rem;
   background: #00FF88;
   color: #000;
-  padding: 1px 4px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
   font-weight: 700;
   opacity: 0;
   transition: opacity .2s;
@@ -2074,12 +2075,12 @@ body.data-mode .location-card::before {
   position: absolute;
   top: 8px; right: 8px;
   font-family: 'Courier New', monospace;
-  font-size: .6rem;
-  color: #00FF88;
-  background: rgba(5,25,15,.9);
-  padding: 2px 8px;
+  font-size: .8rem;
+  color: #33FFA0;
+  background: rgba(5,25,15,.95);
+  padding: 4px 10px;
   border-radius: 4px;
-  border: 1px solid rgba(0,255,136,.2);
+  border: 1px solid rgba(0,255,136,.3);
   z-index: 10;
 }
 
@@ -2158,8 +2159,8 @@ body.data-mode .marquee-strip {
   border-bottom: 1px solid rgba(0,255,136,.2);
   padding: 10px 24px;
   font-family: 'Courier New', monospace;
-  font-size: .72rem;
-  color: rgba(0,255,136,.7);
+  font-size: .88rem;
+  color: rgba(0,255,136,.9);
   overflow: hidden;
 }
 body.data-mode .data-header-bar { display: flex; }
@@ -2168,17 +2169,17 @@ body.data-mode .data-header-bar { display: flex; }
   margin: 0 auto;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
   width: 100%;
 }
 .dhb-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
 }
 .dhb-dot {
-  width: 6px; height: 6px;
+  width: 8px; height: 8px;
   border-radius: 50%;
   animation: dataPulse 2s ease infinite;
 }
@@ -2186,8 +2187,8 @@ body.data-mode .data-header-bar { display: flex; }
 .dhb-dot-blue { background: #00BFFF; }
 .dhb-dot-orange { background: #FF9500; }
 .dhb-dot-red { background: #FF3B3B; }
-.dhb-label { color: rgba(255,255,255,.4); }
-.dhb-value { color: #00FF88; font-weight: 700; }
+.dhb-label { color: rgba(255,255,255,.7); }
+.dhb-value { color: #33FFA0; font-weight: 700; }
 
 /* Offline comparison banner */
 .data-offline-compare {
@@ -2207,23 +2208,24 @@ body.data-mode .data-offline-compare { display: block; }
   margin-top: 16px;
 }
 .data-compare-col h5 {
-  font-size: .82rem;
+  font-size: .95rem;
   letter-spacing: 1px;
   margin-bottom: 12px;
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255,255,255,.1);
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
 .data-compare-col ul {
   list-style: none;
   padding: 0;
 }
 .data-compare-col ul li {
-  font-size: .75rem;
-  color: rgba(255,255,255,.65);
-  padding: 4px 0;
+  font-size: .9rem;
+  color: rgba(255,255,255,.9);
+  padding: 5px 0;
   display: flex;
   align-items: start;
-  gap: 6px;
+  gap: 8px;
+  line-height: 1.5;
 }
 .data-compare-col ul li::before {
   flex-shrink: 0;
@@ -2248,29 +2250,70 @@ body.data-mode .data-offline-compare { display: block; }
 body.data-mode .data-schema-mini { display: block; }
 .schema-box {
   display: inline-block;
-  padding: 6px 14px;
-  border: 1px solid rgba(0,255,136,.3);
+  padding: 8px 16px;
+  border: 1px solid rgba(0,255,136,.4);
   border-radius: 6px;
-  font-size: .7rem;
+  font-size: .88rem;
   font-weight: 700;
   margin: 4px;
-  color: #00FF88;
-  background: rgba(0,255,136,.05);
+  color: #33FFA0;
+  background: rgba(0,255,136,.08);
 }
 .schema-box-fact {
-  border-color: rgba(0,191,255,.4);
-  color: #00BFFF;
-  background: rgba(0,191,255,.08);
+  border-color: rgba(0,191,255,.5);
+  color: #7DE0FF;
+  background: rgba(0,191,255,.1);
 }
 .schema-arrow {
-  color: rgba(255,255,255,.3);
-  font-size: .8rem;
-  margin: 0 4px;
+  color: rgba(255,255,255,.6);
+  font-size: .95rem;
+  margin: 0 6px;
 }
+
+/* ============================================
+   DATA MODE: DISABLE ALL CUSTOMER ANIMATIONS
+   Clean, stable view for the data perspective.
+   Only data-specific animations remain active.
+   ============================================ */
+body.data-mode .floater { animation: none !important; opacity: .05; }
+body.data-mode .hero-floaters { display: none; }
+body.data-mode .scroll-progress { animation: none; }
+body.data-mode .menu-card {
+  animation: none !important;
+  transform: none !important;
+  transition: border-color .15s ease !important;
+}
+body.data-mode .menu-card:hover {
+  transform: none !important;
+  box-shadow: var(--shadow-md) !important;
+}
+body.data-mode .menu-card-img { animation: none !important; }
+body.data-mode .btn-primary::before,
+body.data-mode .btn-primary::after { display: none; }
+body.data-mode .marquee-track { animation-duration: 60s; }
+body.data-mode .hero-stats { animation: none; transform: translateY(0); }
+body.data-mode .section-divider { transition: none; transform: scaleX(1); }
+body.data-mode .back-to-top { transition: opacity .2s; }
+body.data-mode #cursorGlow { display: none !important; }
+body.data-mode .value-card::before { display: none; }
+body.data-mode .team-member:hover .team-photo img { transform: none; }
+body.data-mode .team-photo::after { display: none; }
+body.data-mode .parallax-img { transform: none !important; }
+body.data-mode .nav-links a:hover { transform: none; }
+body.data-mode .img-reveal::after { transform: scaleX(0); }
+body.data-mode .location-card { transition: none !important; }
+body.data-mode .location-card:hover { transform: none !important; }
+body.data-mode .fade-up {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+body.data-mode .confetti-container { display: none; }
+body.data-mode .phone-mockup { animation: none; }
 
 @media (max-width: 768px) {
   .data-toggle { bottom: 16px; left: 16px; padding: 8px 14px; }
-  .data-annotation { max-width: 280px; font-size: .72rem; }
+  .data-annotation { max-width: 320px; font-size: .85rem; }
   .data-compare-grid { grid-template-columns: 1fr; }
   .data-header-bar { display: none !important; }
   .chatbot { right: 16px; bottom: 16px; }
@@ -2762,7 +2805,7 @@ body.data-mode .data-schema-mini { display: block; }
       </div>
       <div class="data-schema-mini" style="display:block;background:transparent;border:none;padding:0;margin:8px 0;text-align:left;">
         <span class="schema-box">Burger</span><span class="schema-arrow">+</span><span class="schema-box">Fries</span><span class="schema-arrow">+</span><span class="schema-box">Cola</span><br>
-        <span style="color:#00BFFF;font-size:.7rem;">Support: 35% · Confidence: 72% · Lift: 2.1</span>
+        <span style="color:#7DE0FF;font-size:.88rem;">Support: 35% · Confidence: 72% · Lift: 2.1</span>
       </div>
       Die Reihenfolge der Clicks und Add-to-Cart-Events ermöglicht Assoziationsregeln, die im Laden nur über POS-Bondaten (ohne Browsing-Kontext) möglich wären.
       <span class="da-ethical"><strong>🔍 Ethik:</strong> Empfehlungsalgorithmen können zum „Upselling" manipulativ eingesetzt werden. Transparenz gegenüber Kunden nötig (Dark Patterns vermeiden).</span>
@@ -2922,7 +2965,7 @@ body.data-mode .data-schema-mini { display: block; }
         </div>
       </div>
       <div style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);">
-        <span style="font-size:.72rem;color:rgba(255,255,255,.5);">→ Idealzustand: <span style="color:#00FF88;font-weight:700;">Omnichannel-Integration</span> — POS-Daten + App-Daten + Web-Daten in einem Data Warehouse zusammenführen (= unser Star Schema mit <code style="background:rgba(0,191,255,.1);color:#00BFFF;padding:1px 6px;border-radius:3px;font-size:.7rem;">fact_orders.order_channel</code>)</span>
+        <span style="font-size:.9rem;color:rgba(255,255,255,.9);">→ Idealzustand: <span style="color:#00FF88;font-weight:700;">Omnichannel-Integration</span> — POS-Daten + App-Daten + Web-Daten in einem Data Warehouse zusammenführen (= unser Star Schema mit <code style="background:rgba(0,191,255,.15);color:#7DE0FF;padding:3px 10px;border-radius:4px;font-size:.88rem;">fact_orders.order_channel</code>)</span>
       </div>
     </div>
   </div>
@@ -3072,20 +3115,20 @@ body.data-mode .data-schema-mini { display: block; }
         <span class="schema-box">dim_customer</span>
         <span class="schema-box">dim_product</span>
       </div>
-      <div style="color:rgba(255,255,255,.3);font-size:1.2rem;">↓ ↓ ↓ ↓</div>
+      <div style="color:rgba(255,255,255,.6);font-size:1.2rem;">↓ ↓ ↓ ↓</div>
       <div style="margin:8px 0;">
         <span class="schema-box schema-box-fact">fact_orders</span>
         <span class="schema-arrow">←→</span>
         <span class="schema-box schema-box-fact">fact_order_items</span>
       </div>
-      <div style="color:rgba(255,255,255,.3);font-size:1.2rem;">↑ ↑</div>
+      <div style="color:rgba(255,255,255,.6);font-size:1.2rem;">↑ ↑</div>
       <div>
         <span class="schema-box">dim_payment</span>
         <span class="schema-box">dim_promotion</span>
         <span class="schema-box">dim_weather</span>
         <span class="schema-box">dim_employee</span>
       </div>
-      <div style="margin-top:12px;font-size:.68rem;color:rgba(255,255,255,.4);">
+      <div style="margin-top:12px;font-size:.88rem;color:rgba(255,255,255,.8);">
         106.720 Bestellungen · 411.982 Positionen · 12.000 Kunden · 50 Produkte · 8 Filialen · 366 Tage
       </div>
     </div>
@@ -3190,7 +3233,7 @@ body.data-mode .data-schema-mini { display: block; }
   <div class="footer-bottom">
     &copy; 2024 BurgerMetrics GmbH. Alle Rechte vorbehalten.
     Bahnhofstraße 2, 97070 Würzburg | HRB 12345 AG Würzburg<br>
-    <span style="opacity:.5;font-size:.7rem;">Fiktives Unternehmen — erstellt für einen BI-Kurs an der THWS Würzburg</span>
+    <span style="opacity:.8;font-size:.85rem;">Fiktives Unternehmen — erstellt für einen BI-Kurs an der THWS Würzburg</span>
   </div>
 </footer>
 
@@ -3809,7 +3852,7 @@ let cursorX = 0, cursorY = 0, glowX = 0, glowY = 0, cursorMoving = false;
 document.addEventListener('mousemove', e => {
   cursorX = e.clientX;
   cursorY = e.clientY;
-  if (!cursorMoving) {
+  if (!cursorMoving && !document.body.classList.contains('data-mode')) {
     cursorMoving = true;
     animateCursorGlow();
   }
@@ -3833,12 +3876,11 @@ function animateCursorGlow() {
 const heroBg = document.getElementById('heroBg');
 const hero = document.getElementById('hero');
 hero.addEventListener('mousemove', e => {
+  if (dataMode) return; // No parallax in data mode
   const rect = hero.getBoundingClientRect();
   const x = (e.clientX - rect.left) / rect.width - .5;
   const y = (e.clientY - rect.top) / rect.height - .5;
   heroBg.style.transform = `scale(1.05) translate(${x * -20}px, ${y * -15}px)`;
-  // NOTE: Floaters no longer get JS transform — their CSS animation handles movement.
-  // The old code set .style.transform which fought with the @keyframes floatAround.
 });
 hero.addEventListener('mouseleave', () => {
   heroBg.style.transform = 'scale(1.05) translate(0, 0)';
@@ -3852,6 +3894,7 @@ hero.addEventListener('mouseleave', () => {
 function initTilt() {
   document.querySelectorAll('.menu-card').forEach(card => {
     card.addEventListener('mousemove', e => {
+      if (dataMode) return; // No 3D tilt in data mode
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width;
       const y = (e.clientY - rect.top) / rect.height;
@@ -3859,7 +3902,6 @@ function initTilt() {
       const tiltY = (x - .5) * 10;
       card.classList.add('tilt-active');
       card.style.transform = `perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(1.02)`;
-      // Dynamic highlight
       card.style.boxShadow = `${(x-.5)*20}px ${(y-.5)*20}px 40px rgba(0,0,0,.12)`;
     });
     card.addEventListener('mouseleave', () => {
@@ -3974,17 +4016,48 @@ document.addEventListener('DOMContentLoaded', () => {
      CHATBOT ASSISTANT
      ================================================================ -->
 <button class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()" aria-label="Chat öffnen">
-  🤖
+  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Speech bubble -->
+    <path d="M4 4h22a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H18l-4 4.5L10 21H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="rgba(255,255,255,.15)" stroke="#FDE68A" stroke-width="1.5"/>
+    <!-- Mini burger inside bubble -->
+    <!-- Top bun -->
+    <path d="M9 9.5c0-1.5 2.7-2.8 6-2.8s6 1.3 6 2.8c0 .4-.1.6-.2.8H9.2c-.1-.2-.2-.4-.2-.8z" fill="#D97706"/>
+    <ellipse cx="15" cy="9.8" rx="6" ry=".5" fill="#C2710C" opacity=".4"/>
+    <!-- Sesame seeds -->
+    <ellipse cx="12.5" cy="8.5" rx=".7" ry=".45" fill="#FDE68A" transform="rotate(-15 12.5 8.5)"/>
+    <ellipse cx="15.8" cy="8" rx=".7" ry=".45" fill="#FDE68A" transform="rotate(10 15.8 8)"/>
+    <ellipse cx="17.5" cy="9" rx=".6" ry=".4" fill="#FDE68A" transform="rotate(-5 17.5 9)"/>
+    <!-- Lettuce -->
+    <path d="M8.5 10.8c1-.5 2.5.3 4-.2s2.5.4 3.5 0 2.5.3 3.5-.1 1.8.4 1.8.4l-.3.8H8.8l-.3-.9z" fill="#22C55E"/>
+    <!-- Patty -->
+    <rect x="9" y="11.5" width="12" height="2.2" rx="1.1" fill="#78350F"/>
+    <!-- Cheese -->
+    <path d="M8.5 13.5h13l.8 1H7.7l.8-1z" fill="#FBBF24"/>
+    <!-- Bottom bun -->
+    <path d="M9 14.5h12c.3 0 .5.1.5.3v1.2c0 1-2.5 1.8-6.5 1.8s-6.5-.8-6.5-1.8v-1.2c0-.2.2-.3.5-.3z" fill="#D97706"/>
+  </svg>
   <span class="fab-badge" style="display:none;" id="chatBadge">1</span>
 </button>
 
 <div class="chatbot-window" id="chatbotWindow">
   <div class="chatbot-header">
-    <div class="chatbot-header-avatar">🍔</div>
+    <div class="chatbot-header-avatar">
+      <svg width="22" height="22" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12c0-4 4.5-7.5 10-7.5S25 8 25 12c0 .8-.2 1.2-.4 1.5H5.4C5.2 13.2 5 12.8 5 12z" fill="#D97706"/>
+        <ellipse cx="12" cy="9" rx="1" ry=".6" fill="#FDE68A" transform="rotate(-15 12 9)"/>
+        <ellipse cx="16" cy="8.5" rx="1" ry=".6" fill="#FDE68A" transform="rotate(10 16 8.5)"/>
+        <ellipse cx="19" cy="10" rx=".8" ry=".5" fill="#FDE68A"/>
+        <path d="M4 14c1.5-.8 3.5.5 5.5-.3s3.5.5 5-.1 3 .5 5-.2 3.5.5 4.5.1l-.5 1.2H4.5L4 14z" fill="#22C55E"/>
+        <rect x="5" y="15.5" width="20" height="3.5" rx="1.8" fill="#78350F"/>
+        <path d="M4.5 19h21l1 1.5H3.5l1-1.5z" fill="#FBBF24"/>
+        <path d="M5 20.5h20c.5 0 .8.2.8.5v2c0 1.5-4.2 2.8-10.8 2.8S4.2 24.5 4.2 23v-2c0-.3.3-.5.8-.5z" fill="#D97706"/>
+      </svg>
+    </div>
     <div class="chatbot-header-info">
       <h4>BURGERBOT</h4>
       <small id="chatbotStatus">Dein persönlicher Burger-Berater</small>
     </div>
+    <button class="chatbot-close" onclick="openApiKeyModal()" aria-label="GPT-Modus" title="GPT-Modus aktivieren" style="opacity:.7;font-size:.9rem;">⚙️</button>
     <button class="chatbot-close" onclick="toggleChatbot()" aria-label="Chat schließen">✕</button>
   </div>
   <div class="chatbot-messages" id="chatMessages"></div>
@@ -4002,35 +4075,193 @@ document.addEventListener('DOMContentLoaded', () => {
   <div class="apikey-box">
     <h3>🔑 API-Key eingeben</h3>
     <p>
-      Damit der BurgerBot funktioniert, wird ein OpenAI API-Key benötigt.
-      Der Key wird nur in dieser Browser-Session gespeichert und <strong>niemals</strong> an Dritte übertragen.
+      Der BurgerBot funktioniert auch ohne Key (Lokal-Modus mit vordefinierten Antworten).
+      Mit einem OpenAI API-Key schaltest du den <strong>GPT-Modus</strong> frei — freie, intelligente Antworten!
+      Der Key wird nur im RAM gehalten und <strong>niemals</strong> gespeichert.
     </p>
     <input type="password" id="apikeyInput" placeholder="sk-proj-..." autocomplete="off">
     <div class="apikey-actions">
+      <button class="apikey-cancel" onclick="removeApiKey()" id="apikeyRemoveBtn" style="color:#B91C1C;display:none;">Key entfernen</button>
       <button class="apikey-cancel" onclick="closeApiKeyModal()">Abbrechen</button>
-      <button class="apikey-save" onclick="saveApiKey()">Speichern & Starten</button>
+      <button class="apikey-save" onclick="saveApiKey()">GPT aktivieren</button>
     </div>
   </div>
 </div>
 
 <script>
 // =============================================================================
-// CHATBOT — OpenAI GPT Integration (API key held in-memory only, never persisted)
+// CHATBOT — Hybrid: Rule-Based (default) + OpenAI GPT (optional upgrade)
 // =============================================================================
 let chatbotOpen = false;
-let chatApiKey = null; // In-memory only. Never saved to disk/localStorage.
+let chatApiKey = null;   // In-memory only — never persisted!
 let chatHistory = [];
 let chatInitialized = false;
+let chatMode = 'local';  // 'local' or 'gpt'
 
+// ---------------------------------------------------------------------------
+// TIME-BASED CONTEXT
+// ---------------------------------------------------------------------------
 function getTimeGreeting() {
   const h = new Date().getHours();
-  if (h < 10) return { greeting: 'Guten Morgen', meal: 'Frühstück', suggestion: 'Wie wäre es mit einem leckeren Frühstück? Unsere Pancakes und der Kaffee sind legendär!' };
-  if (h < 14) return { greeting: 'Mahlzeit', meal: 'Mittagessen', suggestion: 'Perfekte Zeit für einen saftigen Burger! Der Classic Smash oder der Double Burger sind unsere Bestseller.' };
-  if (h < 17) return { greeting: 'Hallo', meal: 'Snack', suggestion: 'Zeit für einen Nachmittags-Snack? Unsere Nuggets mit BBQ-Sauce oder ein erfrischendes Eis wären ideal!' };
-  if (h < 21) return { greeting: 'Guten Abend', meal: 'Abendessen', suggestion: 'Feierabend-Hunger? Gönn dir den BBQ Bacon Burger oder den Crispy Chicken Deluxe — dazu ein kühles Bier!' };
-  return { greeting: 'Noch wach?', meal: 'Late-Night-Snack', suggestion: 'Spät-Hunger? Unser Double Burger und die Loaded Fries stillen jeden Heißhunger!' };
+  if (h < 10) return { greeting: 'Guten Morgen', meal: 'Frühstück', suggestion: 'Wie wäre es mit einem leckeren Frühstück? Unsere Pancakes und der Kaffee sind legendär!', period: 'morning' };
+  if (h < 14) return { greeting: 'Mahlzeit', meal: 'Mittagessen', suggestion: 'Perfekte Zeit für einen saftigen Burger! Der Classic Smash oder der Double Burger sind unsere Bestseller.', period: 'lunch' };
+  if (h < 17) return { greeting: 'Hallo', meal: 'Snack', suggestion: 'Zeit für einen Nachmittags-Snack? Unsere Nuggets mit BBQ-Sauce oder ein erfrischendes Eis wären ideal!', period: 'afternoon' };
+  if (h < 21) return { greeting: 'Guten Abend', meal: 'Abendessen', suggestion: 'Feierabend-Hunger? Gönn dir den BBQ Bacon Burger oder den Crispy Chicken Deluxe — dazu ein kühles Bier!', period: 'evening' };
+  return { greeting: 'Noch wach?', meal: 'Late-Night-Snack', suggestion: 'Spät-Hunger? Unser Double Burger stillt jeden Heißhunger!', period: 'night' };
 }
 
+// ---------------------------------------------------------------------------
+// RULE-BASED ENGINE
+// ---------------------------------------------------------------------------
+function getLocalReply(text) {
+  const q = text.toLowerCase().trim();
+  const t = getTimeGreeting();
+
+  // Greetings
+  if (/^(hi|hallo|hey|moin|servus|guten\s?(morgen|tag|abend)|grüß)/.test(q)) {
+    return `${t.greeting}! 👋 Willkommen bei BurgerMetrics! ${t.suggestion} Was kann ich für dich tun?`;
+  }
+
+  // Menu / Speisekarte
+  if (/speisekarte|menu|karte|was gibt|angebot|was habt ihr/.test(q)) {
+    const cats = {};
+    if (typeof PRODUCTS !== 'undefined') {
+      PRODUCTS.forEach(p => { if (!cats[p.cat]) cats[p.cat] = []; cats[p.cat].push(p); });
+      let reply = 'Unsere Speisekarte umfasst:\n\n';
+      Object.entries(cats).forEach(([cat, items]) => {
+        reply += `🍽️ ${cat}: ${items.map(i => i.name).join(', ')}\n`;
+      });
+      reply += '\nFrag mich gerne nach Details zu einem bestimmten Produkt!';
+      return reply;
+    }
+    return 'Wir haben eine große Auswahl an Burgern, Beilagen, Getränken und Desserts. Schau dir unsere Speisekarte oben an!';
+  }
+
+  // Specific product search
+  if (typeof PRODUCTS !== 'undefined') {
+    const found = PRODUCTS.find(p => q.includes(p.name.toLowerCase()) || q.includes(p.name.split(' ')[0].toLowerCase()));
+    if (found) {
+      return `${found.name} (${found.cat}) — ${found.desc}\n\nPreis: €${found.price.toFixed(2)} | ${found.cal} kcal\nAllergene: ${found.allergens}`;
+    }
+  }
+
+  // Recommendations / Empfehlungen
+  if (/empfehl|tipp|vorschlag|was soll ich|bestell|favorit|beliebt|bestseller/.test(q)) {
+    const recs = {
+      morning: 'Morgens empfehle ich unsere Pancakes mit Ahornsirup und einen frischen Kaffee ☕',
+      lunch: 'Zur Mittagszeit ist der Classic Smash Burger unser absoluter Bestseller — dazu Medium Fries und eine Cola! 🍔',
+      afternoon: 'Am Nachmittag sind die Chicken Nuggets mit BBQ-Dip der perfekte Snack. Dazu ein Eis? 🍗',
+      evening: 'Abends empfehle ich den Bacon King mit Large Fries und einem kühlen Bier. Feierabend-Menü! 🥓',
+      night: 'Spät am Abend? Der Double Burger stillt jeden Heißhunger! 🌙'
+    };
+    return recs[t.period] || recs.lunch;
+  }
+
+  // Prices
+  if (/preis|kosten|was kostet|wie teuer|günstig|billig/.test(q)) {
+    if (typeof PRODUCTS !== 'undefined') {
+      const burgers = PRODUCTS.filter(p => p.cat === 'Burger');
+      const cheapest = burgers.reduce((a, b) => a.price < b.price ? a : b);
+      const dearest = burgers.reduce((a, b) => a.price > b.price ? a : b);
+      return `Unsere Burger-Preise reichen von €${cheapest.price.toFixed(2)} (${cheapest.name}) bis €${dearest.price.toFixed(2)} (${dearest.name}). Fragen nach einem bestimmten Produkt? Ich kenne alle Preise!`;
+    }
+    return 'Unsere Preise findest du auf der Speisekarte oben. Frag mich gerne nach einem bestimmten Produkt!';
+  }
+
+  // Vegan / Vegetarisch
+  if (/vegan|vegetarisch|pflanzlich|veggie|ohne fleisch/.test(q)) {
+    if (typeof PRODUCTS !== 'undefined') {
+      const veg = PRODUCTS.filter(p => p.tags && (p.tags.includes('veg') || p.tags.includes('vegan')));
+      return `Wir haben ${veg.length} vegetarische/vegane Optionen: ${veg.map(p => p.name).join(', ')}. Unser Veggie Burger ist besonders beliebt! 🌿`;
+    }
+    return 'Wir haben mehrere vegetarische und vegane Optionen — schau in der Speisekarte unter dem Filter "Veggie"!';
+  }
+
+  // Allergies
+  if (/allergi|glutenfrei|laktose|unverträglichkeit|inhaltsstoff/.test(q)) {
+    return '⚠️ Hinweis: Dies ist eine Demo-Website. Allergene sind bei jedem Produkt angegeben, aber für echte Allergie-Informationen kontaktiere bitte immer das Filialpersonal direkt. Deine Gesundheit geht vor!';
+  }
+
+  // Locations / Filialen
+  if (/filiale|standort|wo seid|adresse|öffnungszeit|wo ist|location|in der nähe/.test(q)) {
+    if (typeof BRANCHES !== 'undefined') {
+      let reply = 'Unsere 8 Filialen in Würzburg:\n\n';
+      BRANCHES.forEach(b => {
+        reply += `📍 ${b.name} — ${b.address}\n   ${b.hours}${b.dt ? ' | Drive-Through' : ''}\n`;
+      });
+      reply += '\nScrolle zum Standorte-Bereich für die interaktive Karte!';
+      return reply;
+    }
+    return 'Wir haben 8 Filialen in Würzburg — schau auf unserer Standortkarte weiter unten!';
+  }
+
+  // App
+  if (/app|treuepunkt|loyalty|punkte|rabatt|coupon|gutschein/.test(q)) {
+    return 'Mit der BurgerMetrics App sammelst du bei jedem Einkauf Treuepunkte! 📱 Dazu gibt es 10% Willkommensrabatt, exklusive Coupons und ein 25% Geburtstags-Special. Vorbestellen & abholen spart Zeit!';
+  }
+
+  // Opening hours
+  if (/öffnungszeit|geöffnet|auf haben|wann offen|wann zu/.test(q)) {
+    return 'Die meisten Filialen haben Mo-Do 10-22 Uhr und Fr-Sa 10-23 Uhr geöffnet. Der Hauptbahnhof hat täglich 7-23 Uhr und die Uni-Filiale Mo-Fr 8-20 Uhr. Details findest du bei den einzelnen Standorten!';
+  }
+
+  // Delivery
+  if (/liefer|bestell|online|bring|deliver/.test(q)) {
+    return 'Du kannst über die BurgerMetrics App vorbestellen und in jeder Filiale abholen. Drive-Through gibt es in Heidingsfeld und Lengfeld! 🚗';
+  }
+
+  // Jobs
+  if (/job|arbeit|stell|karriere|bewerb|mitarbeit/.test(q)) {
+    return 'Wir suchen immer motivierte Teammitglieder! Bewirb dich direkt in deiner Wunschfiliale oder über die Website. Faire Bezahlung, Burger-Flatrate und ein tolles Team warten auf dich! 💪';
+  }
+
+  // Payment
+  if (/bezahl|zahlung|karte|bar|ec|kredit|apple pay|google pay|mobile pay/.test(q)) {
+    return 'Wir akzeptieren Barzahlung, EC-Karte, Kreditkarte und Mobile Payment (Apple Pay, Google Pay). In der App kannst du auch direkt digital bezahlen! 💳';
+  }
+
+  // Calories / Kalorien
+  if (/kalorie|kcal|nährwert|gesund|diät/.test(q)) {
+    if (typeof PRODUCTS !== 'undefined') {
+      const sorted = [...PRODUCTS].sort((a, b) => a.cal - b.cal);
+      const light = sorted.slice(0, 3).map(p => `${p.name} (${p.cal} kcal)`).join(', ');
+      return `Unsere leichtesten Optionen: ${light}. Alle Kalorienangaben findest du auf den Produktkarten in der Speisekarte!`;
+    }
+    return 'Kalorien sind bei jedem Produkt auf der Speisekarte angegeben!';
+  }
+
+  // Fun / Easter eggs
+  if (/bester burger|nummer 1|king|champion/.test(q)) {
+    return 'Ganz klar: Der Bacon King ist unser Publikumsliebling! 🏆 Aber der Classic Smash hat auch eine riesige Fangemeinde. Probier am besten beide und entscheide selbst!';
+  }
+
+  // GPT mode info
+  if (/gpt|ai|ki|künstliche|openai|chatgpt|upgrade/.test(q)) {
+    return '💡 Ich arbeite gerade im lokalen Modus mit vordefinierten Antworten. Wenn du einen OpenAI API-Key hast, klicke auf das ⚙️ Symbol oben im Chat — dann schalte ich auf GPT-4o-mini um und kann frei antworten!';
+  }
+
+  // Thank you
+  if (/danke|thanks|thx|merci|top|super|cool|geil|nice/.test(q)) {
+    return 'Gerne! 😊 Wenn du noch Fragen hast, bin ich hier. Guten Appetit!';
+  }
+
+  // Goodbye
+  if (/tschüss|bye|ciao|bis bald|auf wiedersehen/.test(q)) {
+    return 'Bis bald! 👋 Wir freuen uns auf deinen nächsten Besuch bei BurgerMetrics!';
+  }
+
+  // Fallback
+  const fallbacks = [
+    `Hmm, darauf habe ich leider keine passende Antwort. Aber ich kann dir bei Speisekarte, Filialen, Empfehlungen, Preisen oder der App helfen! Was interessiert dich?`,
+    `Das liegt leider außerhalb meines Spezialgebiets 🍔 Frag mich gerne nach unseren Burgern, Standorten oder Öffnungszeiten!`,
+    `Gute Frage! Dafür bin ich leider nicht trainiert. Aber versuch mal: "Was empfiehlst du?" oder "Welche Filialen gibt es?"`,
+  ];
+  return fallbacks[Math.floor(Math.random() * fallbacks.length)] + '\n\n💡 Tipp: Mit einem OpenAI API-Key (⚙️) kann ich frei antworten!';
+}
+
+// ---------------------------------------------------------------------------
+// UI FUNCTIONS
+// ---------------------------------------------------------------------------
 function toggleChatbot() {
   chatbotOpen = !chatbotOpen;
   document.getElementById('chatbotWindow').classList.toggle('open', chatbotOpen);
@@ -4040,6 +4271,7 @@ function toggleChatbot() {
     chatInitialized = true;
     const t = getTimeGreeting();
     addBotMessage(`${t.greeting}! 👋 Ich bin der BurgerBot von BurgerMetrics.\n\n${t.suggestion}\n\nFrag mich alles über unsere Speisekarte, Filialen, Allergene oder Empfehlungen!`);
+    updateModeIndicator();
   }
 
   if (chatbotOpen) {
@@ -4080,6 +4312,26 @@ function removeTypingIndicator() {
   if (el) el.remove();
 }
 
+function updateModeIndicator() {
+  const status = document.getElementById('chatbotStatus');
+  if (chatMode === 'gpt' && chatApiKey) {
+    status.textContent = '🟢 GPT-Modus aktiv';
+    status.style.color = '#90EE90';
+  } else {
+    status.textContent = '📋 Lokal-Modus • ⚙️ für GPT';
+    status.style.color = '';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// API KEY MANAGEMENT
+// ---------------------------------------------------------------------------
+function openApiKeyModal() {
+  document.getElementById('apikeyModal').classList.add('open');
+  document.getElementById('apikeyRemoveBtn').style.display = chatApiKey ? 'block' : 'none';
+  setTimeout(() => document.getElementById('apikeyInput').focus(), 300);
+}
+
 function closeApiKeyModal() {
   document.getElementById('apikeyModal').classList.remove('open');
 }
@@ -4090,18 +4342,25 @@ function saveApiKey() {
     document.getElementById('apikeyInput').style.borderColor = '#FF3B3B';
     return;
   }
-  chatApiKey = key; // Stored in JS variable only — never persisted!
-  document.getElementById('apikeyInput').value = ''; // Clear the input
+  chatApiKey = key;
+  chatMode = 'gpt';
+  document.getElementById('apikeyInput').value = '';
   closeApiKeyModal();
-  document.getElementById('chatbotStatus').textContent = 'Verbunden ✓';
-  // Re-send the pending message
-  if (window._pendingChatMsg) {
-    const msg = window._pendingChatMsg;
-    window._pendingChatMsg = null;
-    actualSendMessage(msg);
-  }
+  updateModeIndicator();
+  addBotMessage('🚀 GPT-Modus aktiviert! Ich kann jetzt frei und intelligent auf alle Fragen antworten. Probier es aus!');
 }
 
+function removeApiKey() {
+  chatApiKey = null;
+  chatMode = 'local';
+  closeApiKeyModal();
+  updateModeIndicator();
+  addBotMessage('📋 Zurück im Lokal-Modus. Ich beantworte deine Fragen mit vordefinierten Antworten.');
+}
+
+// ---------------------------------------------------------------------------
+// SEND MESSAGE (hybrid dispatch)
+// ---------------------------------------------------------------------------
 async function sendChatMessage() {
   const input = document.getElementById('chatInput');
   const text = input.value.trim();
@@ -4110,22 +4369,31 @@ async function sendChatMessage() {
   input.value = '';
   addUserMessage(text);
 
-  // If no API key yet, prompt for it
-  if (!chatApiKey) {
-    window._pendingChatMsg = text;
-    document.getElementById('apikeyModal').classList.add('open');
-    setTimeout(() => document.getElementById('apikeyInput').focus(), 300);
-    return;
+  // Log to data mode event stream
+  if (typeof logEvent === 'function') {
+    logEvent('CHATBOT', `mode=${chatMode} msg="${text.substring(0,25)}..."`);
   }
 
-  await actualSendMessage(text);
+  if (chatMode === 'gpt' && chatApiKey) {
+    await sendGptMessage(text);
+  } else {
+    // Local mode: simulate short typing delay for realism
+    addTypingIndicator();
+    setTimeout(() => {
+      removeTypingIndicator();
+      const reply = getLocalReply(text);
+      addBotMessage(reply);
+    }, 400 + Math.random() * 600);
+  }
 }
 
-async function actualSendMessage(text) {
+// ---------------------------------------------------------------------------
+// GPT MODE
+// ---------------------------------------------------------------------------
+async function sendGptMessage(text) {
   const sendBtn = document.getElementById('chatSendBtn');
   sendBtn.disabled = true;
 
-  // Build menu context for the system prompt
   const menuContext = typeof PRODUCTS !== 'undefined'
     ? PRODUCTS.map(p => `${p.name} (${p.cat}) – €${p.price.toFixed(2)}`).join(', ')
     : 'Diverse Burger, Beilagen, Getränke und Desserts';
@@ -4136,22 +4404,19 @@ async function actualSendMessage(text) {
 
   const t = getTimeGreeting();
 
-  // System prompt: BurgerBot persona
   const systemPrompt = `Du bist der BurgerBot, der freundliche KI-Assistent der Burger-Kette BurgerMetrics GmbH in Würzburg.
 Aktuelle Tageszeit: ${t.meal}-Zeit (${new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})}).
 Unsere Speisekarte: ${menuContext}.
 Unsere Filialen: ${branchContext}.
 Regeln:
 - Antworte kurz, freundlich und auf Deutsch.
-- Mache tageszeitabhängige Empfehlungen (morgens: Frühstück, mittags: Burger, abends: große Menüs + Bier).
+- Mache tageszeitabhängige Empfehlungen.
 - Informiere bei Allergie-Fragen ehrlich, dass dies eine Demo ist und echte Allergiker immer Fachpersonal fragen sollten.
-- Kenne unsere 8 Filialen und hilf mit Wegbeschreibungen.
 - Erwähne bei passender Gelegenheit die BurgerMetrics App und das Treueprogramm.
 - Antworte nie mit mehr als 3-4 Sätzen, außer bei detaillierten Nachfragen.
 - Verwende gelegentlich ein Emoji, aber übertreibe nicht.`;
 
   chatHistory.push({ role: 'user', content: text });
-
   addTypingIndicator();
 
   try {
@@ -4165,7 +4430,7 @@ Regeln:
         model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
-          ...chatHistory.slice(-10) // Keep last 10 messages for context
+          ...chatHistory.slice(-10)
         ],
         max_tokens: 300,
         temperature: 0.8
@@ -4178,34 +4443,32 @@ Regeln:
       const err = await response.json().catch(() => ({}));
       if (response.status === 401) {
         chatApiKey = null;
-        document.getElementById('chatbotStatus').textContent = 'Ungültiger API-Key';
-        addBotMessage('⚠️ Der API-Key ist ungültig. Bitte beim nächsten Versuch einen gültigen Key eingeben.');
+        chatMode = 'local';
+        updateModeIndicator();
+        addBotMessage('⚠️ API-Key ungültig — wechsle zurück auf Lokal-Modus. Du kannst über ⚙️ einen neuen Key eingeben.');
       } else {
-        addBotMessage(`⚠️ Fehler: ${err.error?.message || 'Unbekannter Fehler'}. Bitte versuche es erneut.`);
+        addBotMessage(`⚠️ API-Fehler: ${err.error?.message || 'Unbekannt'}. Ich beantworte das lokal:`);
+        addBotMessage(getLocalReply(text));
       }
       sendBtn.disabled = false;
       return;
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || 'Hmm, da ist etwas schiefgelaufen. Probier es nochmal!';
+    const reply = data.choices?.[0]?.message?.content || 'Hmm, da ist etwas schiefgelaufen.';
     chatHistory.push({ role: 'assistant', content: reply });
     addBotMessage(reply);
 
-    // Log to data mode event stream
-    if (typeof logEvent === 'function') {
-      logEvent('CHATBOT', `user="${text.substring(0,30)}..."`);
-    }
-
   } catch (err) {
     removeTypingIndicator();
-    addBotMessage('⚠️ Verbindungsfehler. Bitte prüfe deine Internetverbindung und versuche es erneut.');
+    addBotMessage('⚠️ Verbindungsfehler — beantworte lokal:');
+    addBotMessage(getLocalReply(text));
   }
 
   sendBtn.disabled = false;
 }
 
-// Auto-show badge after 5 seconds if chat not opened
+// Auto-show badge after 5 seconds
 setTimeout(() => {
   if (!chatbotOpen) {
     document.getElementById('chatBadge').style.display = 'flex';
