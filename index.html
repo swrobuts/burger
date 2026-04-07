@@ -284,6 +284,8 @@ ul { list-style: none; }
   background:
     linear-gradient(135deg, rgba(28,25,23,.85) 0%, rgba(28,25,23,.5) 50%, rgba(28,25,23,.7) 100%),
     url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=1600&q=80') center/cover no-repeat;
+  will-change: transform;
+  transform: translateZ(0);
 }
 .hero-content {
   position: relative;
@@ -1448,6 +1450,8 @@ ul { list-style: none; }
   opacity: .12;
   animation: floatAround 18s ease-in-out infinite;
   filter: blur(1px);
+  will-change: transform;
+  contain: layout style;
 }
 .floater:nth-child(1) { top: 15%; right: 8%; animation-delay: 0s; animation-duration: 20s; }
 .floater:nth-child(2) { top: 60%; right: 15%; animation-delay: -4s; animation-duration: 16s; }
@@ -1721,6 +1725,10 @@ body:hover #cursorGlow { opacity: 1; }
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+.menu-card-img.img-loaded {
+  animation: none;
+  background: var(--stone-200);
+}
 @keyframes shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
@@ -1807,10 +1815,12 @@ body.data-mode::after {
   pointer-events: none;
   z-index: 1100;
   animation: scanlines 8s linear infinite;
+  will-change: transform;
+  contain: strict;
 }
 @keyframes scanlines {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(4px); }
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(0, 4px, 0); }
 }
 
 /* Data Annotations */
@@ -2263,6 +2273,258 @@ body.data-mode .data-schema-mini { display: block; }
   .data-annotation { max-width: 280px; font-size: .72rem; }
   .data-compare-grid { grid-template-columns: 1fr; }
   .data-header-bar { display: none !important; }
+  .chatbot { right: 16px; bottom: 16px; }
+  .chatbot-window { width: calc(100vw - 32px); right: 0; bottom: 70px; }
+}
+
+/* ============================================
+   CHATBOT ASSISTANT
+   ============================================ */
+.chatbot-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  box-shadow: 0 6px 30px rgba(185,28,28,.4);
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.chatbot-fab:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 40px rgba(185,28,28,.5);
+}
+.chatbot-fab .fab-badge {
+  position: absolute;
+  top: -2px; right: -2px;
+  width: 18px; height: 18px;
+  background: var(--gold-light);
+  color: var(--charcoal);
+  border-radius: 50%;
+  font-size: .6rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chatbot-window {
+  position: fixed;
+  bottom: 100px;
+  right: 32px;
+  width: 380px;
+  max-height: 520px;
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(0,0,0,.05);
+  z-index: 2001;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(20px) scale(.95);
+  pointer-events: none;
+  transition: all .3s cubic-bezier(.4,0,.2,1);
+}
+.chatbot-window.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.chatbot-header {
+  background: linear-gradient(135deg, var(--red), var(--red-dark));
+  color: var(--white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.chatbot-header-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.chatbot-header-info h4 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  margin: 0;
+}
+.chatbot-header-info small {
+  font-size: .72rem;
+  opacity: .7;
+}
+.chatbot-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .2s;
+  padding: 4px;
+}
+.chatbot-close:hover { opacity: 1; }
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 280px;
+  max-height: 340px;
+  background: #fafafa;
+}
+.chat-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: .88rem;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+.chat-msg.bot {
+  align-self: flex-start;
+  background: var(--white);
+  color: var(--charcoal);
+  border: 1px solid var(--stone-200);
+  border-bottom-left-radius: 4px;
+}
+.chat-msg.user {
+  align-self: flex-end;
+  background: var(--red);
+  color: var(--white);
+  border-bottom-right-radius: 4px;
+}
+.chat-msg.bot .typing-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.chat-msg.bot .typing-dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--stone-400);
+  animation: typingBounce .6s ease-in-out infinite;
+}
+.chat-msg.bot .typing-dots span:nth-child(2) { animation-delay: .15s; }
+.chat-msg.bot .typing-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes typingBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.chatbot-input-area {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--stone-200);
+  background: var(--white);
+}
+.chatbot-input {
+  flex: 1;
+  border: 1px solid var(--stone-200);
+  border-radius: 24px;
+  padding: 10px 16px;
+  font-size: .88rem;
+  font-family: var(--font-body);
+  outline: none;
+  transition: border-color .2s;
+}
+.chatbot-input:focus { border-color: var(--red); }
+.chatbot-send {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .9rem;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.chatbot-send:hover { background: var(--red-dark); }
+.chatbot-send:disabled { background: var(--stone-400); cursor: not-allowed; }
+
+/* API Key modal */
+.apikey-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  z-index: 3000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
+}
+.apikey-modal.open { display: flex; }
+.apikey-box {
+  background: var(--white);
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: var(--shadow-xl);
+}
+.apikey-box h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+.apikey-box p {
+  font-size: .88rem;
+  color: var(--stone-600);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+.apikey-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--stone-200);
+  border-radius: var(--radius);
+  font-family: 'Courier New', monospace;
+  font-size: .82rem;
+  margin-bottom: 16px;
+  outline: none;
+}
+.apikey-box input:focus { border-color: var(--red); }
+.apikey-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+.apikey-actions button {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: .88rem;
+  font-weight: 600;
+}
+.apikey-save {
+  background: var(--red);
+  color: var(--white);
+  border: none;
+}
+.apikey-save:hover { background: var(--red-dark); }
+.apikey-cancel {
+  background: none;
+  border: 1px solid var(--stone-200);
+  color: var(--stone-600);
 }
 </style>
 </head>
@@ -2461,7 +2723,7 @@ body.data-mode .data-schema-mini { display: block; }
     <div class="section-divider fade-up"></div>
     <h2 class="section-title fade-up">DAS VOLLE PROGRAMM</h2>
     <p class="section-subtitle">
-      Vom saftigen Classic Burger bis zum Vegan Beyond — bei uns findet jeder
+      Vom saftigen Classic Burger bis zum Veggie Burger — bei uns findet jeder
       seinen Favoriten. Alle Nährwerte auf einen Blick.
     </p>
     <div class="menu-filters">
@@ -3035,9 +3297,6 @@ const PRODUCTS = [
   {id:5,name:"Chicken Burger",cat:"Burger",sub:"Chicken",price:6.49,cal:510,img:"photo-1606755962773-d324e0a13086",desc:"Zartes Hähnchenbrustfilet, knusprig paniert, mit Coleslaw.",tags:[],allergens:"Gluten, Sesam"},
   {id:6,name:"Crispy Chicken Deluxe",cat:"Burger",sub:"Chicken",price:7.49,cal:620,img:"photo-1513185158878-8d8c2a2a3da3",desc:"Crispy Chicken mit Jalapeños, Avocado-Creme und Rucola.",tags:["new"],allergens:"Gluten, Sesam, Ei"},
   {id:7,name:"Veggie Burger",cat:"Burger",sub:"Vegetarian",price:5.99,cal:420,img:"photo-1525059696034-4967a8e1dca2",desc:"Hausgemachtes Gemüse-Patty mit Röstzwiebeln und Kräuterquark.",tags:["veg"],allergens:"Gluten, Sesam, Soja"},
-  {id:8,name:"Vegan Beyond Burger",cat:"Burger",sub:"Vegan",price:8.49,cal:460,img:"photo-1614961233913-a5113e3b3bfc",desc:"Plant-Based Patty, vegane Sauce, Avocado. 100% pflanzlich, 100% Geschmack.",tags:["vegan","new"],allergens:"Gluten, Sesam, Soja"},
-  {id:10,name:"Kids Burger",cat:"Burger",sub:"Kids",price:3.49,cal:320,img:"photo-1572802419224-296b0aeee0d9",desc:"Kleiner Burger für kleine Gäste. Mit Apfelsaft oder Milch.",tags:[],allergens:"Gluten, Sesam"},
-  {id:11,name:"Small Fries",cat:"Side",sub:"Fries",price:2.29,cal:230,img:"photo-1529589510304-b7e994a92f60",desc:"Knusprige Pommes, goldbraun frittiert.",tags:["veg","vegan"],allergens:"—"},
   {id:12,name:"Medium Fries",cat:"Side",sub:"Fries",price:2.99,cal:340,img:"photo-1573080496219-bb080dd4f877",desc:"Die perfekte Beilage in der beliebten Größe.",tags:["popular","veg"],allergens:"—"},
   {id:13,name:"Large Fries",cat:"Side",sub:"Fries",price:3.49,cal:480,img:"photo-1598679253544-2c97992403ea",desc:"Für die, die nicht genug kriegen können.",tags:["veg","vegan"],allergens:"—"},
   {id:14,name:"Chicken Nuggets 6pc",cat:"Side",sub:"Nuggets",price:3.99,cal:290,img:"photo-1562967916-eb82221dfb92",desc:"6 knusprige Nuggets mit Dip nach Wahl.",tags:["popular"],allergens:"Gluten, Ei"},
@@ -3336,12 +3595,9 @@ BRANCHES.forEach(b => {
 });
 
 // =============================================================================
-// NAVIGATION SCROLL
+// NAVIGATION SCROLL (consolidated in unified scroll handler below)
 // =============================================================================
 const nav = document.getElementById('nav');
-window.addEventListener('scroll', () => {
-  nav.classList.toggle('scrolled', window.scrollY > 60);
-});
 
 // Mobile toggle
 document.getElementById('navToggle').addEventListener('click', () => {
@@ -3410,7 +3666,7 @@ function toggleDataMode() {
   document.body.classList.toggle('data-mode', dataMode);
 
   if (dataMode) {
-    showToast('🔬 Datenperspektive aktiviert — Willkommen, Nerd!');
+    showToast('🔬 Datenperspektive aktiviert — Willkommen, Data Expert!');
     // Start simulated event counter
     startEventCounter();
   } else {
@@ -3470,12 +3726,7 @@ document.addEventListener('click', (e) => {
   const navLink = e.target.closest('.nav-links a');
   if (navLink) logEvent('NAV', `href="${navLink.getAttribute('href')}"`);
 });
-document.addEventListener('scroll', () => {
-  if (!dataMode) return;
-  const pct = Math.round((document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100);
-  // Only log at 25% intervals
-  if (pct % 25 === 0 && pct > 0) logEvent('SCROLL', `depth=${pct}%`);
-}, { passive: true });
+// Data mode scroll logging is now handled in the unified scroll handler above.
 
 // =============================================================================
 // PAGE LOADER
@@ -3497,35 +3748,87 @@ heroStyle.textContent = `
 document.head.appendChild(heroStyle);
 
 // =============================================================================
-// SCROLL PROGRESS BAR
+// UNIFIED SCROLL HANDLER (prevents jitter from multiple listeners)
 // =============================================================================
 const scrollProgress = document.getElementById('scrollProgress');
+let scrollTicking = false;
 window.addEventListener('scroll', () => {
-  const h = document.documentElement;
-  const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-  scrollProgress.style.width = pct + '%';
+  if (!scrollTicking) {
+    requestAnimationFrame(() => {
+      const h = document.documentElement;
+      const scrollY = window.scrollY;
+      const maxScroll = h.scrollHeight - h.clientHeight;
+      const pct = maxScroll > 0 ? (h.scrollTop / maxScroll) * 100 : 0;
+
+      // Scroll progress bar
+      scrollProgress.style.width = pct + '%';
+
+      // Nav scroll state
+      nav.classList.toggle('scrolled', scrollY > 60);
+
+      // Back to top button
+      backToTop.classList.toggle('visible', scrollY > 600);
+
+      // Scroll spy (active nav link)
+      let current = '';
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 150;
+        if (scrollY >= top) current = sec.getAttribute('id');
+      });
+      document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold-light)' : '';
+      });
+
+      // Parallax images
+      document.querySelectorAll('.parallax-img').forEach(img => {
+        const rect = img.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          const progress = (rect.top + rect.height) / (window.innerHeight + rect.height);
+          const offset = (progress - .5) * 30;
+          img.style.transform = `translateY(${offset}px) scale(1.08)`;
+        }
+      });
+
+      // Data mode scroll logging
+      if (dataMode) {
+        const pctRound = Math.round(pct);
+        if (pctRound % 25 === 0 && pctRound > 0) logEvent('SCROLL', `depth=${pctRound}%`);
+      }
+
+      scrollTicking = false;
+    });
+    scrollTicking = true;
+  }
 }, { passive: true });
 
 // =============================================================================
-// CURSOR GLOW
+// CURSOR GLOW (optimized: only animates when mouse moves)
 // =============================================================================
 const cursorGlow = document.getElementById('cursorGlow');
-let cursorX = 0, cursorY = 0, glowX = 0, glowY = 0;
+let cursorX = 0, cursorY = 0, glowX = 0, glowY = 0, cursorMoving = false;
 document.addEventListener('mousemove', e => {
   cursorX = e.clientX;
   cursorY = e.clientY;
+  if (!cursorMoving) {
+    cursorMoving = true;
+    animateCursorGlow();
+  }
 });
 function animateCursorGlow() {
   glowX += (cursorX - glowX) * .08;
   glowY += (cursorY - glowY) * .08;
   cursorGlow.style.left = glowX + 'px';
   cursorGlow.style.top = glowY + 'px';
-  requestAnimationFrame(animateCursorGlow);
+  // Stop loop when glow has caught up to cursor (within 1px)
+  if (Math.abs(cursorX - glowX) > 0.5 || Math.abs(cursorY - glowY) > 0.5) {
+    requestAnimationFrame(animateCursorGlow);
+  } else {
+    cursorMoving = false;
+  }
 }
-animateCursorGlow();
 
 // =============================================================================
-// HERO PARALLAX ON MOUSE MOVE
+// HERO PARALLAX ON MOUSE MOVE (fixed: no longer fights floater CSS animation)
 // =============================================================================
 const heroBg = document.getElementById('heroBg');
 const hero = document.getElementById('hero');
@@ -3534,11 +3837,8 @@ hero.addEventListener('mousemove', e => {
   const x = (e.clientX - rect.left) / rect.width - .5;
   const y = (e.clientY - rect.top) / rect.height - .5;
   heroBg.style.transform = `scale(1.05) translate(${x * -20}px, ${y * -15}px)`;
-  // Move floaters in opposite direction
-  document.querySelectorAll('.floater').forEach((f, i) => {
-    const speed = (i + 1) * 8;
-    f.style.transform = `translate(${x * speed}px, ${y * speed}px)`;
-  });
+  // NOTE: Floaters no longer get JS transform — their CSS animation handles movement.
+  // The old code set .style.transform which fought with the @keyframes floatAround.
 });
 hero.addEventListener('mouseleave', () => {
   heroBg.style.transform = 'scale(1.05) translate(0, 0)';
@@ -3572,7 +3872,7 @@ function initTilt() {
   });
 }
 
-// Re-init tilt after menu render
+// Re-init tilt after menu render, stop shimmer on image load
 const origRenderMenu = renderMenu;
 renderMenu = function(filter) {
   origRenderMenu(filter);
@@ -3580,7 +3880,14 @@ renderMenu = function(filter) {
   document.querySelectorAll('.menu-card').forEach((card, i) => {
     card.style.animationDelay = (i * 0.06) + 's';
   });
-  setTimeout(initTilt, 100);
+  // Stop shimmer once images load
+  document.querySelectorAll('.menu-card-img img').forEach(img => {
+    const stopShimmer = () => img.closest('.menu-card-img')?.classList.add('img-loaded');
+    if (img.complete) stopShimmer();
+    else img.addEventListener('load', stopShimmer, { once: true });
+  });
+  // Init tilt after card entrance animation finishes (500ms)
+  setTimeout(initTilt, 600);
 };
 renderMenu(activeFilter);
 
@@ -3597,28 +3904,8 @@ document.querySelectorAll('.value-card').forEach(card => {
   });
 });
 
-// =============================================================================
-// PARALLAX IMAGES ON SCROLL
-// =============================================================================
-function updateParallax() {
-  document.querySelectorAll('.parallax-img').forEach(img => {
-    const rect = img.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      const progress = (rect.top + rect.height) / (window.innerHeight + rect.height);
-      const offset = (progress - .5) * 30;
-      img.style.transform = `translateY(${offset}px) scale(1.08)`;
-    }
-  });
-}
-window.addEventListener('scroll', updateParallax, { passive: true });
-
-// =============================================================================
-// BACK TO TOP BUTTON
-// =============================================================================
+// Back to top & sections refs (used in unified scroll handler above)
 const backToTop = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-  backToTop.classList.toggle('visible', window.scrollY > 600);
-}, { passive: true });
 
 // =============================================================================
 // CONFETTI ON ORDER
@@ -3655,20 +3942,8 @@ function launchConfetti() {
   setTimeout(() => { container.innerHTML = ''; }, 4000);
 }
 
-// =============================================================================
-// SMOOTH SCROLL SPY (active nav link)
-// =============================================================================
+// Sections ref (used in unified scroll handler above)
 const sections = document.querySelectorAll('section[id]');
-window.addEventListener('scroll', () => {
-  let current = '';
-  sections.forEach(sec => {
-    const top = sec.offsetTop - 150;
-    if (window.scrollY >= top) current = sec.getAttribute('id');
-  });
-  document.querySelectorAll('.nav-links a[href^="#"]').forEach(a => {
-    a.style.color = a.getAttribute('href') === '#' + current ? 'var(--gold-light)' : '';
-  });
-}, { passive: true });
 
 // =============================================================================
 // ANIMATED NUMBER TICKER (improved)
@@ -3693,6 +3968,249 @@ document.addEventListener('DOMContentLoaded', () => {
   initMap();
   initTilt();
 });
+</script>
+
+<!-- ================================================================
+     CHATBOT ASSISTANT
+     ================================================================ -->
+<button class="chatbot-fab" id="chatbotFab" onclick="toggleChatbot()" aria-label="Chat öffnen">
+  🤖
+  <span class="fab-badge" style="display:none;" id="chatBadge">1</span>
+</button>
+
+<div class="chatbot-window" id="chatbotWindow">
+  <div class="chatbot-header">
+    <div class="chatbot-header-avatar">🍔</div>
+    <div class="chatbot-header-info">
+      <h4>BURGERBOT</h4>
+      <small id="chatbotStatus">Dein persönlicher Burger-Berater</small>
+    </div>
+    <button class="chatbot-close" onclick="toggleChatbot()" aria-label="Chat schließen">✕</button>
+  </div>
+  <div class="chatbot-messages" id="chatMessages"></div>
+  <div class="chatbot-input-area">
+    <input class="chatbot-input" id="chatInput" type="text" placeholder="Frag mich was..." autocomplete="off"
+           onkeydown="if(event.key==='Enter')sendChatMessage()">
+    <button class="chatbot-send" id="chatSendBtn" onclick="sendChatMessage()" aria-label="Senden">
+      <i class="fa-solid fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
+<!-- API Key Modal (appears on first use) -->
+<div class="apikey-modal" id="apikeyModal">
+  <div class="apikey-box">
+    <h3>🔑 API-Key eingeben</h3>
+    <p>
+      Damit der BurgerBot funktioniert, wird ein OpenAI API-Key benötigt.
+      Der Key wird nur in dieser Browser-Session gespeichert und <strong>niemals</strong> an Dritte übertragen.
+    </p>
+    <input type="password" id="apikeyInput" placeholder="sk-proj-..." autocomplete="off">
+    <div class="apikey-actions">
+      <button class="apikey-cancel" onclick="closeApiKeyModal()">Abbrechen</button>
+      <button class="apikey-save" onclick="saveApiKey()">Speichern & Starten</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================================================
+// CHATBOT — OpenAI GPT Integration (API key held in-memory only, never persisted)
+// =============================================================================
+let chatbotOpen = false;
+let chatApiKey = null; // In-memory only. Never saved to disk/localStorage.
+let chatHistory = [];
+let chatInitialized = false;
+
+function getTimeGreeting() {
+  const h = new Date().getHours();
+  if (h < 10) return { greeting: 'Guten Morgen', meal: 'Frühstück', suggestion: 'Wie wäre es mit einem leckeren Frühstück? Unsere Pancakes und der Kaffee sind legendär!' };
+  if (h < 14) return { greeting: 'Mahlzeit', meal: 'Mittagessen', suggestion: 'Perfekte Zeit für einen saftigen Burger! Der Classic Smash oder der Double Burger sind unsere Bestseller.' };
+  if (h < 17) return { greeting: 'Hallo', meal: 'Snack', suggestion: 'Zeit für einen Nachmittags-Snack? Unsere Nuggets mit BBQ-Sauce oder ein erfrischendes Eis wären ideal!' };
+  if (h < 21) return { greeting: 'Guten Abend', meal: 'Abendessen', suggestion: 'Feierabend-Hunger? Gönn dir den BBQ Bacon Burger oder den Crispy Chicken Deluxe — dazu ein kühles Bier!' };
+  return { greeting: 'Noch wach?', meal: 'Late-Night-Snack', suggestion: 'Spät-Hunger? Unser Double Burger und die Loaded Fries stillen jeden Heißhunger!' };
+}
+
+function toggleChatbot() {
+  chatbotOpen = !chatbotOpen;
+  document.getElementById('chatbotWindow').classList.toggle('open', chatbotOpen);
+  document.getElementById('chatBadge').style.display = 'none';
+
+  if (chatbotOpen && !chatInitialized) {
+    chatInitialized = true;
+    const t = getTimeGreeting();
+    addBotMessage(`${t.greeting}! 👋 Ich bin der BurgerBot von BurgerMetrics.\n\n${t.suggestion}\n\nFrag mich alles über unsere Speisekarte, Filialen, Allergene oder Empfehlungen!`);
+  }
+
+  if (chatbotOpen) {
+    setTimeout(() => document.getElementById('chatInput').focus(), 300);
+  }
+}
+
+function addBotMessage(text) {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg bot';
+  msg.textContent = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addUserMessage(text) {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg user';
+  msg.textContent = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addTypingIndicator() {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg bot';
+  msg.id = 'typingIndicator';
+  msg.innerHTML = '<span class="typing-dots"><span></span><span></span><span></span></span>';
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function closeApiKeyModal() {
+  document.getElementById('apikeyModal').classList.remove('open');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apikeyInput').value.trim();
+  if (!key || !key.startsWith('sk-')) {
+    document.getElementById('apikeyInput').style.borderColor = '#FF3B3B';
+    return;
+  }
+  chatApiKey = key; // Stored in JS variable only — never persisted!
+  document.getElementById('apikeyInput').value = ''; // Clear the input
+  closeApiKeyModal();
+  document.getElementById('chatbotStatus').textContent = 'Verbunden ✓';
+  // Re-send the pending message
+  if (window._pendingChatMsg) {
+    const msg = window._pendingChatMsg;
+    window._pendingChatMsg = null;
+    actualSendMessage(msg);
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  addUserMessage(text);
+
+  // If no API key yet, prompt for it
+  if (!chatApiKey) {
+    window._pendingChatMsg = text;
+    document.getElementById('apikeyModal').classList.add('open');
+    setTimeout(() => document.getElementById('apikeyInput').focus(), 300);
+    return;
+  }
+
+  await actualSendMessage(text);
+}
+
+async function actualSendMessage(text) {
+  const sendBtn = document.getElementById('chatSendBtn');
+  sendBtn.disabled = true;
+
+  // Build menu context for the system prompt
+  const menuContext = typeof PRODUCTS !== 'undefined'
+    ? PRODUCTS.map(p => `${p.name} (${p.cat}) – €${p.price.toFixed(2)}`).join(', ')
+    : 'Diverse Burger, Beilagen, Getränke und Desserts';
+
+  const branchContext = typeof BRANCHES !== 'undefined'
+    ? BRANCHES.map(b => `${b.name} (${b.type}): ${b.address}, ${b.hours}`).join('; ')
+    : '8 Filialen in Würzburg';
+
+  const t = getTimeGreeting();
+
+  // System prompt: BurgerBot persona
+  const systemPrompt = `Du bist der BurgerBot, der freundliche KI-Assistent der Burger-Kette BurgerMetrics GmbH in Würzburg.
+Aktuelle Tageszeit: ${t.meal}-Zeit (${new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})}).
+Unsere Speisekarte: ${menuContext}.
+Unsere Filialen: ${branchContext}.
+Regeln:
+- Antworte kurz, freundlich und auf Deutsch.
+- Mache tageszeitabhängige Empfehlungen (morgens: Frühstück, mittags: Burger, abends: große Menüs + Bier).
+- Informiere bei Allergie-Fragen ehrlich, dass dies eine Demo ist und echte Allergiker immer Fachpersonal fragen sollten.
+- Kenne unsere 8 Filialen und hilf mit Wegbeschreibungen.
+- Erwähne bei passender Gelegenheit die BurgerMetrics App und das Treueprogramm.
+- Antworte nie mit mehr als 3-4 Sätzen, außer bei detaillierten Nachfragen.
+- Verwende gelegentlich ein Emoji, aber übertreibe nicht.`;
+
+  chatHistory.push({ role: 'user', content: text });
+
+  addTypingIndicator();
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${chatApiKey}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...chatHistory.slice(-10) // Keep last 10 messages for context
+        ],
+        max_tokens: 300,
+        temperature: 0.8
+      })
+    });
+
+    removeTypingIndicator();
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      if (response.status === 401) {
+        chatApiKey = null;
+        document.getElementById('chatbotStatus').textContent = 'Ungültiger API-Key';
+        addBotMessage('⚠️ Der API-Key ist ungültig. Bitte beim nächsten Versuch einen gültigen Key eingeben.');
+      } else {
+        addBotMessage(`⚠️ Fehler: ${err.error?.message || 'Unbekannter Fehler'}. Bitte versuche es erneut.`);
+      }
+      sendBtn.disabled = false;
+      return;
+    }
+
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || 'Hmm, da ist etwas schiefgelaufen. Probier es nochmal!';
+    chatHistory.push({ role: 'assistant', content: reply });
+    addBotMessage(reply);
+
+    // Log to data mode event stream
+    if (typeof logEvent === 'function') {
+      logEvent('CHATBOT', `user="${text.substring(0,30)}..."`);
+    }
+
+  } catch (err) {
+    removeTypingIndicator();
+    addBotMessage('⚠️ Verbindungsfehler. Bitte prüfe deine Internetverbindung und versuche es erneut.');
+  }
+
+  sendBtn.disabled = false;
+}
+
+// Auto-show badge after 5 seconds if chat not opened
+setTimeout(() => {
+  if (!chatbotOpen) {
+    document.getElementById('chatBadge').style.display = 'flex';
+  }
+}, 5000);
 </script>
 </body>
 </html>
