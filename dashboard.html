@@ -278,6 +278,8 @@
       <button data-tab="kunden">Kunden</button>
       <button data-tab="zeitanalyse">Zeitanalyse</button>
       <button data-tab="trends">Trends</button>
+      <button data-tab="datamining">Data Mining</button>
+      <button data-tab="simulation">Simulation</button>
     </nav>
   </div>
 </div>
@@ -859,6 +861,237 @@
   </div>
 </div>
 
+<!-- ═══════════════════ TAB: DATA MINING ═══════════════════ -->
+<div id="datamining" class="tab-content">
+
+  <div id="sub_dm_rfm" class="sub-content active">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Champions</div>
+        <div class="kpi-value" style="font-size:20px;color:var(--green)">4.082</div>
+        <div class="kpi-delta pos">16,3%</div>
+        <div class="kpi-context">Ø 44,7 Bestellungen · Ø €842 Umsatz</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Abwanderungsgefahr</div>
+        <div class="kpi-value" style="font-size:20px;color:var(--red)">5.484</div>
+        <div class="kpi-delta neg">21,9%</div>
+        <div class="kpi-context">Ø 132 Tage inaktiv · €4,07M Umsatzrisiko</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Verloren</div>
+        <div class="kpi-value" style="font-size:20px;color:var(--red)">4.396</div>
+        <div class="kpi-delta neg">17,6%</div>
+        <div class="kpi-context">Ø 249 Tage inaktiv · €1,45M verloren</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">CLV-Spreizung</div>
+        <div class="kpi-value" style="font-size:18px">3,7×</div>
+        <div class="kpi-context">Champion €842 vs. Neukunde €225</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">22% der Kunden sind abwanderungsgefährdet — größtes Segment</div><div class="chart-sub">RFM-Segmentierung · 24.992 Kunden · 7 Cluster</div></div>
+        </div>
+        <div class="chart-area tall"><canvas id="rfmSegmentChart"></canvas></div>
+        <div class="interpretation">
+          <strong>Interpretation:</strong> Die RFM-Analyse (Recency × Frequency × Monetary) teilt 24.992 Kunden in 7 Segmente. Das größte Segment ist „Abwanderungsgefahr" (5.484 Kunden, 21,9%): Diese waren früher aktive Käufer (Ø 39,5 Bestellungen) aber sind seit Ø 132 Tagen inaktiv. Sie repräsentieren €4,07M Umsatzrisiko. Die „Champions" (4.082, 16,3%) hingegen kaufen Ø alle 17 Tage mit Ø €842 Lifetime-Value.
+          <div class="recommendation"><strong>Handlungsempfehlung:</strong> Sofortige Reaktivierungskampagne für die 5.484 abwanderungsgefährdeten Kunden: personalisierte E-Mail mit „Wir vermissen dich"-Gutschein (€5 ab €15 Bestellung). Bei 10% Reaktivierung = 548 Kunden × Ø €742 CLV = €407k gesicherter Umsatz. Kosten: €2.740 (548 × €5).</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Champions generieren €842 pro Kopf — 3,7× mehr als Neukunden</div><div class="chart-sub">Ø Customer Lifetime Value pro Segment in €</div></div>
+        </div>
+        <div class="chart-area tall"><canvas id="rfmValueChart"></canvas></div>
+        <div class="interpretation">
+          <strong>Interpretation:</strong> Der CLV variiert stark: Champions (€842), Potenzial (€766) und Abwanderungsgefahr (€742) haben ähnlich hohe Werte — der Unterschied liegt in der Recency. Die „Potenzial"-Gruppe (2.956 Kunden) hat solide Frequenz, ist aber seit Ø 51 Tagen inaktiv — eine Zwischenstufe, die in beide Richtungen kippen kann.
+          <div class="recommendation"><strong>Handlungsempfehlung:</strong> Die 2.956 „Potenzial"-Kunden mit einer gezielten Loyalty-Upgrade-Kampagne ansprechen: „Jetzt Gold werden und 15% auf die nächste Bestellung sparen". Conversion-Ziel: 30% = 887 Kunden, die zu Champions aufsteigen. Erwarteter Mehrumsatz: €87k/Jahr.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card table-card" style="overflow-x:auto">
+      <div class="chart-title" style="margin-bottom:4px">RFM-Segment-Profiling — Basis für CRM-Maßnahmen</div>
+      <div class="chart-sub" style="margin-bottom:10px">7 Segmente · Recency, Frequency, Monetary · Handlungscluster</div>
+      <div class="table-toolbar">
+        <input class="table-search" type="text" placeholder="Suchen…" oninput="filterTable('tblRFM',this.value)">
+        <span class="table-count" id="tblRFM_count">7 Zeilen</span>
+      </div>
+      <table class="data-table" id="tblRFM">
+        <thead><tr><th>Segment</th><th>Kunden</th><th>Anteil</th><th>Ø Recency</th><th>Ø Frequenz</th><th>Ø CLV</th><th>Σ Umsatz</th></tr></thead>
+        <tbody>
+          <tr><td style="color:var(--green)">Champions</td><td class="mono">4.082</td><td class="mono">16,3%</td><td class="mono text-pos">17 Tage</td><td class="mono">44,7</td><td class="mono">€842</td><td class="mono">€3.437.357</td></tr>
+          <tr><td style="color:var(--green)">Loyal</td><td class="mono">3.972</td><td class="mono">15,9%</td><td class="mono text-pos">17 Tage</td><td class="mono">27,0</td><td class="mono">€541</td><td class="mono">€2.150.168</td></tr>
+          <tr><td style="color:var(--blue)">Potenzial</td><td class="mono">2.956</td><td class="mono">11,8%</td><td class="mono">51 Tage</td><td class="mono">40,4</td><td class="mono">€766</td><td class="mono">€2.263.300</td></tr>
+          <tr><td style="color:var(--blue)">Neukunden</td><td class="mono">2.027</td><td class="mono">8,1%</td><td class="mono text-pos">17 Tage</td><td class="mono">11,0</td><td class="mono">€225</td><td class="mono">€455.520</td></tr>
+          <tr><td style="color:var(--muted)">Schläfer</td><td class="mono">2.075</td><td class="mono">8,3%</td><td class="mono">51 Tage</td><td class="mono">16,7</td><td class="mono">€338</td><td class="mono">€700.609</td></tr>
+          <tr><td style="color:var(--red)">Abwanderungsgefahr</td><td class="mono">5.484</td><td class="mono">21,9%</td><td class="mono text-neg">132 Tage</td><td class="mono">39,5</td><td class="mono">€742</td><td class="mono">€4.067.072</td></tr>
+          <tr><td style="color:var(--red)">Verloren</td><td class="mono">4.396</td><td class="mono">17,6%</td><td class="mono text-neg">249 Tage</td><td class="mono">16,4</td><td class="mono">€329</td><td class="mono">€1.448.353</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="sub_dm_assoc" class="sub-content">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Stärkste Regel (Lift)</div>
+        <div class="kpi-value" style="font-size:16px">Fries+Cola 0.3l</div>
+        <div class="kpi-delta pos">Lift 3,29</div>
+        <div class="kpi-context">66,1% Confidence · 90.608 gemeinsam</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Häufigste Kombination</div>
+        <div class="kpi-value" style="font-size:16px">Fries+Cola 0.5l</div>
+        <div class="kpi-delta pos">155.282×</div>
+        <div class="kpi-context">20,6% Support · Lift 2,73</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Stärkster Cross-Sell</div>
+        <div class="kpi-value" style="font-size:16px">Beyond+Salad</div>
+        <div class="kpi-delta pos">Lift 2,28</div>
+        <div class="kpi-context">Gesundheitscluster · 35.011 Bestellungen</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Regeln mit Lift >2</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-context">Von 15 analysierten Paaren · signifikant</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Lift-Analyse enthüllt drei echte Produktaffinitäten — Rest ist Zufall</div><div class="chart-sub">Top 15 Assoziationsregeln · Support, Confidence & Lift · 754.513 Bestellungen</div></div>
+      </div>
+      <div class="chart-area tall"><canvas id="liftChart"></canvas></div>
+      <div class="interpretation">
+        <strong>Interpretation:</strong> Nur 3 von 15 Top-Regeln haben einen Lift &gt; 2,0 (= starke Assoziation): Small Fries + Cola 0.3l (3,29), Medium Fries + Cola 0.5l (2,73) und Beyond Burger + Side Salad (2,28). Die restlichen Regeln (Lift 1,1–1,5) zeigen nur moderate Abhängigkeiten — die Produkte werden häufig zusammen gekauft, aber nicht signifikant häufiger als zufällig zu erwarten wäre. Der Beyond-Salad-Cluster ist besonders interessant: gesundheitsbewusste Käufer zeigen ein eigenständiges Kaufmuster.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Drei konkrete Bundle-Aktionen basierend auf Lift-Werten: (1) „Fries+Drink Combo" in zwei Größen (Small €3,99 / Medium €4,49) — Lift &gt;2,7 garantiert hohe Annahme. (2) „Beyond Healthy" = Beyond Burger + Side Salad für €13,99 (Lift 2,28). (3) Kiosk/App-Algorithmus: bei Beyond-Burger-Auswahl automatisch Side Salad als Top-Empfehlung anzeigen.</div>
+      </div>
+    </div>
+
+    <div class="chart-card table-card" style="overflow-x:auto">
+      <div class="chart-title" style="margin-bottom:4px">Assoziationsregeln mit Lift-Metrik — vollständige Übersicht</div>
+      <div class="chart-sub" style="margin-bottom:10px">15 Regeln · sortiert nach Häufigkeit · Lift &gt; 2 = starke Assoziation</div>
+      <div class="table-toolbar">
+        <input class="table-search" type="text" placeholder="Suchen…" oninput="filterTable('tblAssoc',this.value)">
+        <span class="table-count" id="tblAssoc_count">15 Zeilen</span>
+      </div>
+      <table class="data-table" id="tblAssoc">
+        <thead><tr><th>Regel (A → B)</th><th>Häufigkeit</th><th>Support</th><th>Confidence</th><th>Lift</th><th>Stärke</th></tr></thead>
+        <tbody>
+          <tr><td>Medium Fries → Cola 0.5l</td><td class="mono">155.282</td><td class="mono">20,6%</td><td class="mono">77,3%</td><td class="mono text-pos">2,73</td><td style="color:var(--green)">★★★</td></tr>
+          <tr><td>Small Fries → Cola 0.3l</td><td class="mono">90.608</td><td class="mono">12,0%</td><td class="mono">66,1%</td><td class="mono text-pos">3,29</td><td style="color:var(--green)">★★★</td></tr>
+          <tr><td>Cola 0.3l → Cola 0.5l</td><td class="mono">51.456</td><td class="mono">6,8%</td><td class="mono">33,9%</td><td class="mono">1,20</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Cola 0.3l → Medium Fries</td><td class="mono">49.145</td><td class="mono">6,5%</td><td class="mono">32,4%</td><td class="mono">1,22</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Beyond Burger → Cola 0.5l</td><td class="mono">47.680</td><td class="mono">6,3%</td><td class="mono">41,1%</td><td class="mono">1,45</td><td style="color:var(--orange)">★★</td></tr>
+          <tr><td>Small Fries → Cola 0.5l</td><td class="mono">47.461</td><td class="mono">6,3%</td><td class="mono">34,6%</td><td class="mono">1,22</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Beyond Burger → Medium Fries</td><td class="mono">46.334</td><td class="mono">6,1%</td><td class="mono">40,0%</td><td class="mono">1,50</td><td style="color:var(--orange)">★★</td></tr>
+          <tr><td>Small Fries → Medium Fries</td><td class="mono">45.590</td><td class="mono">6,0%</td><td class="mono">33,3%</td><td class="mono">1,25</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Beyond Burger → Side Salad</td><td class="mono">35.011</td><td class="mono">4,6%</td><td class="mono">35,0%</td><td class="mono text-pos">2,28</td><td style="color:var(--green)">★★★</td></tr>
+          <tr><td>Large Fries → Cola 0.5l</td><td class="mono">32.765</td><td class="mono">4,3%</td><td class="mono">32,0%</td><td class="mono">1,13</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Side Salad → Cola 0.5l</td><td class="mono">32.431</td><td class="mono">4,3%</td><td class="mono">32,4%</td><td class="mono">1,14</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Green Goddess → Cola 0.5l</td><td class="mono">32.028</td><td class="mono">4,2%</td><td class="mono">41,3%</td><td class="mono">1,46</td><td style="color:var(--orange)">★★</td></tr>
+          <tr><td>Large Fries → Medium Fries</td><td class="mono">31.267</td><td class="mono">4,1%</td><td class="mono">30,6%</td><td class="mono">1,15</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Beyond Burger → Cola 0.3l</td><td class="mono">31.247</td><td class="mono">4,1%</td><td class="mono">27,0%</td><td class="mono">1,34</td><td style="color:var(--muted)">★</td></tr>
+          <tr><td>Side Salad → Medium Fries</td><td class="mono">30.935</td><td class="mono">4,1%</td><td class="mono">30,9%</td><td class="mono">1,16</td><td style="color:var(--muted)">★</td></tr>
+        </tbody>
+      </table>
+      <div class="interpretation" style="font-size:11px"><em>Lift-Bewertung: <span style="color:var(--green)">★★★</span> = Lift &gt; 2 (stark), <span style="color:var(--orange)">★★</span> = Lift 1,3–2 (moderat), <span style="color:var(--muted)">★</span> = Lift &lt; 1,3 (schwach)</em></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ TAB: SIMULATION ═══════════════════ -->
+<div id="simulation" class="tab-content">
+
+  <div id="sub_sim_preis" class="sub-content active">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Preissimulation — Wie wirken Preisänderungen auf Umsatz und Marge?</div><div class="chart-sub">14 Burger-Produkte · Elastizität ε = −1,2 (geschätzt) · Basisjahr 2025</div></div>
+      </div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <span class="group-label" style="min-width:100px">Preisänderung:</span>
+          <input type="range" id="priceSlider" min="-20" max="20" value="0" step="1" style="flex:1;max-width:400px;accent-color:var(--blue)" oninput="updatePriceSim()">
+          <span id="priceSliderValue" class="mono" style="font-size:14px;font-weight:600;min-width:50px;text-align:center">0%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+          <span class="group-label" style="min-width:100px">Elastizität (ε):</span>
+          <input type="range" id="elastSlider" min="-25" max="-5" value="-12" step="1" style="flex:1;max-width:400px;accent-color:var(--blue)" oninput="updatePriceSim()">
+          <span id="elastSliderValue" class="mono" style="font-size:14px;font-weight:600;min-width:50px;text-align:center">−1,2</span>
+        </div>
+      </div>
+      <div class="kpi-row" id="simKPIs">
+        <div class="kpi-card">
+          <div class="kpi-label">Neuer Umsatz (Burger)</div>
+          <div class="kpi-value" id="simRevenue" style="font-size:22px">€6,29M</div>
+          <div class="kpi-delta" id="simRevDelta">0%</div>
+          <div class="kpi-context" id="simRevCtx">Basis: €6,29M (2017–2026)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Neues Volumen</div>
+          <div class="kpi-value" id="simVolume" style="font-size:22px">746.187</div>
+          <div class="kpi-delta" id="simVolDelta">0%</div>
+          <div class="kpi-context" id="simVolCtx">Basis: 746.187 Stück</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Neue Bruttomarge</div>
+          <div class="kpi-value" id="simMargin" style="font-size:22px">€4,43M</div>
+          <div class="kpi-delta" id="simMarDelta">0%</div>
+          <div class="kpi-context" id="simMarCtx">Basis: €4,43M (Marge 70,4%)</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Ø Deckungsbeitrag</div>
+          <div class="kpi-value" id="simDB" style="font-size:22px">€5,94</div>
+          <div class="kpi-context" id="simDBCtx">pro Burger · Basis: €5,94</div>
+        </div>
+      </div>
+      <div class="chart-area tall"><canvas id="simChart"></canvas></div>
+      <div class="interpretation">
+        <strong>Interpretation:</strong> Die Simulation modelliert den Trade-off zwischen Preiserhöhung und Nachfragerückgang. Bei einer Preiselastizität von ε = −1,2 (typisch für Fast Food) führt eine 10%-Preiserhöhung zu einem 12%-Volumenrückgang, aber einem Netto-Umsatzeffekt von ca. −3,2%. Der „Sweet Spot" liegt bei moderaten Erhöhungen von 3–5%, wo die Marge steigt ohne signifikanten Volumenverlust.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Die Schieberegler nutzen, um verschiedene Szenarien durchzuspielen. Besonders aufschlussreich: Premium-Produkte (Truffle Deluxe, Beyond Burger) haben typischerweise niedrigere Elastizität (ε ≈ −0,8) als Basis-Produkte (Classic Burger: ε ≈ −1,5). Eine selektive Preiserhöhung von 5% nur auf Premium-Burger könnte €85k Mehrumsatz generieren.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sub_sim_prognose" class="sub-content">
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Umsatzprognose 2026–2028 — drei Wachstumsszenarien</div><div class="chart-sub">Basis: Ø Wachstum 2023–2025 (14,5%) · Konservativ (3%) · Optimistisch (8%) · Expansiv (15%)</div></div>
+      </div>
+      <div class="chart-area tall"><canvas id="forecastChart"></canvas></div>
+      <div class="legend-row">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--bar)"></span>Historisch</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span>Optimistisch (+8%)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--orange)"></span>Konservativ (+3%)</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--red)"></span>Expansiv (+15%, 9. Filiale)</div>
+      </div>
+      <div class="interpretation">
+        <strong>Interpretation:</strong> Drei Szenarien basierend auf den Wachstumsraten 2023–2025 (28%, 10,1%, 5,4% → Ø 14,5%): <strong>Konservativ (3%):</strong> Organisches Wachstum verlangsamt sich weiter auf Inflationsniveau → €3,18M in 2028. <strong>Optimistisch (8%):</strong> App-Wachstum und Premium-Strategie greifen → €3,77M in 2028. <strong>Expansiv (15%):</strong> Eröffnung einer 9. Filiale (z.B. Schweinfurt) liefert Volumensprung → €4,55M in 2028.
+        <div class="recommendation"><strong>Handlungsempfehlung:</strong> Das konservative Szenario (3%) bildet den Floor — selbst ohne Maßnahmen ist leichtes Wachstum wahrscheinlich. Der Sprung auf 8%+ erfordert konkrete Investitionen: (1) App-Ausbau auf 25% Kanalanteil (+€200k), (2) Premium-Menü-Erweiterung (+€150k), (3) Reaktivierung der 5.484 abwanderungsgefährdeten Kunden (+€400k). Expansion: Standortanalyse Schweinfurt/Aschaffenburg starten, ROI-Prognose basierend auf Mainfrankenpark-Blueprint (Break-even nach 8 Monaten).</div>
+      </div>
+    </div>
+
+    <div class="chart-card table-card" style="overflow-x:auto">
+      <div class="chart-title" style="margin-bottom:4px">Szenario-Vergleich — Umsatz, Bestellungen, Investitionsbedarf</div>
+      <div class="chart-sub" style="margin-bottom:10px">Drei Szenarien für 2026–2028 · basierend auf historischen Wachstumsmustern</div>
+      <table class="data-table" id="tblForecast">
+        <thead><tr><th>Szenario</th><th>Wachstum</th><th>Umsatz 2026</th><th>Umsatz 2027</th><th>Umsatz 2028</th><th>Investition</th><th>ROI (3J)</th></tr></thead>
+        <tbody>
+          <tr><td>Konservativ</td><td class="mono">+3% p.a.</td><td class="mono">€3,08M</td><td class="mono">€3,18M</td><td class="mono">€3,27M</td><td class="mono">€0</td><td class="mono text-muted">—</td></tr>
+          <tr><td style="color:var(--green)">Optimistisch</td><td class="mono">+8% p.a.</td><td class="mono">€3,23M</td><td class="mono">€3,49M</td><td class="mono">€3,77M</td><td class="mono">€350k</td><td class="mono text-pos">2,2×</td></tr>
+          <tr><td style="color:var(--red)">Expansiv</td><td class="mono">+15% p.a.</td><td class="mono">€3,44M</td><td class="mono">€3,96M</td><td class="mono">€4,55M</td><td class="mono">€800k</td><td class="mono text-pos">1,9×</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 </main>
 
 <footer>Fiktives Unternehmen — BI-Kurs THWS Würzburg · Prof. Robert Butscher &nbsp;|&nbsp; 754.513 Bestellungen · 2017–2026 · Erstellt mit Chart.js</footer>
@@ -1177,7 +1410,9 @@ const subNavConfig={
   produkte:[{id:'sub_produkte_ranking',label:'Top-Produkte'},{id:'sub_produkte_kategorien',label:'Kategorien & Warenkörbe'}],
   kunden:[{id:'sub_kunden_demografie',label:'Demografie & Loyalty'},{id:'sub_kunden_segmente',label:'Segmentanalyse'}],
   zeitanalyse:[{id:'sub_zeit_wochentag',label:'Wochentag & Stunde'},{id:'sub_zeit_heatmap',label:'Heatmap & Umsatz'}],
-  trends:[{id:'sub_trends_zahlung',label:'Zahlungsarten'},{id:'sub_trends_kanal',label:'Verkaufskanäle'}]
+  trends:[{id:'sub_trends_zahlung',label:'Zahlungsarten'},{id:'sub_trends_kanal',label:'Verkaufskanäle'}],
+  datamining:[{id:'sub_dm_rfm',label:'RFM-Segmentierung'},{id:'sub_dm_assoc',label:'Assoziationsregeln'}],
+  simulation:[{id:'sub_sim_preis',label:'Preissimulation'},{id:'sub_sim_prognose',label:'Wachstumsprognose'}]
 };
 
 function renderSubNav(tabId){
@@ -1218,6 +1453,147 @@ document.addEventListener('click',e=>{if(!e.target.closest('.filter-group'))docu
 
 function toggleDetail(id){document.getElementById(id).classList.toggle('open')}
 
+/* ═══════════ DATA MINING & SIMULATION DATA ═══════════ */
+const rfmSegments=[
+  {seg:'Champions',count:4082,pct:16.3,avgR:17,avgF:44.7,avgM:842,totalM:3437357},
+  {seg:'Loyal',count:3972,pct:15.9,avgR:17,avgF:27.0,avgM:541,totalM:2150168},
+  {seg:'Potenzial',count:2956,pct:11.8,avgR:51,avgF:40.4,avgM:766,totalM:2263300},
+  {seg:'Neukunden',count:2027,pct:8.1,avgR:17,avgF:11.0,avgM:225,totalM:455520},
+  {seg:'Schläfer',count:2075,pct:8.3,avgR:51,avgF:16.7,avgM:338,totalM:700609},
+  {seg:'Abwanderungsgefahr',count:5484,pct:21.9,avgR:132,avgF:39.5,avgM:742,totalM:4067072},
+  {seg:'Verloren',count:4396,pct:17.6,avgR:249,avgF:16.4,avgM:329,totalM:1448353}
+];
+const rfmColors=['#16a34a','#16a34a','#5b7a9d','#5b7a9d','#94a3b8','#dc2626','#dc2626'];
+
+const simProducts=[
+  {name:'Classic Burger',price:5.90,cost:1.52,vol:43817,rev:228437},
+  {name:'Cheeseburger',price:6.56,cost:1.66,vol:43053,rev:249280},
+  {name:'Double Burger',price:9.19,cost:2.62,vol:45304,rev:367369},
+  {name:'Bacon King',price:10.51,cost:3.04,vol:42157,rev:390869},
+  {name:'Chicken Burger',price:7.88,cost:1.93,vol:39105,rev:272237},
+  {name:'Veggie Burger',price:7.22,cost:2.07,vol:60282,rev:391660},
+  {name:'Fish Burger',price:7.61,cost:2.00,vol:38799,rev:260733},
+  {name:'Kids Burger',price:3.93,cost:1.10,vol:47811,rev:166147},
+  {name:'Crispy Chicken',price:9.19,cost:2.35,vol:37473,rev:305766},
+  {name:'Beyond Burger',price:10.51,cost:3.59,vol:134133,rev:1301008},
+  {name:'BBQ Smokehouse',price:11.16,cost:3.17,vol:54294,rev:551480},
+  {name:'Truffle Deluxe',price:13.14,cost:4.14,vol:43515,rev:531761},
+  {name:'Green Goddess',price:11.82,cost:3.86,vol:89621,rev:1018671},
+  {name:'Smashed Burger',price:9.85,cost:2.76,vol:26823,rev:254634}
+];
+const baseBurgerRev=simProducts.reduce(function(s,p){return s+p.rev},0);
+const baseBurgerVol=simProducts.reduce(function(s,p){return s+p.vol},0);
+const baseBurgerMargin=simProducts.reduce(function(s,p){return s+(p.price-p.cost)*p.vol},0);
+const baseDB=baseBurgerMargin/baseBurgerVol;
+
+/* ═══════════ DATA MINING CHARTS ═══════════ */
+function createRFMSegmentChart(){
+  mkHBar('rfmSegmentChart',
+    rfmSegments.map(function(s){return s.seg}),
+    rfmSegments.map(function(s){return s.count}),
+    rfmColors,
+    function(v){return v.toLocaleString('de-DE')},
+    {barW:28}
+  );
+}
+
+function createRFMValueChart(){
+  mkVBar('rfmValueChart',
+    rfmSegments.map(function(s){return s.seg}),
+    rfmSegments.map(function(s){return s.avgM}),
+    rfmColors,
+    function(v){return '€'+v.toLocaleString('de-DE')},
+    {xTicks:{font:{size:9},maxRotation:35},yFmt:function(v){return '€'+v}}
+  );
+}
+
+function createLiftChart(){
+  var assocLabels=['M.Fries→Cola 0.5','S.Fries→Cola 0.3','Cola 0.3→Cola 0.5','Cola 0.3→M.Fries','Beyond→Cola 0.5','S.Fries→Cola 0.5','Beyond→M.Fries','S.Fries→M.Fries','Beyond→Salad','L.Fries→Cola 0.5','Salad→Cola 0.5','G.Goddess→Cola 0.5','L.Fries→M.Fries','Beyond→Cola 0.3','Salad→M.Fries'];
+  var assocLift=[2.73,3.29,1.20,1.22,1.45,1.22,1.50,1.25,2.28,1.13,1.14,1.46,1.15,1.34,1.16];
+  var assocColors=assocLift.map(function(l){return l>=2?'#16a34a':l>=1.3?'#d97706':barLight});
+  mkHBar('liftChart', assocLabels, assocLift, assocColors,
+    function(v){return v.toFixed(2)+'×'},
+    {xOpts:{beginAtZero:true,max:3.8,suggestedMin:0},xFmt:function(v){return v.toFixed(1)+'×'},barW:20,
+     annotation:{annotations:{threshold:{type:'line',xMin:2,xMax:2,borderColor:'#16a34a',borderWidth:1.5,borderDash:[5,3],
+       label:{display:true,content:'Lift = 2 (stark)',position:'start',font:{size:9},backgroundColor:'rgba(22,163,74,.85)',color:'#fff',padding:3}},
+       weak:{type:'line',xMin:1,xMax:1,borderColor:'#94a3b8',borderWidth:1,borderDash:[3,3],
+       label:{display:true,content:'Lift = 1 (Zufall)',position:'end',font:{size:9},backgroundColor:'rgba(148,163,184,.85)',color:'#fff',padding:3}}
+     }}}
+  );
+}
+
+/* ═══════════ SIMULATION CHARTS ═══════════ */
+var simChart=null;
+function updatePriceSim(){
+  var pctChange=parseInt(document.getElementById('priceSlider').value);
+  var elast=parseInt(document.getElementById('elastSlider').value)/10;
+  document.getElementById('priceSliderValue').textContent=(pctChange>=0?'+':'')+pctChange+'%';
+  document.getElementById('elastSliderValue').textContent='−'+(Math.abs(elast).toFixed(1).replace('.',','));
+
+  var volChange=pctChange*elast/100;
+  var newRev=0, newVol=0, newMargin=0;
+  var prodResults=[];
+  simProducts.forEach(function(p){
+    var nPrice=p.price*(1+pctChange/100);
+    var nVol=Math.round(p.vol*(1+volChange));
+    var nRev=nPrice*nVol;
+    var nMar=(nPrice-p.cost)*nVol;
+    newRev+=nRev; newVol+=nVol; newMargin+=nMar;
+    prodResults.push({name:p.name,oldRev:p.rev,newRev:Math.round(nRev),oldVol:p.vol,newVol:nVol});
+  });
+
+  var revDelta=((newRev/baseBurgerRev)-1)*100;
+  var volDelta=((newVol/baseBurgerVol)-1)*100;
+  var marDelta=((newMargin/baseBurgerMargin)-1)*100;
+  var newDB=newMargin/newVol;
+
+  document.getElementById('simRevenue').textContent='€'+(newRev/1e6).toFixed(2).replace('.',',')+'M';
+  document.getElementById('simRevDelta').textContent=(revDelta>=0?'+':'')+revDelta.toFixed(1).replace('.',',')+'%';
+  document.getElementById('simRevDelta').className='kpi-delta '+(revDelta>=0?'pos':'neg');
+  document.getElementById('simVolume').textContent=newVol.toLocaleString('de-DE');
+  document.getElementById('simVolDelta').textContent=(volDelta>=0?'+':'')+volDelta.toFixed(1).replace('.',',')+'%';
+  document.getElementById('simVolDelta').className='kpi-delta '+(volDelta>=0?'pos':'neg');
+  document.getElementById('simMargin').textContent='€'+(newMargin/1e6).toFixed(2).replace('.',',')+'M';
+  document.getElementById('simMarDelta').textContent=(marDelta>=0?'+':'')+marDelta.toFixed(1).replace('.',',')+'%';
+  document.getElementById('simMarDelta').className='kpi-delta '+(marDelta>=0?'pos':'neg');
+  document.getElementById('simDB').textContent='€'+newDB.toFixed(2).replace('.',',');
+
+  // Chart: old vs new revenue per product
+  if(simChart) simChart.destroy();
+  simChart=new Chart(document.getElementById('simChart'),{type:'bar',
+    data:{labels:prodResults.map(function(p){return p.name}),
+      datasets:[
+        {label:'Basis',data:prodResults.map(function(p){return p.oldRev}),backgroundColor:barLight,borderRadius:2,maxBarThickness:18},
+        {label:'Simulation',data:prodResults.map(function(p){return p.newRev}),backgroundColor:prodResults.map(function(p){return p.newRev>=p.oldRev?'#16a34a':'#dc2626'}),borderRadius:2,maxBarThickness:18}
+      ]},
+    options:mkOpts({legend:{display:true,position:'bottom',labels:{padding:10,usePointStyle:true,pointStyle:'circle',font:{size:10}}},datalabels:{display:false}},
+      {x:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),y:xScale({ticks:{font:{size:9}}})},{indexAxis:'y'})
+  });
+}
+
+function createForecastChart(){
+  var base=2994771;
+  var histLabels=['2017','2018','2019','2020','2021','2022','2023','2024','2025'];
+  var histData=[189699,407631,831495,728623,1232130,2017208,2581072,2841075,base];
+  var foreLabels=['2025','2026','2027','2028'];
+  var conservative=[base,base*1.03,base*1.03*1.03,base*1.03*1.03*1.03];
+  var optimistic=[base,base*1.08,base*1.08*1.08,base*1.08*1.08*1.08];
+  var expansive=[base,base*1.15,base*1.15*1.15,base*1.15*1.15*1.15];
+  var allLabels=histLabels.concat(['2026','2027','2028']);
+  var pad=new Array(histLabels.length-1).fill(null);
+
+  new Chart(document.getElementById('forecastChart'),{type:'line',
+    data:{labels:allLabels,datasets:[
+      {label:'Historisch',data:histData.concat([null,null,null]),borderColor:barBlue,backgroundColor:'rgba(127,149,182,.06)',borderWidth:2.5,fill:true,tension:0.3,pointRadius:3,pointBackgroundColor:barBlue,pointBorderColor:'#fff',pointBorderWidth:1.5},
+      {label:'Optimistisch',data:pad.concat(optimistic),borderColor:'#16a34a',borderWidth:2,borderDash:[6,3],fill:false,tension:0.2,pointRadius:3,pointBackgroundColor:'#16a34a',pointBorderColor:'#fff',pointBorderWidth:1.5},
+      {label:'Konservativ',data:pad.concat(conservative),borderColor:'#d97706',borderWidth:2,borderDash:[6,3],fill:false,tension:0.2,pointRadius:3,pointBackgroundColor:'#d97706',pointBorderColor:'#fff',pointBorderWidth:1.5},
+      {label:'Expansiv',data:pad.concat(expansive),borderColor:'#dc2626',borderWidth:2,borderDash:[6,3],fill:false,tension:0.2,pointRadius:3,pointBackgroundColor:'#dc2626',pointBorderColor:'#fff',pointBorderWidth:1.5}
+    ]},
+    options:mkOpts({legend:{display:false},datalabels:{display:false}},
+      {y:yScale({beginAtZero:true,ticks:Object.assign({},monoTicks,{callback:function(v){return fmtShort(v)}})}),x:xScale({})})
+  });
+}
+
 /* ═══════════ INIT ═══════════ */
 renderSubNav('uebersicht');
 createRevenueChart('monat');
@@ -1251,6 +1627,11 @@ createDowChart();
 createHourChart();
 createDowRevenueChart();
 buildHeatmap();
+createRFMSegmentChart();
+createRFMValueChart();
+createLiftChart();
+updatePriceSim();
+createForecastChart();
 
 /* ═══════════ INTERACTIVE TABLES ═══════════ */
 
@@ -1366,7 +1747,7 @@ function groupTable(tableId, colIdx){
 }
 
 /* --- Init: Sortier-Icons und Zeilenzähler --- */
-['tblYears','tblBranch','tblBasket'].forEach(function(id){
+['tblYears','tblBranch','tblBasket','tblRFM','tblAssoc','tblForecast'].forEach(function(id){
   var table = document.getElementById(id);
   if(!table) return;
   var rows = table.querySelectorAll('tbody tr');
