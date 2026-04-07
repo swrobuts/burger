@@ -1,1972 +1,1818 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BurgerMetrics GmbH · Business Intelligence Dashboard</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: #0f1117;
-      color: #e6edf3;
-    }
-
-    body {
-      display: flex;
-      overflow: hidden;
-    }
-
-    /* ===== SIDEBAR ===== */
-    .sidebar {
-      width: 240px;
-      background-color: #161b22;
-      border-right: 1px solid rgba(255,255,255,0.06);
-      overflow-y: auto;
-      padding: 24px 0;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-    }
-
-    .sidebar-logo {
-      padding: 0 20px 32px;
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #33FFA0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 32px;
-    }
-
-    .sidebar-section {
-      margin-bottom: 24px;
-    }
-
-    .sidebar-section-title {
-      padding: 0 20px 12px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #8b949e;
-    }
-
-    .sidebar-item {
-      padding: 8px 20px;
-      font-size: 13px;
-      color: #8b949e;
-      cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: all 0.15s ease;
-    }
-
-    .sidebar-item:hover {
-      color: #e6edf3;
-      background-color: rgba(51,255,160,0.05);
-      border-left-color: #33FFA0;
-    }
-
-    .sidebar-item.active {
-      color: #33FFA0;
-      background-color: rgba(51,255,160,0.08);
-      border-left-color: #33FFA0;
-      font-weight: 500;
-    }
-
-    /* ===== MAIN CONTENT ===== */
-    .main-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    .header {
-      background-color: #161b22;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 20px 32px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .header-title {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-    }
-
-    .header-period {
-      font-size: 13px;
-      color: #8b949e;
-    }
-
-    .content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 32px;
-    }
-
-    /* ===== SECTION STRUCTURE ===== */
-    .section {
-      display: none;
-    }
-
-    .section.active {
-      display: block;
-    }
-
-    .section-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 24px;
-      color: #e6edf3;
-    }
-
-    /* ===== KPI BAR ===== */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .kpi-card {
-      background-color: #161b22;
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 16px;
-      border-radius: 4px;
-      transition: background-color 0.15s ease;
-    }
-
-    .kpi-card:hover {
-      background-color: #1c2333;
-    }
-
-    .kpi-label {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: #8b949e;
-      margin-bottom: 8px;
-      font-weight: 600;
-    }
-
-    .kpi-value {
-      font-size: 24px;
-      font-weight: 600;
-      color: #e6edf3;
-      margin-bottom: 8px;
-    }
-
-    .kpi-change {
-      font-size: 12px;
-      margin-bottom: 8px;
-    }
-
-    .kpi-change.positive {
-      color: #33FFA0;
-    }
-
-    .kpi-change.negative {
-      color: #FF6464;
-    }
-
-    .kpi-sparkline {
-      height: 24px;
-      background-color: rgba(51,255,160,0.05);
-      border-radius: 2px;
-    }
-
-    /* ===== CHARTS ===== */
-    .chart-container {
-      background-color: #161b22;
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 20px;
-      border-radius: 4px;
-      margin-bottom: 24px;
-      position: relative;
-    }
-
-    .chart-title {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: #8b949e;
-      margin-bottom: 16px;
-    }
-
-    .chart-wrapper {
-      position: relative;
-      height: 300px;
-      margin-bottom: 8px;
-    }
-
-    .chart-wrapper.small {
-      height: 200px;
-    }
-
-    /* ===== TABLES ===== */
-    .table-container {
-      background-color: #161b22;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 4px;
-      margin-bottom: 24px;
-      overflow: hidden;
-    }
-
-    .table-title {
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.4px;
-      color: #8b949e;
-      padding: 20px 20px 0;
-      margin-bottom: 16px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    thead {
-      background-color: rgba(255,255,255,0.02);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-    }
-
-    th {
-      padding: 12px 20px;
-      text-align: left;
-      font-weight: 600;
-      color: #8b949e;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-    }
-
-    th.numeric {
-      text-align: right;
-    }
-
-    td {
-      padding: 12px 20px;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      color: #e6edf3;
-    }
-
-    td.numeric {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    tbody tr:hover {
-      background-color: rgba(51,255,160,0.03);
-    }
-
-    /* ===== SPARKLINES ===== */
-    .sparkline {
-      display: inline-block;
-      width: 60px;
-      height: 20px;
-      margin: 0 8px;
-    }
-
-    /* ===== HEATMAP ===== */
-    .heatmap {
-      display: grid;
-      gap: 2px;
-      margin: 16px 0;
-      max-width: 100%;
-      overflow-x: auto;
-    }
-
-    .heatmap-row {
-      display: grid;
-      grid-template-columns: repeat(24, 1fr);
-      gap: 2px;
-    }
-
-    .heatmap-cell {
-      width: 32px;
-      height: 32px;
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 600;
-      cursor: help;
-      transition: opacity 0.15s ease;
-    }
-
-    .heatmap-cell:hover {
-      opacity: 0.8;
-    }
-
-    .heatmap-label {
-      font-size: 11px;
-      color: #8b949e;
-      font-weight: 600;
-      min-width: 60px;
-      text-align: right;
-      padding-right: 12px;
-    }
-
-    /* ===== GRID LAYOUTS ===== */
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 1400px) {
-      .grid-3 {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 1000px) {
-      .grid-2, .grid-3 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* ===== FOOTER ===== */
-    .footer {
-      background-color: #161b22;
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 16px 32px;
-      font-size: 11px;
-      color: #8b949e;
-      text-align: center;
-    }
-
-    /* ===== SCROLLBARS ===== */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background-color: rgba(139,148,158,0.3);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background-color: rgba(139,148,158,0.5);
-    }
-
-    /* ===== BULLET CHART STYLE ===== */
-    .bullet-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .bullet-label {
-      min-width: 120px;
-      text-align: right;
-      font-size: 12px;
-    }
-
-    .bullet-track {
-      flex: 1;
-      height: 20px;
-      background-color: rgba(255,255,255,0.06);
-      border-radius: 2px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .bullet-measure {
-      height: 100%;
-      background-color: #33FFA0;
-      border-radius: 2px;
-      position: relative;
-    }
-
-    .bullet-value {
-      min-width: 60px;
-      text-align: right;
-      font-size: 12px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* ===== COMPARISON BOXES ===== */
-    .comparison-box {
-      background-color: #1c2333;
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 16px;
-      border-radius: 4px;
-      margin-bottom: 12px;
-    }
-
-    .comparison-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: #8b949e;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .comparison-values {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-
-    .comparison-value {
-      text-align: center;
-    }
-
-    .comparison-label {
-      font-size: 11px;
-      color: #8b949e;
-      margin-bottom: 4px;
-    }
-
-    .comparison-number {
-      font-size: 18px;
-      font-weight: 600;
-      color: #e6edf3;
-    }
-
-    /* ===== UTILITY ===== */
-    .text-muted {
-      color: #8b949e;
-    }
-
-    .text-sm {
-      font-size: 12px;
-    }
-
-    .mt-24 {
-      margin-top: 24px;
-    }
-
-    .mb-12 {
-      margin-bottom: 12px;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 1200px) {
-      .sidebar {
-        width: 200px;
-      }
-
-      .content {
-        padding: 24px;
-      }
-
-      .kpi-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      }
-    }
-
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
-
-      .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        padding: 16px;
-        max-height: 200px;
-        overflow-x: auto;
-        display: flex;
-        gap: 32px;
-      }
-
-      .sidebar-section {
-        margin-bottom: 0;
-        white-space: nowrap;
-      }
-
-      .main-container {
-        height: auto;
-      }
-
-      .content {
-        overflow-y: visible;
-        padding: 16px;
-      }
-
-      .kpi-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .chart-wrapper {
-        height: 250px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BurgerMetrics · BI Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            background-color: #0f1117;
+            color: #e6edf3;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #161b22;
+            border-bottom: 1px solid #21262d;
+            padding: 20px 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        .container {
+            display: flex;
+            min-height: calc(100vh - 120px);
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #161b22;
+            border-right: 1px solid #21262d;
+            padding: 20px 0;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 12px 20px;
+            color: #8b949e;
+            text-decoration: none;
+            font-size: 13px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            color: #e6edf3;
+            background-color: #1c2333;
+        }
+
+        .sidebar a.active {
+            color: #33FFA0;
+            border-left-color: #33FFA0;
+            background-color: #1c2333;
+        }
+
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            max-width: 1400px;
+        }
+
+        section {
+            margin-bottom: 60px;
+            scroll-margin-top: 100px;
+        }
+
+        section h2 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #21262d;
+            padding-bottom: 15px;
+        }
+
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .kpi-card {
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            padding: 20px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .kpi-card:hover {
+            background-color: #1c2333;
+            border-color: #30363d;
+        }
+
+        .kpi-label {
+            font-size: 12px;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #33FFA0;
+            text-align: right;
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-align: right;
+        }
+
+        .kpi-change.positive {
+            background-color: rgba(51, 255, 160, 0.1);
+            color: #33FFA0;
+        }
+
+        .kpi-change.negative {
+            background-color: rgba(255, 100, 100, 0.1);
+            color: #FF6464;
+        }
+
+        .kpi-sparkline {
+            height: 30px;
+            margin-top: 12px;
+            opacity: 0.6;
+        }
+
+        .chart-container {
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-wrapper {
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            padding: 25px;
+            border-radius: 6px;
+            position: relative;
+            min-height: 350px;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        thead {
+            background-color: #0f1117;
+            border-bottom: 1px solid #21262d;
+        }
+
+        th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #8b949e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-right: 1px solid #21262d;
+        }
+
+        th:last-child {
+            border-right: none;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-right: 1px solid #21262d;
+            font-size: 13px;
+        }
+
+        td:last-child {
+            border-right: none;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #21262d;
+        }
+
+        tbody tr:hover {
+            background-color: #1c2333;
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .num-right {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .insight-box {
+            background-color: #1c2333;
+            border-left: 4px solid #33FFA0;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 4px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .insight-box.warning {
+            border-left-color: #FFB43C;
+        }
+
+        .insight-box.alert {
+            border-left-color: #FF6464;
+        }
+
+        .insight-box strong {
+            color: #e6edf3;
+        }
+
+        .bar-inline {
+            display: inline-block;
+            height: 20px;
+            background: linear-gradient(90deg, #33FFA0, #64C8FF);
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+
+        .sparkline-canvas {
+            height: 30px;
+            display: block;
+        }
+
+        .heatmap-container {
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            padding: 25px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+
+        .heatmap-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e6edf3;
+            margin-bottom: 15px;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            font-size: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-swatch {
+            width: 20px;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .stat-block {
+            background-color: #161b22;
+            border: 1px solid #21262d;
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            font-size: 13px;
+        }
+
+        .stat-item {
+            margin-bottom: 0;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #33FFA0;
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            color: #8b949e;
+            margin-bottom: 8px;
+        }
+
+        .stat-note {
+            color: #8b949e;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 1200px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        footer {
+            background-color: #161b22;
+            border-top: 1px solid #21262d;
+            padding: 20px 30px;
+            margin-top: 60px;
+            font-size: 12px;
+            color: #8b949e;
+            text-align: center;
+        }
+
+        .growth-positive {
+            color: #33FFA0;
+        }
+
+        .growth-negative {
+            color: #FF6464;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 0;
+                border-right: none;
+                border-bottom: 1px solid #21262d;
+                display: flex;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 0;
+            }
+            .sidebar a {
+                padding: 12px 16px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+            .sidebar a.active {
+                border-left: none;
+                border-bottom-color: #33FFA0;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <header>
+        <h1>BurgerMetrics GmbH · Business Intelligence Dashboard</h1>
+    </header>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
-  <div class="sidebar-logo">BurgerMetrics BI</div>
+    <div class="container">
+        <nav class="sidebar">
+            <a href="#executive" class="nav-link active">Executive Summary</a>
+            <a href="#jahresvergleich" class="nav-link">Jahresvergleich</a>
+            <a href="#filialen" class="nav-link">Filialen-Performance</a>
+            <a href="#produkte" class="nav-link">Produkt-Analyse</a>
+            <a href="#zahlungsarten" class="nav-link">Zahlungsarten</a>
+            <a href="#bestellkanale" class="nav-link">Bestellkanäle</a>
+            <a href="#kunden" class="nav-link">Kundenanalyse</a>
+            <a href="#saisonalitat" class="nav-link">Saisonalität</a>
+            <a href="#marktkorb" class="nav-link">Market Basket</a>
+            <a href="#covid" class="nav-link">COVID-19 Impact</a>
+            <a href="#preisentwicklung" class="nav-link">Preisentwicklung</a>
+        </nav>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">Übersicht</div>
-    <div class="sidebar-item active" onclick="showSection('executive')">Executive Summary</div>
-    <div class="sidebar-item" onclick="showSection('revenue')">Revenue Trends</div>
-  </div>
+        <main class="content">
+            <!-- 1. EXECUTIVE SUMMARY -->
+            <section id="executive">
+                <h2>Executive Summary</h2>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">Geschäft</div>
-    <div class="sidebar-item" onclick="showSection('branches')">Filialen Performance</div>
-    <div class="sidebar-item" onclick="showSection('products')">Produkt Mix</div>
-    <div class="sidebar-item" onclick="showSection('payment')">Zahlungsarten</div>
-  </div>
+                <div class="kpi-row">
+                    <div class="kpi-card">
+                        <div class="kpi-label">Total Revenue</div>
+                        <div class="kpi-value">€14.52M</div>
+                        <div class="kpi-change positive">↑ +5.8% YoY</div>
+                        <canvas class="kpi-sparkline" id="sparkRevenue"></canvas>
+                    </div>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">Kunden</div>
-    <div class="sidebar-item" onclick="showSection('customers')">Kundenanalyse</div>
-    <div class="sidebar-item" onclick="showSection('seasonal')">Saisonalität</div>
-  </div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Total Orders</div>
+                        <div class="kpi-value">754,513</div>
+                        <div class="kpi-change positive">↑ +3.2% YoY</div>
+                        <canvas class="kpi-sparkline" id="sparkOrders"></canvas>
+                    </div>
 
-  <div class="sidebar-section">
-    <div class="sidebar-section-title">Spezial</div>
-    <div class="sidebar-item" onclick="showSection('covid')">COVID-19 Analyse</div>
-  </div>
-</div>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Average Order Value</div>
+                        <div class="kpi-value">€19.25</div>
+                        <div class="kpi-change positive">↑ +2.5% YoY</div>
+                        <canvas class="kpi-sparkline" id="sparkAOV"></canvas>
+                    </div>
 
-<!-- MAIN CONTENT -->
-<div class="main-container">
-  <div class="header">
-    <div>
-      <h1 class="header-title">BurgerMetrics GmbH · Business Intelligence Dashboard</h1>
-      <p class="header-period">Datenstand: Q1 2026 | 2017-2026</p>
+                    <div class="kpi-card">
+                        <div class="kpi-label">Active Customers</div>
+                        <div class="kpi-value">25,000</div>
+                        <div class="kpi-change positive">↑ +8.1% YoY</div>
+                        <canvas class="kpi-sparkline" id="sparkCustomers"></canvas>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Satisfaction Score</div>
+                        <div class="kpi-value">3.80★</div>
+                        <div class="kpi-change positive">↑ +0.5% YoY</div>
+                        <canvas class="kpi-sparkline" id="sparkSat"></canvas>
+                    </div>
+
+                    <div class="kpi-card">
+                        <div class="kpi-label">Active Branches</div>
+                        <div class="kpi-value">8</div>
+                        <div class="kpi-change positive">↑ +1 since 2023</div>
+                        <canvas class="kpi-sparkline" id="sparkBranches"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Monthly Revenue Trend (2017-2026)</div>
+                        <canvas id="chartRevenueTrend"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Monthly Orders Trend (2017-2026)</div>
+                        <canvas id="chartOrdersTrend"></canvas>
+                    </div>
+                </div>
+
+                <div class="insight-box">
+                    <strong>Key Insight:</strong> Strong recovery post-COVID with 2023-2025 showing sustained growth. Q1 2026 tracking €698.7K (annualized €2.79M), slight moderation from peak 2025 of €3.0M. AOV growth demonstrates successful premium positioning despite inflation.
+                </div>
+            </section>
+
+            <!-- 2. JAHRESVERGLEICH -->
+            <section id="jahresvergleich">
+                <h2>Jahresvergleich (Year-over-Year Analysis)</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jahr</th>
+                            <th class="num-right">Revenue €</th>
+                            <th class="num-right">YoY %</th>
+                            <th class="num-right">Orders</th>
+                            <th class="num-right">YoY %</th>
+                            <th class="num-right">AOV €</th>
+                            <th class="num-right">YoY %</th>
+                            <th class="num-right">Satisfaction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2017</td>
+                            <td class="num-right">189,699</td>
+                            <td class="num-right">—</td>
+                            <td class="num-right">13,086</td>
+                            <td class="num-right">—</td>
+                            <td class="num-right">14.50</td>
+                            <td class="num-right">—</td>
+                            <td class="num-right">3.80</td>
+                        </tr>
+                        <tr>
+                            <td>2018</td>
+                            <td class="num-right">407,631</td>
+                            <td class="num-right growth-positive">+114.5%</td>
+                            <td class="num-right">27,402</td>
+                            <td class="num-right growth-positive">+109.4%</td>
+                            <td class="num-right">14.88</td>
+                            <td class="num-right growth-positive">+2.6%</td>
+                            <td class="num-right">3.78</td>
+                        </tr>
+                        <tr>
+                            <td>2019</td>
+                            <td class="num-right">831,495</td>
+                            <td class="num-right growth-positive">+104.0%</td>
+                            <td class="num-right">53,307</td>
+                            <td class="num-right growth-positive">+94.8%</td>
+                            <td class="num-right">15.60</td>
+                            <td class="num-right growth-positive">+4.8%</td>
+                            <td class="num-right">3.75</td>
+                        </tr>
+                        <tr>
+                            <td>2020</td>
+                            <td class="num-right">728,623</td>
+                            <td class="num-right growth-negative">-12.4%</td>
+                            <td class="num-right">46,209</td>
+                            <td class="num-right growth-negative">-13.3%</td>
+                            <td class="num-right">15.77</td>
+                            <td class="num-right growth-positive">+1.1%</td>
+                            <td class="num-right">3.71</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="num-right">1,232,130</td>
+                            <td class="num-right growth-positive">+69.1%</td>
+                            <td class="num-right">73,415</td>
+                            <td class="num-right growth-positive">+58.9%</td>
+                            <td class="num-right">16.78</td>
+                            <td class="num-right growth-positive">+6.4%</td>
+                            <td class="num-right">3.78</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="num-right">2,017,208</td>
+                            <td class="num-right growth-positive">+63.8%</td>
+                            <td class="num-right">113,128</td>
+                            <td class="num-right growth-positive">+54.1%</td>
+                            <td class="num-right">17.83</td>
+                            <td class="num-right growth-positive">+6.3%</td>
+                            <td class="num-right">3.80</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="num-right">2,581,072</td>
+                            <td class="num-right growth-positive">+27.9%</td>
+                            <td class="num-right">127,022</td>
+                            <td class="num-right growth-positive">+12.3%</td>
+                            <td class="num-right">20.32</td>
+                            <td class="num-right growth-positive">+14.0%</td>
+                            <td class="num-right">3.80</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="num-right">2,841,075</td>
+                            <td class="num-right growth-positive">+10.1%</td>
+                            <td class="num-right">133,307</td>
+                            <td class="num-right growth-positive">+5.0%</td>
+                            <td class="num-right">21.31</td>
+                            <td class="num-right growth-positive">+4.9%</td>
+                            <td class="num-right">3.82</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="num-right">2,994,771</td>
+                            <td class="num-right growth-positive">+5.4%</td>
+                            <td class="num-right">136,557</td>
+                            <td class="num-right growth-positive">+2.4%</td>
+                            <td class="num-right">21.93</td>
+                            <td class="num-right growth-positive">+2.9%</td>
+                            <td class="num-right">3.82</td>
+                        </tr>
+                        <tr>
+                            <td>2026*</td>
+                            <td class="num-right">698,674</td>
+                            <td class="num-right">Q1 YTD</td>
+                            <td class="num-right">31,080</td>
+                            <td class="num-right">Q1 YTD</td>
+                            <td class="num-right">22.48</td>
+                            <td class="num-right growth-positive">+2.5%</td>
+                            <td class="num-right">3.84</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="chart-wrapper">
+                    <div class="chart-title">Annual Revenue Growth with YoY % Overlay</div>
+                    <canvas id="chartYearlyRevenue"></canvas>
+                </div>
+
+                <div class="insight-box alert">
+                    <strong>COVID-19 Impact (2020):</strong> Revenue declined 12.4% from 2019 to 2020 as lockdowns reduced foot traffic. Strong V-shaped recovery in 2021-2022 with 69% and 64% growth respectively. Channel diversification (app/kiosk) helped mitigate lockdown impact. Deceleration in 2024-2025 reflects market saturation at current branch count.
+                </div>
+            </section>
+
+            <!-- 3. FILIALEN-PERFORMANCE -->
+            <section id="filialen">
+                <h2>Filialen-Performance</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Filiale</th>
+                            <th>Typ</th>
+                            <th>Eröffnet</th>
+                            <th class="num-right">Revenue €</th>
+                            <th class="num-right">Orders</th>
+                            <th class="num-right">AOV €</th>
+                            <th class="num-right">Satis.</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BM Europastern</strong></td>
+                            <td>Highway</td>
+                            <td>2017-03</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 120px;"></span>3,391,529</td>
+                            <td class="num-right">182,120</td>
+                            <td class="num-right">18.62</td>
+                            <td class="num-right">3.81</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Hauptbahnhof</strong></td>
+                            <td>City Center</td>
+                            <td>2018-06</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 78px;"></span>2,205,646</td>
+                            <td class="num-right">123,929</td>
+                            <td class="num-right">17.80</td>
+                            <td class="num-right">3.77</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Mainfrankenpark</strong></td>
+                            <td>Shopping</td>
+                            <td>2021-04</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 76px;"></span>2,158,128</td>
+                            <td class="num-right">102,631</td>
+                            <td class="num-right">21.03</td>
+                            <td class="num-right">3.82</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Heuchelhof</strong></td>
+                            <td>Residential</td>
+                            <td>2019-09</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 72px;"></span>2,029,699</td>
+                            <td class="num-right">100,783</td>
+                            <td class="num-right">20.14</td>
+                            <td class="num-right">3.81</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Sanderring</strong></td>
+                            <td>University</td>
+                            <td>2019-02</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 60px;"></span>1,683,541</td>
+                            <td class="num-right">89,366</td>
+                            <td class="num-right">18.84</td>
+                            <td class="num-right">3.76</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Lengfeld</strong></td>
+                            <td>Commercial</td>
+                            <td>2020-08</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 48px;"></span>1,359,198</td>
+                            <td class="num-right">72,218</td>
+                            <td class="num-right">18.82</td>
+                            <td class="num-right">3.81</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Grombühl</strong></td>
+                            <td>Hospital</td>
+                            <td>2022-01</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 33px;"></span>942,419</td>
+                            <td class="num-right">47,734</td>
+                            <td class="num-right">19.74</td>
+                            <td class="num-right">3.83</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BM Zellerau</strong></td>
+                            <td>Mixed</td>
+                            <td>2023-03</td>
+                            <td class="num-right"><span class="bar-inline" style="width: 27px;"></span>752,219</td>
+                            <td class="num-right">35,732</td>
+                            <td class="num-right">21.05</td>
+                            <td class="num-right">3.82</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <strong>Standort-Insights:</strong> Europastern (Highway) dominates with €3.4M revenue (23.4% of total) but AOV is below average. Shopping centers (Mainfrankenpark) and newest locations (Zellerau) show highest AOV (€21+), suggesting premium traffic or menu mix. Hospital location (Grombühl) achieves 3.83★ satisfaction — highest in portfolio.
+                </div>
+            </section>
+
+            <!-- 4. PRODUKT-ANALYSE -->
+            <section id="produkte">
+                <h2>Produkt-Analyse</h2>
+
+                <div class="chart-wrapper" style="min-height: 450px;">
+                    <div class="chart-title">Top 15 Products by Revenue</div>
+                    <canvas id="chartTopProducts"></canvas>
+                </div>
+
+                <div class="grid-2">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Revenue by Category</div>
+                        <canvas id="chartCategoryPie"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Veggie/Vegan Burger Adoption (2017-2026)</div>
+                        <canvas id="chartVeggieAdoption"></canvas>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>Kategorie</th>
+                            <th class="num-right">Revenue €</th>
+                            <th class="num-right">Menge</th>
+                            <th class="num-right">Avg Price €</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Beyond Burger</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">1,301,008</td>
+                            <td class="num-right">134,133</td>
+                            <td class="num-right">9.70</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Green Goddess Bowl</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">1,018,671</td>
+                            <td class="num-right">89,621</td>
+                            <td class="num-right">11.35</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cola 0.5l</strong></td>
+                            <td>Drink</td>
+                            <td class="num-right">829,880</td>
+                            <td class="num-right">240,672</td>
+                            <td class="num-right">3.45</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Medium Fries</strong></td>
+                            <td>Side</td>
+                            <td class="num-right">597,158</td>
+                            <td class="num-right">200,952</td>
+                            <td class="num-right">2.97</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BBQ Smokehouse</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">551,480</td>
+                            <td class="num-right">54,294</td>
+                            <td class="num-right">10.15</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Truffle Deluxe</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">531,761</td>
+                            <td class="num-right">43,515</td>
+                            <td class="num-right">12.22</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beer 0.3l</strong></td>
+                            <td>Drink</td>
+                            <td class="num-right">500,522</td>
+                            <td class="num-right">120,655</td>
+                            <td class="num-right">4.15</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cola 0.3l</strong></td>
+                            <td>Drink</td>
+                            <td class="num-right">463,206</td>
+                            <td class="num-right">177,336</td>
+                            <td class="num-right">2.61</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Fresh OJ</strong></td>
+                            <td>Drink</td>
+                            <td class="num-right">407,178</td>
+                            <td class="num-right">107,250</td>
+                            <td class="num-right">3.80</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Coffee</strong></td>
+                            <td>Drink</td>
+                            <td class="num-right">392,573</td>
+                            <td class="num-right">165,621</td>
+                            <td class="num-right">2.37</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Veggie Burger</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">391,660</td>
+                            <td class="num-right">60,282</td>
+                            <td class="num-right">6.49</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bacon King</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">390,869</td>
+                            <td class="num-right">42,157</td>
+                            <td class="num-right">9.27</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Double Burger</strong></td>
+                            <td>Burger</td>
+                            <td class="num-right">367,369</td>
+                            <td class="num-right">45,304</td>
+                            <td class="num-right">8.10</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Large Fries</strong></td>
+                            <td>Side</td>
+                            <td class="num-right">364,547</td>
+                            <td class="num-right">102,274</td>
+                            <td class="num-right">3.56</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Side Salad</strong></td>
+                            <td>Side</td>
+                            <td class="num-right">361,562</td>
+                            <td class="num-right">100,150</td>
+                            <td class="num-right">3.61</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <strong>Category Mix:</strong> Burgers dominate at 43.2% of revenue (€6.29M) but drinks achieve highest volume (1.57M units). Veggie/Vegan adoption surged from 8.9% (2017) to 50.8% (2026) — transformational dietary shift. Premium burgers (Truffle Deluxe, BBQ Smokehouse) show strong AOV contribution despite lower volume. Coffee and OJ present untapped growth opportunities in health-conscious segment.
+                </div>
+            </section>
+
+            <!-- 5. ZAHLUNGSARTEN -->
+            <section id="zahlungsarten">
+                <h2>Zahlungsarten-Evolution</h2>
+
+                <div class="chart-wrapper">
+                    <div class="chart-title">Payment Method Mix Over Time (2017-2026)</div>
+                    <canvas id="chartPaymentMethods"></canvas>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jahr</th>
+                            <th class="num-right">Cash %</th>
+                            <th class="num-right">EC Card %</th>
+                            <th class="num-right">Credit Card %</th>
+                            <th class="num-right">Mobile %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2017</td>
+                            <td class="num-right">48.9%</td>
+                            <td class="num-right">30.5%</td>
+                            <td class="num-right">19.6%</td>
+                            <td class="num-right">1.0%</td>
+                        </tr>
+                        <tr>
+                            <td>2018</td>
+                            <td class="num-right">48.6%</td>
+                            <td class="num-right">30.4%</td>
+                            <td class="num-right">20.2%</td>
+                            <td class="num-right">0.9%</td>
+                        </tr>
+                        <tr>
+                            <td>2019</td>
+                            <td class="num-right">43.7%</td>
+                            <td class="num-right">32.9%</td>
+                            <td class="num-right">21.9%</td>
+                            <td class="num-right">1.6%</td>
+                        </tr>
+                        <tr>
+                            <td>2020</td>
+                            <td class="num-right">34.3%</td>
+                            <td class="num-right">37.7%</td>
+                            <td class="num-right">25.3%</td>
+                            <td class="num-right">2.7%</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="num-right">30.8%</td>
+                            <td class="num-right">38.7%</td>
+                            <td class="num-right">25.9%</td>
+                            <td class="num-right">4.5%</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="num-right">28.0%</td>
+                            <td class="num-right">39.4%</td>
+                            <td class="num-right">26.2%</td>
+                            <td class="num-right">6.3%</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="num-right">25.1%</td>
+                            <td class="num-right">39.6%</td>
+                            <td class="num-right">26.9%</td>
+                            <td class="num-right">8.4%</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="num-right">22.4%</td>
+                            <td class="num-right">40.3%</td>
+                            <td class="num-right">27.0%</td>
+                            <td class="num-right">10.4%</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="num-right">20.4%</td>
+                            <td class="num-right">40.3%</td>
+                            <td class="num-right">27.1%</td>
+                            <td class="num-right">12.2%</td>
+                        </tr>
+                        <tr>
+                            <td>2026</td>
+                            <td class="num-right">18.4%</td>
+                            <td class="num-right">41.0%</td>
+                            <td class="num-right">26.9%</td>
+                            <td class="num-right">13.7%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box warning">
+                    <strong>Digitalization Trend:</strong> Cash payments collapsed from 48.9% (2017) to 18.4% (2026) — a 61.9 percentage point decline. Mobile payments exploded from 1.0% to 13.7%, growing 13.7x. EC Card stabilized at ~40% (Germany's debit card standard). This shift improves cash flow visibility, reduces handling costs, and enables better fraud detection. COVID-19 accelerated contactless adoption (2020: 2.7% mobile).
+                </div>
+            </section>
+
+            <!-- 6. BESTELLKANALE -->
+            <section id="bestellkanale">
+                <h2>Bestellkanäle (Order Channels)</h2>
+
+                <div class="chart-wrapper">
+                    <div class="chart-title">Channel Mix Evolution (2017-2026)</div>
+                    <canvas id="chartChannels"></canvas>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jahr</th>
+                            <th class="num-right">Counter %</th>
+                            <th class="num-right">Drive-Through %</th>
+                            <th class="num-right">App Order %</th>
+                            <th class="num-right">Kiosk %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2017</td>
+                            <td class="num-right">44.7%</td>
+                            <td class="num-right">55.3%</td>
+                            <td class="num-right">0.0%</td>
+                            <td class="num-right">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>2018</td>
+                            <td class="num-right">61.6%</td>
+                            <td class="num-right">38.4%</td>
+                            <td class="num-right">0.0%</td>
+                            <td class="num-right">0.0%</td>
+                        </tr>
+                        <tr>
+                            <td>2019</td>
+                            <td class="num-right">56.5%</td>
+                            <td class="num-right">24.9%</td>
+                            <td class="num-right">0.3%</td>
+                            <td class="num-right">18.4%</td>
+                        </tr>
+                        <tr>
+                            <td>2020</td>
+                            <td class="num-right">49.0%</td>
+                            <td class="num-right">35.2%</td>
+                            <td class="num-right">2.1%</td>
+                            <td class="num-right">13.6%</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="num-right">50.2%</td>
+                            <td class="num-right">30.6%</td>
+                            <td class="num-right">3.1%</td>
+                            <td class="num-right">16.1%</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="num-right">53.1%</td>
+                            <td class="num-right">24.6%</td>
+                            <td class="num-right">4.2%</td>
+                            <td class="num-right">18.1%</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="num-right">53.6%</td>
+                            <td class="num-right">22.8%</td>
+                            <td class="num-right">5.8%</td>
+                            <td class="num-right">17.8%</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="num-right">52.8%</td>
+                            <td class="num-right">21.7%</td>
+                            <td class="num-right">7.9%</td>
+                            <td class="num-right">17.7%</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="num-right">51.2%</td>
+                            <td class="num-right">21.1%</td>
+                            <td class="num-right">10.6%</td>
+                            <td class="num-right">17.1%</td>
+                        </tr>
+                        <tr>
+                            <td>2026</td>
+                            <td class="num-right">49.9%</td>
+                            <td class="num-right">20.5%</td>
+                            <td class="num-right">12.9%</td>
+                            <td class="num-right">16.7%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <strong>Channel Diversification:</strong> Counter orders remain dominant (49.9%) but declining. Drive-Through stabilized at ~21% post-COVID recovery. App Order is the growth engine: 0% in 2019 → 12.9% in 2026, adding revenue streams while reducing labor. Kiosk launched 2019 (18.4%) is steady at ~17%. This portfolio approach provides operational flexibility and resilience against lockdowns.
+                </div>
+            </section>
+
+            <!-- 7. KUNDENANALYSE -->
+            <section id="kunden">
+                <h2>Kundenanalyse (Customer Insights)</h2>
+
+                <div class="grid-2">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Age Distribution (25,000 Customers)</div>
+                        <canvas id="chartAgeGroup"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Loyalty Tier Breakdown</div>
+                        <canvas id="chartLoyalty"></canvas>
+                    </div>
+                </div>
+
+                <div class="stat-block">
+                    <div style="font-size: 14px; font-weight: 600; color: #e6edf3; margin-bottom: 20px;">Customer Segment Metrics</div>
+                    <div class="stat-grid">
+                        <div class="stat-item">
+                            <div class="stat-label">Total Active Customers</div>
+                            <div class="stat-value">25,000</div>
+                            <div class="stat-note">+8.1% vs 2025</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">App Users</div>
+                            <div class="stat-value">11,343</div>
+                            <div class="stat-note">45.4% penetration</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Non-App (Cash/Card)</div>
+                            <div class="stat-value">13,657</div>
+                            <div class="stat-note">54.6% of base</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Gold Tier Customers</div>
+                            <div class="stat-value">1,908</div>
+                            <div class="stat-note">Highest CLV segment</div>
+                        </div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Age Group</th>
+                            <th class="num-right">Count</th>
+                            <th class="num-right">% of Total</th>
+                            <th>App Users %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>&lt;18 Jahre</td>
+                            <td class="num-right">2,034</td>
+                            <td class="num-right">8.1%</td>
+                            <td>62.3%</td>
+                        </tr>
+                        <tr>
+                            <td>18-24 Jahre</td>
+                            <td class="num-right">5,392</td>
+                            <td class="num-right">21.6%</td>
+                            <td>71.4%</td>
+                        </tr>
+                        <tr>
+                            <td>25-34 Jahre</td>
+                            <td class="num-right">6,320</td>
+                            <td class="num-right">25.3%</td>
+                            <td>58.9%</td>
+                        </tr>
+                        <tr>
+                            <td>35-44 Jahre</td>
+                            <td class="num-right">4,516</td>
+                            <td class="num-right">18.1%</td>
+                            <td>39.2%</td>
+                        </tr>
+                        <tr>
+                            <td>45-54 Jahre</td>
+                            <td class="num-right">2,948</td>
+                            <td class="num-right">11.8%</td>
+                            <td>28.6%</td>
+                        </tr>
+                        <tr>
+                            <td>55-64 Jahre</td>
+                            <td class="num-right">2,254</td>
+                            <td class="num-right">9.0%</td>
+                            <td>15.7%</td>
+                        </tr>
+                        <tr>
+                            <td>65+ Jahre</td>
+                            <td class="num-right">1,536</td>
+                            <td class="num-right">6.1%</td>
+                            <td>8.4%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <strong>Customer Demographics:</strong> Peak segment is 25-34 years (25.3%), followed by 18-24 (21.6%). Gen Z and Millennials (under 35) comprise 55% of base. App adoption peaks at 18-24 (71.4%) and drops off with age (8.4% for 65+). Gold customers (1,908) represent 7.6% but likely drive 25-30% of profit margin. Cross-sell opportunity: age 35+ segments show low app adoption but stable transaction frequency.
+                </div>
+            </section>
+
+            <!-- 8. SAISONALITÄT -->
+            <section id="saisonalitat">
+                <h2>Saisonalität & Zeitanalyse</h2>
+
+                <div class="grid-2">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Day of Week Distribution</div>
+                        <canvas id="chartDayOfWeek"></canvas>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">Hourly Order Distribution</div>
+                        <canvas id="chartHourly"></canvas>
+                    </div>
+                </div>
+
+                <div class="heatmap-container">
+                    <div class="heatmap-title">Day × Hour Intensity Heatmap (Mon-Sun, 06:00-23:00)</div>
+                    <canvas id="heatmapCanvas" width="1000" height="300"></canvas>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-swatch" style="background-color: #8b949e;"></div>
+                            <span>Low</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-swatch" style="background-color: #FFB43C;"></div>
+                            <span>Medium</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-swatch" style="background-color: #33FFA0;"></div>
+                            <span>Medium-High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-swatch" style="background-color: #64C8FF;"></div>
+                            <span>High</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-swatch" style="background-color: #FF6464;"></div>
+                            <span>Peak</span>
+                        </div>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Wochentag</th>
+                            <th class="num-right">Bestellungen</th>
+                            <th class="num-right">% of Week</th>
+                            <th class="num-right">Revenue €</th>
+                            <th class="num-right">Avg Order Value €</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Montag</td>
+                            <td class="num-right">93,117</td>
+                            <td class="num-right">12.4%</td>
+                            <td class="num-right">1,790,393</td>
+                            <td class="num-right">19.23</td>
+                        </tr>
+                        <tr>
+                            <td>Dienstag</td>
+                            <td class="num-right">92,168</td>
+                            <td class="num-right">12.2%</td>
+                            <td class="num-right">1,774,042</td>
+                            <td class="num-right">19.25</td>
+                        </tr>
+                        <tr>
+                            <td>Mittwoch</td>
+                            <td class="num-right">97,848</td>
+                            <td class="num-right">13.0%</td>
+                            <td class="num-right">1,875,684</td>
+                            <td class="num-right">19.19</td>
+                        </tr>
+                        <tr>
+                            <td>Donnerstag</td>
+                            <td class="num-right">104,023</td>
+                            <td class="num-right">13.8%</td>
+                            <td class="num-right">1,998,150</td>
+                            <td class="num-right">19.21</td>
+                        </tr>
+                        <tr>
+                            <td>Freitag</td>
+                            <td class="num-right">120,584</td>
+                            <td class="num-right">16.0%</td>
+                            <td class="num-right">2,322,635</td>
+                            <td class="num-right">19.27</td>
+                        </tr>
+                        <tr>
+                            <td>Samstag</td>
+                            <td class="num-right">131,444</td>
+                            <td class="num-right">17.4%</td>
+                            <td class="num-right">2,535,972</td>
+                            <td class="num-right">19.31</td>
+                        </tr>
+                        <tr>
+                            <td>Sonntag</td>
+                            <td class="num-right">115,329</td>
+                            <td class="num-right">15.3%</td>
+                            <td class="num-right">2,225,503</td>
+                            <td class="num-right">19.29</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box warning">
+                    <strong>Saisonale Muster:</strong> Weekend peak: Saturday commands 17.4% of weekly volume, Friday+Saturday = 33.4%. Weekday baseline ~12-13%. AOV stable across week (€19.21-19.31) — no premium on weekend pricing. Hour analysis reveals TWO distinct peaks: Lunch 11:00-13:00 (226k orders, 41.7K avg/hour) and Dinner 17:00-19:00 (189k orders, 31.5K avg/hour). Staffing and inventory should mirror this bimodal distribution for optimal efficiency.
+                </div>
+            </section>
+
+            <!-- 9. MARKET BASKET -->
+            <section id="marktkorb">
+                <h2>Market Basket Analysis</h2>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Pair</th>
+                            <th class="num-right">Co-occurrences</th>
+                            <th class="num-right">Support %</th>
+                            <th class="num-right">Confidence %</th>
+                            <th>Association Strength</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Medium Fries + Cola 0.5l</strong></td>
+                            <td class="num-right">155,282</td>
+                            <td class="num-right">20.6%</td>
+                            <td class="num-right">77.3%</td>
+                            <td><span class="bar-inline" style="width: 110px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Small Fries + Cola 0.3l</strong></td>
+                            <td class="num-right">90,608</td>
+                            <td class="num-right">12.0%</td>
+                            <td class="num-right">66.1%</td>
+                            <td><span class="bar-inline" style="width: 95px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cola 0.3l + Cola 0.5l</strong></td>
+                            <td class="num-right">51,456</td>
+                            <td class="num-right">6.8%</td>
+                            <td class="num-right">33.9%</td>
+                            <td><span class="bar-inline" style="width: 49px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Medium Fries + Cola 0.3l</strong></td>
+                            <td class="num-right">49,145</td>
+                            <td class="num-right">6.5%</td>
+                            <td class="num-right">24.5%</td>
+                            <td><span class="bar-inline" style="width: 35px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beyond Burger + Cola 0.5l</strong></td>
+                            <td class="num-right">47,680</td>
+                            <td class="num-right">6.3%</td>
+                            <td class="num-right">41.1%</td>
+                            <td><span class="bar-inline" style="width: 59px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Small Fries + Cola 0.5l</strong></td>
+                            <td class="num-right">47,461</td>
+                            <td class="num-right">6.3%</td>
+                            <td class="num-right">34.6%</td>
+                            <td><span class="bar-inline" style="width: 50px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beyond Burger + Medium Fries</strong></td>
+                            <td class="num-right">46,334</td>
+                            <td class="num-right">6.1%</td>
+                            <td class="num-right">40.0%</td>
+                            <td><span class="bar-inline" style="width: 57px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Small Fries + Medium Fries</strong></td>
+                            <td class="num-right">45,590</td>
+                            <td class="num-right">6.0%</td>
+                            <td class="num-right">33.3%</td>
+                            <td><span class="bar-inline" style="width: 48px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Beyond Burger + Side Salad</strong></td>
+                            <td class="num-right">35,011</td>
+                            <td class="num-right">4.6%</td>
+                            <td class="num-right">30.2%</td>
+                            <td><span class="bar-inline" style="width: 43px;"></span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Large Fries + Cola 0.5l</strong></td>
+                            <td class="num-right">32,765</td>
+                            <td class="num-right">4.3%</td>
+                            <td class="num-right">32.0%</td>
+                            <td><span class="bar-inline" style="width: 46px;"></span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box">
+                    <strong>Key Association Rules:</strong> The "Fries + Cola" combo is unbeatable: Medium Fries + Cola 0.5l appears in 155K orders (77.3% confidence). This classic pairing should be prominently bundled in promotions. Beyond Burger drives 40%+ confidence to sides and drinks. Health-conscious pairing (Beyond Burger + Side Salad) has lower support but indicates a loyal micro-segment. Opportunity: Bundle pricing and cross-promotion of High-Confidence pairs could increase AOV by 2-3%.
+                </div>
+            </section>
+
+            <!-- 10. COVID-19 IMPACT -->
+            <section id="covid">
+                <h2>COVID-19 Impact Analysis</h2>
+
+                <div class="stat-block">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div>
+                            <div class="stat-label">Pre-COVID Peak (2019)</div>
+                            <div class="stat-value" style="color: #64C8FF;">€831.5K</div>
+                            <div class="stat-note">Annual revenue</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">COVID Trough (2020)</div>
+                            <div class="stat-value" style="color: #FF6464;">€728.6K</div>
+                            <div class="stat-note">-12.4% YoY decline</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Recovery (2021)</div>
+                            <div class="stat-value" style="color: #33FFA0;">€1,232.1K</div>
+                            <div class="stat-note">+69.1% recovery growth</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Loss Impact (2020)</div>
+                            <div class="stat-value" style="color: #FF6464;">€102.9M</div>
+                            <div class="stat-note">vs 2019 baseline</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-wrapper">
+                    <div class="chart-title">Revenue Recovery: Pre-, During-, and Post-COVID</div>
+                    <canvas id="chartCOVIDImpact"></canvas>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Zeitraum</th>
+                            <th class="num-right">Avg Orders/Month</th>
+                            <th class="num-right">Counter %</th>
+                            <th class="num-right">Drive-Through %</th>
+                            <th class="num-right">Cash %</th>
+                            <th class="num-right">Mobile %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Pre-COVID</strong></td>
+                            <td>2017-2019</td>
+                            <td class="num-right">2,285</td>
+                            <td class="num-right">54.3%</td>
+                            <td class="num-right">38.2%</td>
+                            <td class="num-right">45.4%</td>
+                            <td class="num-right">0.8%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>COVID Period</strong></td>
+                            <td>2020 (Lockdowns)</td>
+                            <td class="num-right">3,851</td>
+                            <td class="num-right">49.0%</td>
+                            <td class="num-right">35.2%</td>
+                            <td class="num-right">34.3%</td>
+                            <td class="num-right">2.7%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recovery</strong></td>
+                            <td>2021-2023</td>
+                            <td class="num-right">5,644</td>
+                            <td class="num-right">51.6%</td>
+                            <td class="num-right">28.3%</td>
+                            <td class="num-right">25.5%</td>
+                            <td class="num-right">6.4%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Normalized</strong></td>
+                            <td>2024-2026</td>
+                            <td class="num-right">6,286</td>
+                            <td class="num-right">51.3%</td>
+                            <td class="num-right">21.1%</td>
+                            <td class="num-right">20.6%</td>
+                            <td class="num-right">11.0%</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box alert">
+                    <strong>COVID Insights:</strong> Counter service briefly dropped from 54% to 49% during lockdowns, offset by surge in Drive-Through (35%+ utilization). Cash payments collapsed 11 points (45% → 34%) during 2020, accelerating shift to contactless. Mobile payments jumped 1.9 points during lockdowns. The -12.4% revenue decline was far less severe than industry due to diversified channels (Drive-Through + early Kiosk 2019). By 2021, structural changes (App, Kiosk, payment digitalization) became permanent, enabling superior growth trajectory.
+                </div>
+            </section>
+
+            <!-- 11. PREISENTWICKLUNG -->
+            <section id="preisentwicklung">
+                <h2>Preisentwicklung & Inflation</h2>
+
+                <div class="chart-wrapper">
+                    <div class="chart-title">Average Order Value Trend with Inflation Context</div>
+                    <canvas id="chartAOVTrend"></canvas>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Jahr</th>
+                            <th class="num-right">AOV €</th>
+                            <th class="num-right">YoY Change</th>
+                            <th class="num-right">Cumulative Change</th>
+                            <th>Pricing Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2017</td>
+                            <td class="num-right">14.50</td>
+                            <td class="num-right">—</td>
+                            <td class="num-right">—</td>
+                            <td>Baseline</td>
+                        </tr>
+                        <tr>
+                            <td>2018</td>
+                            <td class="num-right">14.88</td>
+                            <td class="num-right growth-positive">+2.6%</td>
+                            <td class="num-right growth-positive">+2.6%</td>
+                            <td>Minor increases</td>
+                        </tr>
+                        <tr>
+                            <td>2019</td>
+                            <td class="num-right">15.60</td>
+                            <td class="num-right growth-positive">+4.8%</td>
+                            <td class="num-right growth-positive">+7.6%</td>
+                            <td>Menu premiumization</td>
+                        </tr>
+                        <tr>
+                            <td>2020</td>
+                            <td class="num-right">15.77</td>
+                            <td class="num-right growth-positive">+1.1%</td>
+                            <td class="num-right growth-positive">+8.7%</td>
+                            <td>COVID holdback</td>
+                        </tr>
+                        <tr>
+                            <td>2021</td>
+                            <td class="num-right">16.78</td>
+                            <td class="num-right growth-positive">+6.4%</td>
+                            <td class="num-right growth-positive">+15.7%</td>
+                            <td>Inflation catch-up</td>
+                        </tr>
+                        <tr>
+                            <td>2022</td>
+                            <td class="num-right">17.83</td>
+                            <td class="num-right growth-positive">+6.3%</td>
+                            <td class="num-right growth-positive">+23.0%</td>
+                            <td>Aggressive pricing</td>
+                        </tr>
+                        <tr>
+                            <td>2023</td>
+                            <td class="num-right">20.32</td>
+                            <td class="num-right growth-positive">+14.0%</td>
+                            <td class="num-right growth-positive">+40.1%</td>
+                            <td>Peak premiumization</td>
+                        </tr>
+                        <tr>
+                            <td>2024</td>
+                            <td class="num-right">21.31</td>
+                            <td class="num-right growth-positive">+4.9%</td>
+                            <td class="num-right growth-positive">+46.9%</td>
+                            <td>Moderation begins</td>
+                        </tr>
+                        <tr>
+                            <td>2025</td>
+                            <td class="num-right">21.93</td>
+                            <td class="num-right growth-positive">+2.9%</td>
+                            <td class="num-right growth-positive">+51.2%</td>
+                            <td>Steady increases</td>
+                        </tr>
+                        <tr>
+                            <td>2026*</td>
+                            <td class="num-right">22.48</td>
+                            <td class="num-right growth-positive">+2.5%</td>
+                            <td class="num-right growth-positive">+55.0%</td>
+                            <td>Inflation-matched</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="insight-box warning">
+                    <strong>Pricing Power Analysis:</strong> AOV grew 55% over 9 years (€14.50 → €22.48), far outpacing unit growth (84% order growth). This demonstrates exceptional pricing power. 2023 was peak (+14.0%) — likely aggressive inflation response. Deceleration 2024-2026 (+2.5-4.9% annually) suggests price sensitivity emerging. Gross margin pressure: While AOV surged, order growth slowed, indicating some volume trade-off. Premium burger adoption (Beyond, Truffle) enabled AOV expansion without commoditization risk. Caution: Further increases may hit elasticity ceiling; focus on volume recovery in 2026+.
+                </div>
+            </section>
+        </main>
     </div>
-  </div>
 
-  <div class="content">
+    <footer>
+        Fiktives Unternehmen — BI-Kurs THWS Würzburg · Prof. Robert Butscher | Daten: 754.513 Bestellungen · 2017-03 bis 2026-03
+    </footer>
 
-    <!-- EXECUTIVE SUMMARY -->
-    <div id="executive" class="section active">
-      <div class="section-title">Executive Summary</div>
+    <script>
+        // Monthly data
+        const mLabels=["2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03"];
+        const mRevenue=[5898,12479,17304,23110,26763,22715,20156,20479,20243,20552,20270,18978,24901,23127,24584,39925,46158,44391,42845,40687,39659,42106,41285,43468,56582,62945,69413,77971,76165,67982,78250,82537,86251,88646,77917,72344,51248,23154,42781,71677,73431,72018,96576,53540,52260,41678,44742,39926,64780,73166,99957,117999,146981,131005,121967,131948,125496,134164,139922,129325,164997,165478,169479,193735,206204,176571,169575,168958,161796,171168,172234,160126,207455,204841,216178,252557,268252,230323,217804,217310,211513,222478,205838,194496,240856,225280,241618,269353,278917,255440,236901,232738,231233,228404,220475,196587,251062,241181,253082,281271,300584,267627,240745,248232,248426,245499,233984,208414,256276];
+        const mOrders=[479,845,1156,1631,1842,1595,1400,1378,1332,1428,1389,1261,1628,1518,1575,2745,3144,3081,2840,2704,2691,2826,2782,3045,3883,3963,4342,5012,4828,4402,4977,5132,5358,5583,4875,4496,3237,1423,2658,4648,4734,4697,6051,3395,3367,2628,2831,2467,3995,4491,6031,7144,8686,7750,7113,7624,7363,7920,7932,7310,9112,9177,9386,11005,11769,10017,9449,9430,8944,9597,8851,7880,10189,10110,10587,12442,13247,11430,10485,10585,10263,10953,9707,9125,11200,10448,11117,12861,13219,12091,11069,10865,10781,10824,10174,9046,11317,10798,11372,13078,13856,12471,10943,11202,11090,11210,10427,9375,11278];
+        const mAOV=[12.31,14.77,14.97,14.17,14.53,14.24,14.4,14.86,15.2,14.39,14.59,15.05,15.3,15.24,15.61,14.54,14.68,14.41,15.09,15.05,14.74,14.9,14.84,14.28,14.57,15.88,15.99,15.56,15.78,15.44,15.72,16.08,16.1,15.88,15.98,16.09,15.83,16.27,16.1,15.42,15.51,15.33,15.96,15.77,15.52,15.86,15.8,16.18,16.22,16.29,16.57,16.52,16.92,16.9,17.15,17.31,17.04,16.94,17.64,17.69,18.11,18.03,18.06,17.6,17.52,17.63,17.95,17.92,18.09,17.84,19.46,20.32,20.36,20.26,20.42,20.3,20.25,20.15,20.77,20.53,20.61,20.31,21.21,21.31,21.51,21.56,21.73,20.94,21.1,21.13,21.4,21.42,21.45,21.1,21.67,21.73,22.18,22.34,22.25,21.51,21.69,21.46,22.0,22.16,22.4,21.9,22.44,22.23,22.72];
 
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-label">Gesamtmensatz (kumulativ)</div>
-          <div class="kpi-value">€14.5M</div>
-          <div class="kpi-change positive">↑ 38% YoY</div>
-          <canvas class="kpi-sparkline" id="spark-revenue"></canvas>
-        </div>
+        const yearLabels = ['2017','2018','2019','2020','2021','2022','2023','2024','2025','2026*'];
+        const yearRevenue = [189699,407631,831495,728623,1232130,2017208,2581072,2841075,2994771,698674];
+        const yearOrders = [13086,27402,53307,46209,73415,113128,127022,133307,136557,31080];
+        const yearAOV = [14.50,14.88,15.60,15.77,16.78,17.83,20.32,21.31,21.93,22.48];
 
-        <div class="kpi-card">
-          <div class="kpi-label">Bestellungen (Gesamt)</div>
-          <div class="kpi-value">754k</div>
-          <div class="kpi-change positive">↑ 22% YoY</div>
-          <canvas class="kpi-sparkline" id="spark-orders"></canvas>
-        </div>
+        const dowLabels = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+        const dowOrders = [93117,92168,97848,104023,120584,131444,115329];
+        const dowRevenue = [1790393,1774042,1875684,1998150,2322635,2535972,2225503];
 
-        <div class="kpi-card">
-          <div class="kpi-label">Durchschnittlicher Bestellwert</div>
-          <div class="kpi-value">€19.25</div>
-          <div class="kpi-change positive">↑ 13% YoY</div>
-          <canvas class="kpi-sparkline" id="spark-aov"></canvas>
-        </div>
+        const hourLabels = Array.from({length:18}, (_,i) => (i+6).toString().padStart(2,'0')+':00');
+        const hourOrders = [12235,30576,37909,24757,18363,41517,121331,104250,50750,26012,26333,44067,81926,63592,32974,19399,12192,6330];
 
-        <div class="kpi-card">
-          <div class="kpi-label">Aktive Kunden</div>
-          <div class="kpi-value">25,340</div>
-          <div class="kpi-change positive">↑ 18% YoY</div>
-          <canvas class="kpi-sparkline" id="spark-customers"></canvas>
-        </div>
+        const paymentYears = ['2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+        const cashData = [48.9,48.6,43.7,34.3,30.8,28.0,25.1,22.4,20.4,18.4];
+        const ecData = [30.5,30.4,32.9,37.7,38.7,39.4,39.6,40.3,40.3,41.0];
+        const ccData = [19.6,20.2,21.9,25.3,25.9,26.2,26.9,27.0,27.1,26.9];
+        const mobileData = [1.0,0.9,1.6,2.7,4.5,6.3,8.4,10.4,12.2,13.7];
 
-        <div class="kpi-card">
-          <div class="kpi-label">Kundenzufriedenheit</div>
-          <div class="kpi-value">3.8 / 5.0</div>
-          <div class="kpi-change positive">↑ 0.2 Points</div>
-          <canvas class="kpi-sparkline" id="spark-satisfaction"></canvas>
-        </div>
+        const channelYears = ['2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+        const counterData = [44.7,61.6,56.5,49.0,50.2,53.1,53.6,52.8,51.2,49.9];
+        const driveData = [55.3,38.4,24.9,35.2,30.6,24.6,22.8,21.7,21.1,20.5];
+        const appData = [0,0,0.3,2.1,3.1,4.2,5.8,7.9,10.6,12.9];
+        const kioskData = [0,0,18.4,13.6,16.1,18.1,17.8,17.7,17.1,16.7];
 
-        <div class="kpi-card">
-          <div class="kpi-label">Filialen</div>
-          <div class="kpi-value">8</div>
-          <div class="kpi-change text-muted">Stabil seit 2023</div>
-          <canvas class="kpi-sparkline" id="spark-branches"></canvas>
-        </div>
-      </div>
+        const ageGroups = ['<18','18-24','25-34','35-44','45-54','55-64','65+'];
+        const ageCount = [2034,5392,6320,4516,2948,2254,1536];
 
-      <h3 class="section-title mt-24">Geschäftsübersicht 2017-2026</h3>
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Monatlicher Umsatz (€)</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-revenue"></canvas>
-          </div>
-        </div>
+        const loyaltyTiers = ['None','Bronze','Silver','Gold'];
+        const loyaltyCount = [15000,4212,3541,1908];
+        const loyaltyColors = ['#8b949e','#FFB43C','#33FFA0','#64C8FF'];
 
-        <div class="chart-container">
-          <div class="chart-title">Bestellungen pro Monat</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-orders"></canvas>
-          </div>
-        </div>
-      </div>
+        const heatmapData=[[1502,3833,4741,3079,2178,5127,15012,12763,6178,3226,3208,5404,10105,7875,4158,2436,1515,777],[1482,3752,4548,3100,2209,5065,14757,12894,6149,3063,3213,5417,10010,7833,4127,2377,1442,730],[1585,3956,5033,3229,2429,5294,15521,13479,6649,3307,3451,5748,10612,8186,4377,2547,1621,824],[1629,4202,5193,3491,2587,5624,16877,14221,7088,3546,3597,6078,11356,8767,4536,2648,1661,922],[1955,4844,6141,3967,2961,6601,19484,16820,8271,4216,4116,6947,12991,10059,5140,3139,1940,992],[2133,5266,6584,4258,3186,7379,21040,18214,8739,4559,4634,7751,14229,11174,5664,3360,2135,1139],[1949,4723,5669,3633,2813,6427,18640,15859,7676,4095,4114,6722,12623,9698,4972,2892,1878,946]];
 
-      <div class="chart-container">
-        <div class="chart-title">Jahresvergleich: Umsatz vs. Bestellungen</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-year-comparison"></canvas>
-        </div>
-      </div>
-    </div>
+        const veggieYears = ['2017','2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+        const veggiePercent = [8.9,9.8,21.0,24.3,26.3,29.3,44.3,46.9,48.9,50.8];
 
-    <!-- REVENUE TRENDS -->
-    <div id="revenue" class="section">
-      <div class="section-title">Revenue Trends & Analyse</div>
+        const chartBg = '#161b22';
+        const chartText = '#e6edf3';
+        const gridColor = '#21262d';
+        const accentGreen = '#33FFA0';
+        const accentRed = '#FF6464';
+        const accentOrange = '#FFB43C';
+        const accentBlue = '#64C8FF';
 
-      <div class="chart-container">
-        <div class="chart-title">Monatlicher Umsatz (2017-2026) mit Trendanalyse</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-revenue-detailed"></canvas>
-        </div>
-        <p class="text-sm text-muted" style="margin-top: 12px;">
-          Blaue Linie: Tatsächlicher Umsatz | Grüne Referenzlinie: Vor-COVID-Trend | Deutlicher Rückgang Q2 2020 (COVID-19), gefolgt von stetigem Aufschwung
-        </p>
-      </div>
+        Chart.defaults.color = '#8b949e';
+        Chart.defaults.borderColor = gridColor;
+        Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif";
+        Chart.defaults.font.size = 12;
 
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Umsatz nach Quartal</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-quarters"></canvas>
-          </div>
-        </div>
+        function drawSparkline(canvasId, data, color) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const padding = 2;
+            const width = w - 2*padding;
+            const height = h - 2*padding;
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
 
-        <div class="chart-container">
-          <div class="chart-title">YoY Wachstumsrate (%)</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-growth"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="comparison-box">
-        <div class="comparison-title">Zeitraumvergleiche</div>
-        <div class="comparison-values">
-          <div class="comparison-value">
-            <div class="comparison-label">2019 (Pre-COVID)</div>
-            <div class="comparison-number">€1.1M</div>
-          </div>
-          <div class="comparison-value">
-            <div class="comparison-label">2020 (COVID)</div>
-            <div class="comparison-number">€0.82M</div>
-          </div>
-          <div class="comparison-value">
-            <div class="comparison-label">2025 (Peak)</div>
-            <div class="comparison-number">€2.1M</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BRANCHES -->
-    <div id="branches" class="section">
-      <div class="section-title">Filialen Performance</div>
-
-      <div class="table-container">
-        <div class="table-title">Filial-Kennzahlen 2017-2026</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Filiale</th>
-              <th>Stadt</th>
-              <th class="numeric">Eröffnet</th>
-              <th class="numeric">Gesamt Umsatz (€)</th>
-              <th class="numeric">Bestellungen</th>
-              <th class="numeric">AOV (€)</th>
-              <th class="numeric">Zufriedenheit</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Hauptsitz</strong></td>
-              <td>Würzburg</td>
-              <td class="numeric">2017</td>
-              <td class="numeric">3,840,000</td>
-              <td class="numeric">198,500</td>
-              <td class="numeric">19.35</td>
-              <td class="numeric">3.9</td>
-            </tr>
-            <tr>
-              <td><strong>Nürnberg</strong></td>
-              <td>Nürnberg</td>
-              <td class="numeric">2018</td>
-              <td class="numeric">2,156,000</td>
-              <td class="numeric">112,250</td>
-              <td class="numeric">19.21</td>
-              <td class="numeric">3.7</td>
-            </tr>
-            <tr>
-              <td><strong>Bamberg</strong></td>
-              <td>Bamberg</td>
-              <td class="numeric">2019</td>
-              <td class="numeric">1,648,000</td>
-              <td class="numeric">85,600</td>
-              <td class="numeric">19.26</td>
-              <td class="numeric">3.8</td>
-            </tr>
-            <tr>
-              <td><strong>Erlangen</strong></td>
-              <td>Erlangen</td>
-              <td class="numeric">2019</td>
-              <td class="numeric">1,532,000</td>
-              <td class="numeric">79,400</td>
-              <td class="numeric">19.30</td>
-              <td class="numeric">3.6</td>
-            </tr>
-            <tr>
-              <td><strong>Ansbach</strong></td>
-              <td>Ansbach</td>
-              <td class="numeric">2021</td>
-              <td class="numeric">1,285,000</td>
-              <td class="numeric">66,800</td>
-              <td class="numeric">19.24</td>
-              <td class="numeric">3.8</td>
-            </tr>
-            <tr>
-              <td><strong>Aschaffenburg</strong></td>
-              <td>Aschaffenburg</td>
-              <td class="numeric">2022</td>
-              <td class="numeric">1,126,000</td>
-              <td class="numeric">58,500</td>
-              <td class="numeric">19.27</td>
-              <td class="numeric">3.9</td>
-            </tr>
-            <tr>
-              <td><strong>Coburg</strong></td>
-              <td>Coburg</td>
-              <td class="numeric">2023</td>
-              <td class="numeric">875,000</td>
-              <td class="numeric">45,300</td>
-              <td class="numeric">19.32</td>
-              <td class="numeric">3.8</td>
-            </tr>
-            <tr>
-              <td><strong>Kronach</strong></td>
-              <td>Kronach</td>
-              <td class="numeric">2024</td>
-              <td class="numeric">487,000</td>
-              <td class="numeric">25,200</td>
-              <td class="numeric">19.29</td>
-              <td class="numeric">3.9</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <h3 class="section-title mt-24">Filial-Ranking nach Umsatz</h3>
-      <div class="chart-container">
-        <div class="chart-title">Gesamtumsatz pro Filiale (€)</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-branches-revenue"></canvas>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Durchschn. Bestellwert nach Filiale (€)</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-branches-aov"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-title">Kundenzufriedenheit nach Filiale</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-branches-satisfaction"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- PRODUCTS -->
-    <div id="products" class="section">
-      <div class="section-title">Produkt Mix & Trends</div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Veggie/Vegan-Anteil am Umsatz (%)</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-veggie-trend"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-title">Top 10 Produkte nach Umsatz</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-top-products"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-title">Kategorienmix (Anteil am Jahresumsatz 2025)</div>
-        <div class="chart-wrapper small">
-          <canvas id="chart-category-mix"></canvas>
-        </div>
-      </div>
-
-      <h3 class="section-title mt-24">Produktkategorie-Trends</h3>
-      <div class="chart-container">
-        <div class="chart-title">Kategorie-Umsatz im Zeitverlauf (2021-2025)</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-category-trends"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- PAYMENT -->
-    <div id="payment" class="section">
-      <div class="section-title">Zahlungsarten Evolution</div>
-
-      <div class="chart-container">
-        <div class="chart-title">Zahlungsart-Mix im Zeitverlauf (Anteil %)</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-payment-stacked"></canvas>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Bargeld vs. Kartenlose (2017 vs. 2025)</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-payment-shift"></canvas>
-          </div>
-        </div>
-
-        <div class="table-container">
-          <div class="table-title">Zahlungsart-Trends</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Zahlungsart</th>
-                <th class="numeric">2017 (%)</th>
-                <th class="numeric">2025 (%)</th>
-                <th class="numeric">Δ (pp)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Bargeld</td>
-                <td class="numeric">49.0%</td>
-                <td class="numeric">18.0%</td>
-                <td class="numeric"><span style="color: #FF6464;">-31.0</span></td>
-              </tr>
-              <tr>
-                <td>EC-Karte</td>
-                <td class="numeric">43.0%</td>
-                <td class="numeric">45.0%</td>
-                <td class="numeric"><span style="color: #33FFA0;">+2.0</span></td>
-              </tr>
-              <tr>
-                <td>Mobil-Zahlung</td>
-                <td class="numeric">1.0%</td>
-                <td class="numeric">14.0%</td>
-                <td class="numeric"><span style="color: #33FFA0;">+13.0</span></td>
-              </tr>
-              <tr>
-                <td>Gutschein</td>
-                <td class="numeric">7.0%</td>
-                <td class="numeric">23.0%</td>
-                <td class="numeric"><span style="color: #33FFA0;">+16.0</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- CUSTOMERS -->
-    <div id="customers" class="section">
-      <div class="section-title">Kundenanalyse</div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Kundenverteilung nach Altersgruppe</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-age-distribution"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-title">Loyalitätsstufen-Verteilung</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-loyalty-distribution"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-title">App-Adoption im Zeitverlauf (%)</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-app-adoption"></canvas>
-        </div>
-      </div>
-
-      <h3 class="section-title mt-24">Kundenlebenszyklusmetrik</h3>
-      <div class="table-container">
-        <div class="table-title">Kundenmetriken nach Jahr</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Jahr</th>
-              <th class="numeric">Neue Kunden</th>
-              <th class="numeric">Aktive Kunden</th>
-              <th class="numeric">Bestellungen p.K.</th>
-              <th class="numeric">Avg. LTV (€)</th>
-              <th class="numeric">Retention (%)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2017</td>
-              <td class="numeric">4,200</td>
-              <td class="numeric">4,200</td>
-              <td class="numeric">19.2</td>
-              <td class="numeric">356</td>
-              <td class="numeric">—</td>
-            </tr>
-            <tr>
-              <td>2018</td>
-              <td class="numeric">3,100</td>
-              <td class="numeric">6,850</td>
-              <td class="numeric">18.8</td>
-              <td class="numeric">382</td>
-              <td class="numeric">81%</td>
-            </tr>
-            <tr>
-              <td>2019</td>
-              <td class="numeric">2,950</td>
-              <td class="numeric">9,200</td>
-              <td class="numeric">19.1</td>
-              <td class="numeric">378</td>
-              <td class="numeric">84%</td>
-            </tr>
-            <tr>
-              <td>2020</td>
-              <td class="numeric">1,800</td>
-              <td class="numeric">9,850</td>
-              <td class="numeric">16.4</td>
-              <td class="numeric">295</td>
-              <td class="numeric">71%</td>
-            </tr>
-            <tr>
-              <td>2021</td>
-              <td class="numeric">3,200</td>
-              <td class="numeric">12,150</td>
-              <td class="numeric">18.2</td>
-              <td class="numeric">412</td>
-              <td class="numeric">88%</td>
-            </tr>
-            <tr>
-              <td>2022</td>
-              <td class="numeric">2,800</td>
-              <td class="numeric">14,200</td>
-              <td class="numeric">18.9</td>
-              <td class="numeric">438</td>
-              <td class="numeric">91%</td>
-            </tr>
-            <tr>
-              <td>2023</td>
-              <td class="numeric">2,400</td>
-              <td class="numeric">15,800</td>
-              <td class="numeric">19.3</td>
-              <td class="numeric">451</td>
-              <td class="numeric">92%</td>
-            </tr>
-            <tr>
-              <td>2024</td>
-              <td class="numeric">2,600</td>
-              <td class="numeric">17,950</td>
-              <td class="numeric">19.5</td>
-              <td class="numeric">468</td>
-              <td class="numeric">93%</td>
-            </tr>
-            <tr>
-              <td>2025</td>
-              <td class="numeric">3,100</td>
-              <td class="numeric">20,540</td>
-              <td class="numeric">19.8</td>
-              <td class="numeric">485</td>
-              <td class="numeric">94%</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- SEASONAL -->
-    <div id="seasonal" class="section">
-      <div class="section-title">Saisonalität & Muster</div>
-
-      <div class="chart-container">
-        <div class="chart-title">Wochentag × Tageszeit Heatmap (Bestellvolumen)</div>
-        <p class="text-sm text-muted" style="margin-bottom: 16px;">Dunkler = Höheres Volumen | Durchschnittswerte 2025</p>
-        <div id="heatmap-hourly-container" style="overflow-x: auto;">
-          <div style="display: inline-block;">
-            <div style="display: flex; margin-bottom: 8px;">
-              <div style="width: 80px;"></div>
-              <div style="display: grid; grid-template-columns: repeat(24, 32px); gap: 2px;">
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">00</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">01</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">02</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">03</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">04</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">05</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">06</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">07</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">08</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">09</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">10</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">11</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">12</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">13</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">14</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">15</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">16</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">17</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">18</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">19</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">20</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">21</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">22</div>
-                <div style="font-size: 9px; color: #8b949e; text-align: center;">23</div>
-              </div>
-            </div>
-            <div id="heatmap-actual"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Bestellungen nach Wochentag</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-day-of-week"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-title">Monatliche Saisonalität (Durchschnittsindizes)</div>
-          <div class="chart-wrapper small">
-            <canvas id="chart-monthly-seasonality"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COVID IMPACT -->
-    <div id="covid" class="section">
-      <div class="section-title">COVID-19 Geschäftsauswirkungen</div>
-
-      <h3 class="section-title">Perioden-Vergleich</h3>
-      <div class="grid-2">
-        <div class="comparison-box">
-          <div class="comparison-title">Vor COVID (2017-2019)</div>
-          <div class="comparison-values">
-            <div class="comparison-value">
-              <div class="comparison-label">Durchschn. Umsatz p.M.</div>
-              <div class="comparison-number">€89.2k</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Bestellungen p.M.</div>
-              <div class="comparison-number">4,650</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Filiale</div>
-              <div class="comparison-number">2</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="comparison-box">
-          <div class="comparison-title">Während COVID (2020)</div>
-          <div class="comparison-values">
-            <div class="comparison-value">
-              <div class="comparison-label">Durchschn. Umsatz p.M.</div>
-              <div class="comparison-number">€68.3k</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Bestellungen p.M.</div>
-              <div class="comparison-number">3,544</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Filiale</div>
-              <div class="comparison-number">4</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="comparison-box">
-          <div class="comparison-title">Nach COVID (2021-2025)</div>
-          <div class="comparison-values">
-            <div class="comparison-value">
-              <div class="comparison-label">Durchschn. Umsatz p.M.</div>
-              <div class="comparison-number">€142.8k</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Bestellungen p.M.</div>
-              <div class="comparison-number">7,412</div>
-            </div>
-            <div class="comparison-value">
-              <div class="comparison-label">Filiale</div>
-              <div class="comparison-number">8</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="grid-2">
-        <div class="chart-container">
-          <div class="chart-title">Channel-Verschiebung: Dine-In vs. Delivery</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-channel-shift"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-container">
-          <div class="chart-title">Monatlicher Umsatz (Hervorgehoben: COVID-Phase)</div>
-          <div class="chart-wrapper">
-            <canvas id="chart-covid-timeline"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <div class="chart-container">
-        <div class="chart-title">Bestellmethoden Evolution (2019-2025)</div>
-        <div class="chart-wrapper">
-          <canvas id="chart-order-method"></canvas>
-        </div>
-      </div>
-
-      <h3 class="section-title mt-24">Geschäftserholung Metriken</h3>
-      <div class="table-container">
-        <div class="table-title">Quartal-für-Quartal Vergleich (2019 Q4 bis 2021 Q4)</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Quartal</th>
-              <th class="numeric">Umsatz (€)</th>
-              <th class="numeric">vs. Q4 2019</th>
-              <th class="numeric">Bestellungen</th>
-              <th class="numeric">Aktive Filialen</th>
-              <th class="numeric">Notiz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>2019 Q4</td>
-              <td class="numeric">310,000</td>
-              <td class="numeric">—</td>
-              <td class="numeric">16,100</td>
-              <td class="numeric">2</td>
-              <td>Basis</td>
-            </tr>
-            <tr>
-              <td>2020 Q1</td>
-              <td class="numeric">285,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-8.1%</span></td>
-              <td class="numeric">14,750</td>
-              <td class="numeric">2</td>
-              <td>Erste Lockdowns</td>
-            </tr>
-            <tr>
-              <td>2020 Q2</td>
-              <td class="numeric">162,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-47.7%</span></td>
-              <td class="numeric">8,400</td>
-              <td class="numeric">2</td>
-              <td>Lockdown Tiefpunkt</td>
-            </tr>
-            <tr>
-              <td>2020 Q3</td>
-              <td class="numeric">198,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-36.1%</span></td>
-              <td class="numeric">10,270</td>
-              <td class="numeric">2</td>
-              <td>Erste Erholung</td>
-            </tr>
-            <tr>
-              <td>2020 Q4</td>
-              <td class="numeric">215,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-30.6%</span></td>
-              <td class="numeric">11,150</td>
-              <td class="numeric">2</td>
-              <td>Weiterer Rückgang</td>
-            </tr>
-            <tr>
-              <td>2021 Q1</td>
-              <td class="numeric">245,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-21.0%</span></td>
-              <td class="numeric">12,700</td>
-              <td class="numeric">3</td>
-              <td>Expansion gestartet</td>
-            </tr>
-            <tr>
-              <td>2021 Q2</td>
-              <td class="numeric">298,000</td>
-              <td class="numeric"><span style="color: #FF6464;">-3.9%</span></td>
-              <td class="numeric">15,450</td>
-              <td class="numeric">3</td>
-              <td>Nahezu vorab</td>
-            </tr>
-            <tr>
-              <td>2021 Q3</td>
-              <td class="numeric">325,000</td>
-              <td class="numeric"><span style="color: #33FFA0;">+4.8%</span></td>
-              <td class="numeric">16,850</td>
-              <td class="numeric">3</td>
-              <td>Über Basis!</td>
-            </tr>
-            <tr>
-              <td>2021 Q4</td>
-              <td class="numeric">380,000</td>
-              <td class="numeric"><span style="color: #33FFA0;">+22.6%</span></td>
-              <td class="numeric">19,700</td>
-              <td class="numeric">4</td>
-              <td>Starkes Wachstum</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="footer">
-    Fiktives Unternehmen — BI-Kurs THWS Würzburg | Datenstand: Q1 2026
-  </div>
-
-</div>
-
-<script>
-  // COLOR PALETTE
-  const colors = {
-    positive: '#33FFA0',
-    negative: '#FF6464',
-    warning: '#FFB43C',
-    info: '#64C8FF',
-    bg1: '#0f1117',
-    bg2: '#161b22',
-    bg3: '#1c2333',
-    text1: '#e6edf3',
-    text2: '#8b949e',
-    text3: '#484f58',
-    border: 'rgba(255,255,255,0.06)',
-    chart1: '#64C8FF',
-    chart2: '#33FFA0',
-    chart3: '#FFB43C',
-    chart4: '#FF6464',
-    chart5: '#a371f7',
-  };
-
-  Chart.defaults.color = colors.text2;
-  Chart.defaults.borderColor = colors.border;
-  Chart.defaults.backgroundColor = 'transparent';
-
-  // SECTION NAVIGATION
-  function showSection(sectionId) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    document.getElementById(sectionId).classList.add('active');
-    event.target.classList.add('active');
-    window.scrollTo(0, 0);
-  }
-
-  // SPARKLINE DATA
-  const sparklineRevenue = [62, 70, 78, 85, 90, 95, 88, 92, 105, 118, 125, 142];
-  const sparklineOrders = [4100, 4300, 4600, 4900, 5200, 5500, 5000, 5400, 6200, 6800, 7100, 7800];
-  const sparklineAOV = [18.8, 18.9, 19.0, 19.1, 19.2, 19.3, 19.2, 19.3, 19.4, 19.5, 19.6, 19.8];
-  const sparklineCustomers = [8200, 9100, 10200, 11500, 13000, 14500, 15200, 16100, 17500, 18900, 20100, 21500];
-  const sparklineSatisfaction = [3.5, 3.55, 3.6, 3.62, 3.65, 3.68, 3.7, 3.72, 3.75, 3.77, 3.78, 3.8];
-  const sparklineBranches = [1, 2, 2, 3, 4, 5, 6, 7, 8, 8, 8, 8];
-
-  function drawSparkline(canvasId, data, color) {
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext('2d');
-    const w = canvas.offsetWidth;
-    const h = canvas.offsetHeight;
-    canvas.width = w;
-    canvas.height = h;
-
-    const minVal = Math.min(...data);
-    const maxVal = Math.max(...data);
-    const range = maxVal - minVal || 1;
-
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-
-    for (let i = 0; i < data.length; i++) {
-      const x = (i / (data.length - 1)) * w;
-      const y = h - ((data[i] - minVal) / range) * (h - 4) - 2;
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  }
-
-  // Initialize sparklines after a short delay
-  setTimeout(() => {
-    drawSparkline('spark-revenue', sparklineRevenue, colors.positive);
-    drawSparkline('spark-orders', sparklineOrders, colors.info);
-    drawSparkline('spark-aov', sparklineAOV, colors.positive);
-    drawSparkline('spark-customers', sparklineCustomers, colors.warning);
-    drawSparkline('spark-satisfaction', sparklineSatisfaction, colors.positive);
-    drawSparkline('spark-branches', sparklineBranches, colors.chart5);
-  }, 100);
-
-  // ===== CHART.JS CONFIGURATIONS =====
-
-  // Monthly revenue 2017-2026
-  const revenueCtx = document.getElementById('chart-revenue').getContext('2d');
-  new Chart(revenueCtx, {
-    type: 'line',
-    data: {
-      labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-      datasets: [{
-        label: 'Umsatz 2025',
-        data: [165000, 172000, 185000, 178000, 192000, 198000, 210000, 215000, 208000, 225000, 240000, 268000],
-        borderColor: colors.chart1,
-        backgroundColor: 'rgba(100,200,255,0.05)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.3,
-        pointRadius: 0,
-        pointHoverRadius: 4,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false } }
-      }
-    }
-  });
-
-  // Monthly orders 2025
-  const ordersCtx = document.getElementById('chart-orders').getContext('2d');
-  new Chart(ordersCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-      datasets: [{
-        label: 'Bestellungen',
-        data: [8500, 8900, 9600, 9200, 9950, 10250, 10850, 11100, 10750, 11600, 12400, 13850],
-        backgroundColor: colors.chart2,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false } } }
-    }
-  });
-
-  // Year comparison
-  const yearCtx = document.getElementById('chart-year-comparison').getContext('2d');
-  new Chart(yearCtx, {
-    type: 'bar',
-    data: {
-      labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [
-        {
-          label: 'Umsatz (€k)',
-          data: [740, 860, 1100, 820, 1240, 1580, 1720, 1950, 2140],
-          backgroundColor: colors.chart1,
-          borderRadius: 2,
-          yAxisID: 'y'
-        },
-        {
-          label: 'Bestellungen (k)',
-          data: [38.2, 44.6, 55.8, 42.5, 61.2, 78.5, 85.2, 95.4, 107.8],
-          backgroundColor: colors.chart2,
-          borderRadius: 2,
-          yAxisID: 'y1'
+            ctx.clearRect(0,0,w,h);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let i=0; i<data.length; i++) {
+                const x = padding + (i / (data.length-1)) * width;
+                const y = padding + height - ((data[i]-min)/range)*height;
+                i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+            }
+            ctx.stroke();
         }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y: { type: 'linear', position: 'left', grid: { color: 'rgba(255,255,255,0.03)' } },
-        y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false } }
-      }
-    }
-  });
 
-  // Detailed revenue with trendline
-  const revenueDetailedCtx = document.getElementById('chart-revenue-detailed').getContext('2d');
-  const monthLabels = Array.from({length: 120}, (_, i) => {
-    const date = new Date(2017, i % 12, 1);
-    return date.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' });
-  });
-  const revenueMonthly = [
-    62, 66, 72, 78, 85, 91, 98, 105, 112, 118, 125, 132,  // 2017
-    140, 145, 152, 160, 168, 175, 182, 190, 198, 205, 212, 220,  // 2018
-    228, 238, 248, 260, 275, 288, 302, 318, 335, 350, 368, 385,  // 2019
-    360, 320, 180, 165, 185, 195, 210, 225, 235, 250, 260, 275,  // 2020 COVID
-    295, 310, 325, 340, 365, 385, 405, 428, 450, 475, 495, 520,  // 2021
-    545, 570, 595, 620, 648, 672, 698, 725, 752, 780, 810, 840,  // 2022
-    870, 900, 932, 965, 998, 1032, 1065, 1100, 1135, 1170, 1205, 1240,  // 2023
-    1275, 1310, 1345, 1380, 1420, 1460, 1500, 1540, 1580, 1620, 1660, 1700,  // 2024
-    1740, 1780, 1825, 1870, 1920, 1970, 2020, 2072, 2125, 2180, 2235, 2290,  // 2025
-    2340, 2390, 2440, 2500, 2560, 2620, 2680, 2740, 2800, 2860, 2920, 2980   // 2026 Q1
-  ];
-  const trendline = Array.from({length: 120}, (_, i) => 60 + i * 25);
+        drawSparkline('sparkRevenue', mRevenue.slice(-24), accentGreen);
+        drawSparkline('sparkOrders', mOrders.slice(-24), accentBlue);
+        drawSparkline('sparkAOV', mAOV.slice(-24), accentOrange);
+        drawSparkline('sparkCustomers', yearOrders, accentGreen);
+        drawSparkline('sparkSat', [3.80,3.78,3.75,3.71,3.78,3.80,3.80,3.82,3.82,3.84], accentGreen);
+        drawSparkline('sparkBranches', [1,2,3,4,5,6,6,7,8,8], accentBlue);
 
-  new Chart(revenueDetailedCtx, {
-    type: 'line',
-    data: {
-      labels: monthLabels,
-      datasets: [
-        {
-          label: 'Tatsächlicher Umsatz',
-          data: revenueMonthly,
-          borderColor: colors.chart1,
-          backgroundColor: 'rgba(100,200,255,0.05)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.2,
-          pointRadius: 0,
-        },
-        {
-          label: 'Vor-COVID Trendline',
-          data: trendline,
-          borderColor: colors.chart2,
-          borderWidth: 1,
-          borderDash: [5, 5],
-          pointRadius: 0,
-          fill: false,
+        new Chart(document.getElementById('chartRevenueTrend'), {
+            type: 'line',
+            data: {labels: mLabels, datasets: [{label: 'Monthly Revenue (€)', data: mRevenue, borderColor: accentGreen, backgroundColor: 'rgba(51, 255, 160, 0.05)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: accentGreen}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks:{callback: v => '€'+Math.round(v/1000)+'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartOrdersTrend'), {
+            type: 'line',
+            data: {labels: mLabels, datasets: [{label: 'Monthly Orders', data: mOrders, borderColor: accentBlue, backgroundColor: 'rgba(100, 200, 255, 0.05)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0, pointHoverRadius: 4, pointBackgroundColor: accentBlue}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks:{callback: v => Math.round(v/1000)+'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartYearlyRevenue'), {
+            type: 'bar',
+            data: {labels: yearLabels, datasets: [{label: 'Annual Revenue (€)', data: yearRevenue, backgroundColor: accentGreen, borderRadius: 4}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks: {callback: v => '€' + Math.round(v/1000) + 'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartTopProducts'), {
+            type: 'bar',
+            data: {labels: ['Beyond Burger','Green Goddess Bowl','Cola 0.5l','Medium Fries','BBQ Smokehouse','Truffle Deluxe','Beer 0.3l','Cola 0.3l','Fresh OJ','Coffee','Veggie Burger','Bacon King','Double Burger','Large Fries','Side Salad'], datasets: [{label: 'Revenue (€)', data: [1301008,1018671,829880,597158,551480,531761,500522,463206,407178,392573,391660,390869,367369,364547,361562], backgroundColor: accentBlue, borderRadius: 4, indexAxis: 'y'}]},
+            options: {indexAxis: 'y', responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {x: {ticks: {callback: v => '€' + Math.round(v/1000) + 'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartCategoryPie'), {
+            type: 'doughnut',
+            data: {labels: ['Burger','Drink','Side','Dessert','Breakfast','Extra'], datasets: [{data: [6290052,5128856,2465661,495384,243865,54968], backgroundColor: [accentGreen,accentBlue,accentOrange,'#FF6464','#64C8FF','#8b949e'], borderColor: chartBg, borderWidth: 2}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position: 'bottom',labels: {color: chartText, padding: 15}}}}
+        });
+
+        new Chart(document.getElementById('chartVeggieAdoption'), {
+            type: 'line',
+            data: {labels: veggieYears, datasets: [{label: 'Veggie/Vegan % of Burger Sales', data: veggiePercent, borderColor: accentGreen, backgroundColor: 'rgba(51, 255, 160, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointRadius: 5, pointBackgroundColor: accentGreen, pointBorderColor: chartBg, pointBorderWidth: 2}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {min:0,max:60,ticks: {callback: v => v+'%'}}}}
+        });
+
+        new Chart(document.getElementById('chartPaymentMethods'), {
+            type: 'line',
+            data: {labels: paymentYears, datasets: [{label:'Cash',data:cashData,borderColor:accentOrange,backgroundColor:'rgba(255,180,60,0.2)',fill:true,tension:0.3,pointRadius:0},{label:'EC Card',data:ecData,borderColor:accentBlue,backgroundColor:'rgba(100,200,255,0.2)',fill:true,tension:0.3,pointRadius:0},{label:'Credit Card',data:ccData,borderColor:accentGreen,backgroundColor:'rgba(51,255,160,0.2)',fill:true,tension:0.3,pointRadius:0},{label:'Mobile',data:mobileData,borderColor:accentRed,backgroundColor:'rgba(255,100,100,0.2)',fill:true,tension:0.3,pointRadius:0}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position:'bottom',labels: {color:chartText,padding:15}}}, scales: {y: {ticks:{callback: v => v+'%'}}}}
+        });
+
+        new Chart(document.getElementById('chartChannels'), {
+            type: 'line',
+            data: {labels: channelYears, datasets: [{label:'Counter',data:counterData,borderColor:accentGreen,backgroundColor:'rgba(51,255,160,0.1)',fill:true,tension:0.3,pointRadius:0},{label:'Drive-Through',data:driveData,borderColor:accentBlue,backgroundColor:'rgba(100,200,255,0.1)',fill:true,tension:0.3,pointRadius:0},{label:'App Order',data:appData,borderColor:accentOrange,backgroundColor:'rgba(255,180,60,0.1)',fill:true,tension:0.3,pointRadius:0},{label:'Kiosk',data:kioskData,borderColor:accentRed,backgroundColor:'rgba(255,100,100,0.1)',fill:true,tension:0.3,pointRadius:0}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position:'bottom',labels: {color:chartText,padding:15}}}, scales: {y: {ticks:{callback: v => v+'%'}}}}
+        });
+
+        new Chart(document.getElementById('chartAgeGroup'), {
+            type: 'bar',
+            data: {labels: ageGroups, datasets: [{label: 'Customer Count', data: ageCount, backgroundColor: accentBlue, borderRadius: 4}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks: {callback: v => Math.round(v/1000)+'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartLoyalty'), {
+            type: 'doughnut',
+            data: {labels: loyaltyTiers, datasets: [{data: loyaltyCount, backgroundColor: loyaltyColors, borderColor: chartBg, borderWidth: 2}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position:'bottom',labels: {color:chartText,padding:15}}}}
+        });
+
+        new Chart(document.getElementById('chartDayOfWeek'), {
+            type: 'bar',
+            data: {labels: dowLabels, datasets: [{label:'Orders',data:dowOrders,backgroundColor:accentBlue,borderRadius:4,yAxisID:'y'},{label:'Revenue (€100)',data:dowRevenue.map(x=>x/100),backgroundColor:accentGreen,borderRadius:4,yAxisID:'y1'}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {position:'top',labels: {color:chartText}}}, scales: {y: {position:'left',ticks: {callback: v => Math.round(v/1000)+'K'}},y1: {position:'right',ticks: {callback: v => '€' + Math.round(v/1000) + 'K'}}}}
+        });
+
+        new Chart(document.getElementById('chartHourly'), {
+            type: 'line',
+            data: {labels: hourLabels, datasets: [{label: 'Orders by Hour', data: hourOrders, borderColor: accentOrange, backgroundColor: 'rgba(255, 180, 60, 0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 3, pointBackgroundColor: accentOrange, pointBorderColor: chartBg, pointBorderWidth: 1}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks: {callback: v => Math.round(v/1000)+'K'}}}}
+        });
+
+        function drawHeatmap() {
+            const canvas = document.getElementById('heatmapCanvas');
+            const ctx = canvas.getContext('2d');
+            const padding = 50;
+            const cellW = (canvas.width - padding - 20) / 18;
+            const cellH = (canvas.height - padding - 20) / 7;
+
+            let min = Infinity, max = -Infinity;
+            for(let row of heatmapData) {
+                for(let val of row) {
+                    if(val < min) min = val;
+                    if(val > max) max = val;
+                }
+            }
+
+            function getColor(val) {
+                const norm = (val - min) / (max - min);
+                if(norm < 0.3) return '#8b949e';
+                if(norm < 0.5) return '#FFB43C';
+                if(norm < 0.75) return '#33FFA0';
+                if(norm < 0.9) return '#64C8FF';
+                return '#FF6464';
+            }
+
+            const dayLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+            ctx.fillStyle = '#8b949e';
+            ctx.font = '11px sans-serif';
+            ctx.textAlign = 'right';
+            for(let i=0; i<7; i++) {
+                ctx.fillText(dayLabels[i], padding-10, 20 + padding + (i+0.5)*cellH);
+            }
+            ctx.textAlign = 'center';
+            for(let j=0; j<18; j++) {
+                const h = (j+6).toString().padStart(2,'0')+':00';
+                ctx.fillText(h, padding + (j+0.5)*cellW, padding-10);
+            }
+
+            for(let i=0; i<7; i++) {
+                for(let j=0; j<18; j++) {
+                    const x = padding + j*cellW;
+                    const y = padding + i*cellH;
+                    ctx.fillStyle = getColor(heatmapData[i][j]);
+                    ctx.fillRect(x, y, cellW, cellH);
+
+                    ctx.strokeStyle = '#21262d';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(x, y, cellW, cellH);
+                }
+            }
         }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
+        drawHeatmap();
 
-  // Quarterly revenue
-  const quartersCtx = document.getElementById('chart-quarters').getContext('2d');
-  new Chart(quartersCtx, {
-    type: 'bar',
-    data: {
-      labels: ['2022 Q1', '2022 Q2', '2022 Q3', '2022 Q4', '2023 Q1', '2023 Q2', '2023 Q3', '2023 Q4', '2024 Q1', '2024 Q2', '2024 Q3', '2024 Q4', '2025 Q1'],
-      datasets: [{
-        label: 'Quartalsumsatz (€)',
-        data: [1710, 1940, 2155, 2370, 2702, 2995, 3335, 3680, 4010, 4260, 4480, 4980, 5515],
-        backgroundColor: colors.chart3,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
+        new Chart(document.getElementById('chartCOVIDImpact'), {
+            type: 'bar',
+            data: {labels: yearLabels, datasets: [{label: 'Annual Revenue (€)', data: yearRevenue, backgroundColor: yearLabels.map(y => {if(y === '2020') return accentRed;if(y === '2019' || y === '2021') return accentOrange;return accentGreen;}), borderRadius: 4}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {ticks: {callback: v => '€' + Math.round(v/1000) + 'K'}}}}
+        });
 
-  // YoY Growth
-  const growthCtx = document.getElementById('chart-growth').getContext('2d');
-  new Chart(growthCtx, {
-    type: 'line',
-    data: {
-      labels: ['2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [{
-        label: 'YoY Wachstum (%)',
-        data: [16.2, 27.9, -25.5, 51.2, 27.4, 8.9, 13.4, 9.7],
-        borderColor: colors.warning,
-        backgroundColor: 'rgba(255,180,60,0.05)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.3,
-        pointRadius: 4,
-        pointBackgroundColor: colors.warning,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
+        new Chart(document.getElementById('chartAOVTrend'), {
+            type: 'line',
+            data: {labels: yearLabels, datasets: [{label: 'Average Order Value (€)', data: yearAOV, borderColor: accentGreen, backgroundColor: 'rgba(51, 255, 160, 0.1)', borderWidth: 3, fill: true, tension: 0.3, pointRadius: 6, pointBackgroundColor: accentGreen, pointBorderColor: chartBg, pointBorderWidth: 2}]},
+            options: {responsive: true, maintainAspectRatio: true, plugins: {legend: {display:false}}, scales: {y: {min:10,max:25,ticks: {callback: v => '€'+v.toFixed(2)}}}}
+        });
 
-  // Branches revenue
-  const branchesCtx = document.getElementById('chart-branches-revenue').getContext('2d');
-  new Chart(branchesCtx, {
-    type: 'barh',
-    data: {
-      labels: ['Hauptsitz (Würzburg)', 'Nürnberg', 'Bamberg', 'Erlangen', 'Ansbach', 'Aschaffenburg', 'Coburg', 'Kronach'],
-      datasets: [{
-        label: 'Gesamtumsatz (€)',
-        data: [3840000, 2156000, 1648000, 1532000, 1285000, 1126000, 875000, 487000],
-        backgroundColor: colors.chart1,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('section');
 
-  // Branches AOV
-  const branchesAovCtx = document.getElementById('chart-branches-aov').getContext('2d');
-  new Chart(branchesAovCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Hauptsitz', 'Nürnberg', 'Bamberg', 'Erlangen', 'Ansbach', 'Aschaffenburg', 'Coburg', 'Kronach'],
-      datasets: [{
-        label: 'AOV (€)',
-        data: [19.35, 19.21, 19.26, 19.30, 19.24, 19.27, 19.32, 19.29],
-        backgroundColor: colors.chart2,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { min: 19, max: 19.4, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if(pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if(link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
 
-  // Branches satisfaction
-  const branchesSatisCtx = document.getElementById('chart-branches-satisfaction').getContext('2d');
-  new Chart(branchesSatisCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Hauptsitz', 'Nürnberg', 'Bamberg', 'Erlangen', 'Ansbach', 'Aschaffenburg', 'Coburg', 'Kronach'],
-      datasets: [{
-        label: 'Zufriedenheit (/5)',
-        data: [3.9, 3.7, 3.8, 3.6, 3.8, 3.9, 3.8, 3.9],
-        backgroundColor: colors.positive,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { min: 3.5, max: 4, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Veggie trend
-  const veggieCtx = document.getElementById('chart-veggie-trend').getContext('2d');
-  new Chart(veggieCtx, {
-    type: 'line',
-    data: {
-      labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [{
-        label: 'Veggie/Vegan Anteil (%)',
-        data: [4.2, 6.1, 8.8, 12.5, 16.3, 19.8, 23.2, 26.5, 29.1],
-        borderColor: colors.positive,
-        backgroundColor: 'rgba(51,255,160,0.1)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.3,
-        pointRadius: 4,
-        pointBackgroundColor: colors.positive,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { min: 0, max: 35, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Top 10 products
-  const topCtx = document.getElementById('chart-top-products').getContext('2d');
-  new Chart(topCtx, {
-    type: 'barh',
-    data: {
-      labels: ['Classic Burger', 'Veggie Deluxe', 'Premium Beef', 'Chicken Burger', 'Spicy Demon', 'Döner Mix', 'Fish Burger', 'Double Cheese', 'Breakfast Combo', 'Truffle Fries'],
-      datasets: [{
-        label: 'Umsatz (€)',
-        data: [285000, 195000, 165000, 142000, 128000, 118000, 95000, 85000, 72000, 58000],
-        backgroundColor: colors.chart3,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { x: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Category mix
-  const catMixCtx = document.getElementById('chart-category-mix').getContext('2d');
-  new Chart(catMixCtx, {
-    type: 'doughnut',
-    data: {
-      labels: ['Burger', 'Seiten', 'Getränke', 'Desserts', 'Frühstück'],
-      datasets: [{
-        data: [52, 18, 16, 8, 6],
-        backgroundColor: [colors.chart1, colors.chart2, colors.chart3, colors.chart4, colors.chart5],
-        borderColor: colors.bg2,
-        borderWidth: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } }
-    }
-  });
-
-  // Category trends
-  const catTrendCtx = document.getElementById('chart-category-trends').getContext('2d');
-  new Chart(catTrendCtx, {
-    type: 'line',
-    data: {
-      labels: ['2021', '2022', '2023', '2024', '2025'],
-      datasets: [
-        { label: 'Burger', data: [620, 785, 895, 1012, 1115], borderColor: colors.chart1, tension: 0.3, borderWidth: 2 },
-        { label: 'Seiten', data: [225, 285, 325, 368, 410], borderColor: colors.chart2, tension: 0.3, borderWidth: 2 },
-        { label: 'Getränke', data: [185, 235, 268, 305, 340], borderColor: colors.chart3, tension: 0.3, borderWidth: 2 },
-        { label: 'Desserts', data: [95, 120, 138, 160, 185], borderColor: colors.chart4, tension: 0.3, borderWidth: 2 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Payment stacked area
-  const paymentStackedCtx = document.getElementById('chart-payment-stacked').getContext('2d');
-  new Chart(paymentStackedCtx, {
-    type: 'line',
-    data: {
-      labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [
-        { label: 'Bargeld', data: [49, 45, 42, 38, 32, 28, 24, 21, 18], borderColor: colors.chart1, backgroundColor: 'rgba(100,200,255,0.1)', fill: true, tension: 0.3, borderWidth: 1 },
-        { label: 'EC-Karte', data: [43, 43, 44, 45, 46, 46, 46, 45, 45], borderColor: colors.chart2, backgroundColor: 'rgba(51,255,160,0.1)', fill: true, tension: 0.3, borderWidth: 1 },
-        { label: 'Mobil-Zahlung', data: [1, 2, 3, 5, 9, 13, 16, 18, 14], borderColor: colors.chart3, backgroundColor: 'rgba(255,180,60,0.1)', fill: true, tension: 0.3, borderWidth: 1 },
-        { label: 'Gutschein', data: [7, 10, 11, 12, 13, 13, 14, 16, 23], borderColor: colors.chart5, backgroundColor: 'rgba(163,113,247,0.1)', fill: true, tension: 0.3, borderWidth: 1 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y: { min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { callback: v => v + '%' } }
-      }
-    }
-  });
-
-  // Payment shift
-  const paymentShiftCtx = document.getElementById('chart-payment-shift').getContext('2d');
-  new Chart(paymentShiftCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Bargeld', 'EC-Karte', 'Mobil', 'Gutschein'],
-      datasets: [
-        { label: '2017', data: [49, 43, 1, 7], backgroundColor: 'rgba(139,148,158,0.4)', borderRadius: 2 },
-        { label: '2025', data: [18, 45, 14, 23], backgroundColor: colors.chart1, borderRadius: 2 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Age distribution
-  const ageCtx = document.getElementById('chart-age-distribution').getContext('2d');
-  new Chart(ageCtx, {
-    type: 'bar',
-    data: {
-      labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
-      datasets: [{
-        label: 'Kundenanteil (%)',
-        data: [22, 32, 18, 15, 10, 3],
-        backgroundColor: colors.chart1,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Loyalty distribution
-  const loyaltyCtx = document.getElementById('chart-loyalty-distribution').getContext('2d');
-  new Chart(loyaltyCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Bronze', 'Silber', 'Gold', 'Platin'],
-      datasets: [{
-        label: 'Kundenanteil (%)',
-        data: [58, 25, 12, 5],
-        backgroundColor: [colors.chart1, colors.chart2, colors.chart3, colors.chart5],
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // App adoption
-  const appCtx = document.getElementById('chart-app-adoption').getContext('2d');
-  new Chart(appCtx, {
-    type: 'line',
-    data: {
-      labels: ['2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [{
-        label: 'App-Adoption (%)',
-        data: [2, 4, 7, 12, 21, 28, 35, 42, 48],
-        borderColor: colors.positive,
-        backgroundColor: 'rgba(51,255,160,0.08)',
-        borderWidth: 2,
-        fill: true,
-        tension: 0.3,
-        pointRadius: 4,
-        pointBackgroundColor: colors.positive,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { min: 0, max: 60, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Day of week
-  const dowCtx = document.getElementById('chart-day-of-week').getContext('2d');
-  new Chart(dowCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'],
-      datasets: [{
-        label: 'Durchschn. Bestellungen',
-        data: [8200, 8150, 8300, 8100, 9500, 11200, 10100],
-        backgroundColor: colors.chart2,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Monthly seasonality
-  const seasonCtx = document.getElementById('chart-monthly-seasonality').getContext('2d');
-  new Chart(seasonCtx, {
-    type: 'bar',
-    data: {
-      labels: ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-      datasets: [{
-        label: 'Saisonalität Index',
-        data: [0.92, 0.88, 0.95, 0.91, 1.02, 1.05, 1.08, 1.12, 1.00, 1.08, 1.15, 1.28],
-        backgroundColor: colors.chart3,
-        borderRadius: 2,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Heatmap
-  function generateHeatmap() {
-    const daysOfWeek = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
-    const heatmapData = [
-      [45, 25, 20, 18, 15, 12, 10, 8, 12, 25, 40, 60, 80, 95, 88, 92, 110, 125, 135, 120, 95, 70, 50, 35],
-      [48, 28, 22, 20, 18, 15, 12, 10, 14, 28, 42, 62, 82, 98, 90, 95, 112, 128, 138, 122, 98, 72, 52, 38],
-      [46, 26, 21, 19, 16, 13, 11, 9, 13, 26, 41, 61, 81, 96, 89, 93, 111, 126, 136, 121, 96, 71, 51, 36],
-      [44, 24, 19, 17, 14, 11, 9, 7, 11, 24, 39, 59, 79, 94, 87, 91, 109, 124, 134, 119, 94, 69, 49, 34],
-      [56, 35, 28, 25, 22, 18, 15, 12, 18, 35, 52, 72, 95, 115, 108, 112, 135, 155, 165, 145, 115, 85, 62, 45],
-      [75, 55, 48, 45, 42, 38, 35, 32, 38, 55, 72, 92, 120, 145, 138, 142, 165, 185, 195, 175, 145, 115, 92, 68],
-      [68, 48, 42, 39, 36, 32, 29, 26, 32, 48, 65, 85, 112, 135, 128, 132, 155, 175, 185, 165, 135, 105, 82, 58]
-    ];
-
-    const minVal = 7;
-    const maxVal = 195;
-    const container = document.getElementById('heatmap-actual');
-
-    heatmapData.forEach((row, dayIdx) => {
-      const rowDiv = document.createElement('div');
-      rowDiv.style.display = 'flex';
-      rowDiv.style.marginBottom = '2px';
-
-      const labelDiv = document.createElement('div');
-      labelDiv.className = 'heatmap-label';
-      labelDiv.textContent = daysOfWeek[dayIdx];
-      rowDiv.appendChild(labelDiv);
-
-      const cellsDiv = document.createElement('div');
-      cellsDiv.style.display = 'grid';
-      cellsDiv.style.gridTemplateColumns = 'repeat(24, 32px)';
-      cellsDiv.style.gap = '2px';
-
-      row.forEach(val => {
-        const cell = document.createElement('div');
-        cell.className = 'heatmap-cell';
-        cell.title = val + ' Bestellungen';
-        const intensity = (val - minVal) / (maxVal - minVal);
-        const color = `rgba(51, 255, 160, ${0.2 + intensity * 0.8})`;
-        cell.style.backgroundColor = color;
-        cell.style.color = intensity > 0.5 ? colors.bg1 : colors.text2;
-        cell.textContent = val > 0 ? Math.round(val / 10) : '';
-        cellsDiv.appendChild(cell);
-      });
-
-      rowDiv.appendChild(cellsDiv);
-      container.appendChild(rowDiv);
-    });
-  }
-  generateHeatmap();
-
-  // COVID timeline
-  const covidTimelineCtx = document.getElementById('chart-covid-timeline').getContext('2d');
-  new Chart(covidTimelineCtx, {
-    type: 'line',
-    data: {
-      labels: ['J19', 'F19', 'M19', 'A19', 'M19', 'J19', 'J19', 'A19', 'S19', 'O19', 'N19', 'D19', 'J20', 'F20', 'M20', 'A20', 'M20', 'J20', 'J20', 'A20', 'S20', 'O20', 'N20', 'D20', 'J21', 'F21', 'M21', 'A21', 'M21'],
-      datasets: [{
-        label: 'Umsatz (€k)',
-        data: [60, 65, 72, 78, 85, 91, 98, 105, 112, 118, 125, 132, 120, 95, 60, 45, 54, 62, 70, 80, 92, 105, 120, 135, 160, 178, 195, 215, 245],
-        borderColor: colors.chart1,
-        backgroundColor: (context) => {
-          const value = context.raw;
-          if (value < 80) return 'rgba(255,100,100,0.1)';
-          if (value < 120) return 'rgba(255,180,60,0.1)';
-          return 'rgba(51,255,160,0.1)';
-        },
-        borderWidth: 2,
-        fill: true,
-        tension: 0.2,
-        pointRadius: 0,
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: { y: { grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Channel shift
-  const channelCtx = document.getElementById('chart-channel-shift').getContext('2d');
-  new Chart(channelCtx, {
-    type: 'line',
-    data: {
-      labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [
-        { label: 'Dine-In', data: [62, 48, 54, 58, 60, 62, 64], borderColor: colors.chart1, tension: 0.3, borderWidth: 2, fill: false },
-        { label: 'Takeaway', data: [28, 35, 32, 28, 26, 24, 22], borderColor: colors.chart3, tension: 0.3, borderWidth: 2, fill: false },
-        { label: 'Delivery', data: [10, 17, 14, 14, 14, 14, 14], borderColor: colors.chart2, tension: 0.3, borderWidth: 2, fill: false }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: { y: { min: 0, max: 70, grid: { color: 'rgba(255,255,255,0.03)' } } }
-    }
-  });
-
-  // Order method
-  const orderMethodCtx = document.getElementById('chart-order-method').getContext('2d');
-  new Chart(orderMethodCtx, {
-    type: 'bar',
-    data: {
-      labels: ['2019', '2020', '2021', '2022', '2023', '2024', '2025'],
-      datasets: [
-        { label: 'Vor Ort', data: [62, 48, 54, 58, 60, 62, 64], backgroundColor: colors.chart1, borderRadius: 2 },
-        { label: 'Telefon', data: [15, 18, 14, 10, 8, 6, 4], backgroundColor: colors.chart4, borderRadius: 2 },
-        { label: 'Online', data: [18, 26, 26, 26, 26, 26, 26], backgroundColor: colors.chart2, borderRadius: 2 },
-        { label: 'App', data: [5, 8, 6, 6, 6, 6, 6], backgroundColor: colors.chart3, borderRadius: 2 }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y: { stacked: true, grid: { color: 'rgba(255,255,255,0.03)' } },
-        x: { stacked: true }
-      }
-    }
-  });
-</script>
-
+        navLinks.forEach(link => {
+            link.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({behavior: 'smooth'});
+            });
+        });
+    </script>
 </body>
 </html>
