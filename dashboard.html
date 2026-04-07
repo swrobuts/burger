@@ -1001,9 +1001,24 @@
           datalabels: { display: false }
         },
         scales: {
+          x: {
+            ...chartDefaults.scales.x,
+            ticks: {
+              ...chartDefaults.scales.x.ticks,
+              maxTicksLimit: 12,
+              callback: function(value, index) {
+                const label = mLabels[index];
+                return label && label.endsWith('-01') ? label.substring(0, 4) : '';
+              }
+            }
+          },
           y: {
             ...chartDefaults.scales.y,
-            beginAtZero: false,
+            beginAtZero: true,
+            ticks: {
+              ...chartDefaults.scales.y.ticks,
+              callback: function(v) { return '€' + (v / 1000).toLocaleString('de-DE', {maximumFractionDigits: 0}) + 'k'; },
+            }
           }
         }
       }
@@ -1026,17 +1041,28 @@
         ...chartDefaults,
         responsive: true,
         maintainAspectRatio: false,
-        indexAxis: undefined,
         plugins: {
           ...chartDefaults.plugins,
           legend: { display: false },
-          datalabels: { display: false }
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            formatter: function(value) {
+              if (value >= 1000000) return '€' + (value / 1000000).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + 'M';
+              return '€' + (value / 1000).toLocaleString('de-DE', { maximumFractionDigits: 0 }) + 'k';
+            },
+            font: { family: 'IBM Plex Mono', size: 9, weight: '600' },
+            color: '#1e2a36',
+            padding: 4,
+          }
         },
         scales: {
+          x: { ...chartDefaults.scales.x },
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
             max: 3500000,
+            ticks: { display: false },
           }
         }
       }
@@ -1054,9 +1080,11 @@
           borderWidth: 2.5,
           fill: false,
           tension: 0.35,
-          pointRadius: 0,
-          pointHoverRadius: 5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
           pointBackgroundColor: '#7F95B6',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
         }]
       },
       options: {
@@ -1066,13 +1094,23 @@
         plugins: {
           ...chartDefaults.plugins,
           legend: { display: false },
-          datalabels: { display: false }
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            offset: 6,
+            formatter: function(value) {
+              return '€' + value.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            },
+            font: { family: 'IBM Plex Mono', size: 9, weight: '600' },
+            color: '#1e2a36',
+          }
         },
         scales: {
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 25,
+            max: 27,
+            ticks: { display: false },
           }
         }
       }
@@ -1088,7 +1126,7 @@
             label: 'Bargeld',
             data: cashData,
             borderColor: '#1e2a36',
-            backgroundColor: 'rgba(30, 42, 54, 0.1)',
+            backgroundColor: 'rgba(30, 42, 54, 0.15)',
             borderWidth: 2.5,
             fill: true,
             tension: 0.35,
@@ -1099,7 +1137,7 @@
             label: 'EC-Karte',
             data: ecData,
             borderColor: '#7F95B6',
-            backgroundColor: 'rgba(127, 149, 182, 0.1)',
+            backgroundColor: 'rgba(127, 149, 182, 0.15)',
             borderWidth: 2.5,
             fill: true,
             tension: 0.35,
@@ -1110,7 +1148,7 @@
             label: 'Kreditkarte',
             data: ccData,
             borderColor: '#2980b9',
-            backgroundColor: 'rgba(41, 128, 185, 0.1)',
+            backgroundColor: 'rgba(41, 128, 185, 0.15)',
             borderWidth: 2.5,
             fill: true,
             tension: 0.35,
@@ -1121,7 +1159,7 @@
             label: 'Mobile Payment',
             data: mobileData,
             borderColor: '#e67e22',
-            backgroundColor: 'rgba(230, 126, 34, 0.1)',
+            backgroundColor: 'rgba(230, 126, 34, 0.15)',
             borderWidth: 2.5,
             fill: true,
             tension: 0.35,
@@ -1142,7 +1180,12 @@
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 100,
+            max: 60,
+            ticks: {
+              ...chartDefaults.scales.y.ticks,
+              callback: function(v) { return v + '%'; },
+              stepSize: 10,
+            }
           }
         }
       }
@@ -1247,7 +1290,7 @@
         labels: categories,
         datasets: [{
           data: categoryRevenue,
-          backgroundColor: ['#1e2a36', '#7F95B6', '#2980b9', '#e67e22', '#c0392b', '#95a5a6'],
+          backgroundColor: ['#1e2a36', '#7F95B6', '#2980b9', '#e67e22', '#c0392b', '#9aabb8'],
           borderColor: '#ffffff',
           borderWidth: 3,
         }]
@@ -1284,8 +1327,11 @@
           borderWidth: 2.5,
           fill: true,
           tension: 0.35,
-          pointRadius: 0,
-          pointHoverRadius: 5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#7F95B6',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
         }]
       },
       options: {
@@ -1298,7 +1344,7 @@
           datalabels: {
             anchor: 'end',
             align: 'top',
-            offset: 10,
+            offset: 6,
             formatter: function(value) {
               return value.toLocaleString('de-DE', { maximumFractionDigits: 1 }) + '%';
             },
@@ -1310,7 +1356,8 @@
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 55,
+            max: 60,
+            ticks: { display: false },
           }
         }
       }
@@ -1320,11 +1367,11 @@
     new Chart(document.getElementById('dowChart'), {
       type: 'bar',
       data: {
-        labels: dowLabels,
+        labels: ['Mo','Di','Mi','Do','Fr','Sa','So'],
         datasets: [{
           label: 'Bestellungen',
           data: dowOrders,
-          backgroundColor: '#1e2a36',
+          backgroundColor: dowOrders.map((v,i) => i >= 4 ? '#c0392b' : '#1e2a36'),
           borderRadius: 6,
           borderSkipped: false,
         }]
@@ -1336,13 +1383,23 @@
         plugins: {
           ...chartDefaults.plugins,
           legend: { display: false },
-          datalabels: { display: false }
+          datalabels: {
+            anchor: 'end',
+            align: 'end',
+            formatter: function(value) {
+              return (value / 1000).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + 'k';
+            },
+            font: { family: 'IBM Plex Mono', size: 10, weight: '600' },
+            color: '#1e2a36',
+            padding: 4,
+          }
         },
         scales: {
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 140000,
+            max: 150000,
+            ticks: { display: false },
           }
         }
       }
@@ -1357,7 +1414,7 @@
           label: 'Bestellungen',
           data: hourOrders,
           borderColor: '#2980b9',
-          backgroundColor: 'rgba(41, 128, 185, 0.15)',
+          backgroundColor: 'rgba(41, 128, 185, 0.12)',
           borderWidth: 2.5,
           fill: true,
           tension: 0.35,
@@ -1375,10 +1432,24 @@
           datalabels: { display: false }
         },
         scales: {
+          x: {
+            ...chartDefaults.scales.x,
+            ticks: {
+              ...chartDefaults.scales.x.ticks,
+              callback: function(value, index) {
+                return index % 2 === 0 ? hourLabels[index] + 'h' : '';
+              }
+            }
+          },
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 130000,
+            max: 135000,
+            ticks: {
+              ...chartDefaults.scales.y.ticks,
+              callback: function(v) { return (v / 1000).toLocaleString('de-DE', {maximumFractionDigits: 0}) + 'k'; },
+              stepSize: 30000,
+            }
           }
         }
       }
@@ -1431,7 +1502,7 @@
         labels: loyaltyTiers,
         datasets: [{
           data: loyaltyCount,
-          backgroundColor: ['#dde1e6', '#7F95B6', '#2980b9', '#c0392b'],
+          backgroundColor: ['#9aabb8', '#7F95B6', '#2980b9', '#c0392b'],
           borderColor: '#ffffff',
           borderWidth: 3,
         }]
@@ -1519,7 +1590,12 @@
           y: {
             ...chartDefaults.scales.y,
             beginAtZero: true,
-            max: 100,
+            max: 70,
+            ticks: {
+              ...chartDefaults.scales.y.ticks,
+              callback: function(v) { return v + '%'; },
+              stepSize: 10,
+            }
           }
         }
       }
