@@ -138,5 +138,3 @@ Erstellt für die **THWS Business School** im Rahmen der Veranstaltung **Busines
 ---
 
 **Erstellt mit:** Python, Faker, NumPy  
-**Dozent:** Prof. Dr. Robert Butscher  
-**Hochschule:** Technische Hochschule Würzburg-Schweinfurt
