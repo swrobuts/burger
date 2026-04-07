@@ -2452,6 +2452,27 @@ body.data-mode .data-header-bar { display: flex; }
 .dhb-dot-orange { background: #FF9500; }
 .dhb-dot-red { background: #FF3B3B; }
 .dhb-label { color: rgba(255,255,255,.7); }
+.dhb-dashboard-link {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 14px;
+  background: rgba(0,255,136,.12);
+  border: 1px solid rgba(0,255,136,.4);
+  border-radius: 6px;
+  color: #33FFA0;
+  font-family: 'Courier New', monospace;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all .2s;
+  margin-left: 12px;
+}
+.dhb-dashboard-link:hover {
+  background: rgba(0,255,136,.25);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0,255,136,.3);
+}
 .dhb-value { color: #33FFA0; font-weight: 700; }
 
 /* Offline comparison banner */
@@ -2892,6 +2913,9 @@ body.data-mode .phone-mockup { animation: none; }
       <h5>💬 Chatbot-Nutzung</h5>
       <p>Häufige Fragen zeigen Informationslücken auf der Website. NLP-Clustering der Chat-Nachrichten → automatische FAQ-Generierung.</p>
     </div>
+    <a href="dashboard.html" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;margin-top:6px;background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.35);border-radius:8px;color:#33FFA0;font-family:'Courier New',monospace;font-size:.85rem;font-weight:700;text-decoration:none;letter-spacing:.5px;transition:all .2s;" onmouseover="this.style.background='rgba(0,255,136,.2)'" onmouseout="this.style.background='rgba(0,255,136,.1)'">
+      <i class="fa-solid fa-chart-line"></i> BI-DASHBOARD ÖFFNEN →
+    </a>
   </div>
 </div>
 
@@ -2909,9 +2933,10 @@ body.data-mode .phone-mockup { animation: none; }
     <div class="dhb-item"><span class="dhb-dot dhb-dot-green"></span><span class="dhb-label">SESSION</span> <span class="dhb-value" id="dhbSession">SID-a8f2c…</span></div>
     <div class="dhb-item"><span class="dhb-dot dhb-dot-blue"></span><span class="dhb-label">EVENTS</span> <span class="dhb-value" id="dhbEvents">0</span></div>
     <div class="dhb-item"><span class="dhb-dot dhb-dot-orange"></span><span class="dhb-label">DIMS</span> <span class="dhb-value">10 Tabellen</span></div>
-    <div class="dhb-item"><span class="dhb-dot dhb-dot-green"></span><span class="dhb-label">FACTS</span> <span class="dhb-value">106.720 orders</span></div>
+    <div class="dhb-item"><span class="dhb-dot dhb-dot-green"></span><span class="dhb-label">FACTS</span> <span class="dhb-value">754.513 orders</span></div>
     <div class="dhb-item"><span class="dhb-dot dhb-dot-red"></span><span class="dhb-label">DSGVO</span> <span class="dhb-value">Art. 6 Abs. 1</span></div>
     <div class="dhb-item" style="margin-left:auto;"><span style="color:#00FF88;">▶</span> <span class="dhb-value" style="color:#00FF88;">LIVE TRACKING</span></div>
+    <a href="dashboard.html" target="_blank" class="dhb-dashboard-link" title="BI-Dashboard öffnen"><i class="fa-solid fa-chart-line"></i> DASHBOARD</a>
   </div>
 </div>
 
