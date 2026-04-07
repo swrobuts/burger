@@ -1097,10 +1097,10 @@
 </div>
 
 <!-- ═══════════ TAB: WETTER ═══════════ -->
-<div id="wetter" class="tab-content" style="display:none">
+<div id="wetter" class="tab-content">
 
   <!-- Sub: Temperatur-Impact -->
-  <div id="sub_wetter_temp" class="tab-section">
+  <div id="sub_wetter_temp" class="sub-content active">
     <div class="chart-card">
       <div><div class="chart-title">Temperatur bestimmt den Tagesumsatz — Sommer-Boost ab 15 °C</div>
       <div class="chart-sub">Ø Tagesumsatz & Bestellungen nach 5°C-Intervallen · 3.304 Betriebstage · 2017–2026</div></div>
@@ -1124,7 +1124,7 @@
   </div>
 
   <!-- Sub: Scatter & Niederschlag -->
-  <div id="sub_wetter_scatter" class="tab-section" style="display:none">
+  <div id="sub_wetter_scatter" class="sub-content">
     <div class="chart-card">
       <div><div class="chart-title">Temperatur vs. Tagesumsatz — Wachstumstrend dominiert Wettereffekt</div>
       <div class="chart-sub">1.102 Datenpunkte (jeder 3. Tag) · Farbe = Umsatzhöhe</div></div>
@@ -1142,10 +1142,10 @@
 </div>
 
 <!-- ═══════════ TAB: PERSONAL ═══════════ -->
-<div id="personal" class="tab-content" style="display:none">
+<div id="personal" class="tab-content">
 
   <!-- Sub: Produktivität -->
-  <div id="sub_personal_prod" class="tab-section">
+  <div id="sub_personal_prod" class="sub-content active">
     <div class="chart-card">
       <div><div class="chart-title">Europastern und Hauptbahnhof liefern doppelte Produktivität pro Mitarbeiter</div>
       <div class="chart-sub">Umsatz pro Mitarbeiter (kum. 2017–2026) · 8 Filialen · 188 Mitarbeiter</div></div>
@@ -1169,7 +1169,7 @@
   </div>
 
   <!-- Sub: Zufriedenheit -->
-  <div id="sub_personal_sat" class="tab-section" style="display:none">
+  <div id="sub_personal_sat" class="sub-content">
     <div class="chart-card">
       <div><div class="chart-title">App-Bestellungen generieren signifikant höhere Zufriedenheit</div>
       <div class="chart-sub">Ø Satisfaction Score (1–5) nach Bestellkanal · 754.513 Bestellungen</div></div>
@@ -1200,10 +1200,10 @@
 </div>
 
 <!-- ═══════════ TAB: PROMOTIONS ═══════════ -->
-<div id="promotions" class="tab-content" style="display:none">
+<div id="promotions" class="tab-content">
 
   <!-- Sub: Promo-Effektivität -->
-  <div id="sub_promo_effekt" class="tab-section">
+  <div id="sub_promo_effekt" class="sub-content active">
     <div class="chart-card">
       <div><div class="chart-title">Nur 8,2% der Bestellungen nutzen Promotions — aber mit höherer Zufriedenheit</div>
       <div class="chart-sub">9 Aktionstypen · ROI & Uplift vs. Baseline (€19,45 Ø ohne Promo)</div></div>
@@ -1227,7 +1227,7 @@
   </div>
 
   <!-- Sub: Kohorten & Standorte -->
-  <div id="sub_promo_kohorten" class="tab-section" style="display:none">
+  <div id="sub_promo_kohorten" class="sub-content">
     <div class="chart-card">
       <div><div class="chart-title">Kohortenanalyse — Retention liegt bei 98–100% über alle Jahrgänge</div>
       <div class="chart-sub">Anteil aktiver Kunden pro Kohorte (Erstbesuchsjahr) · 24.992 Kunden</div></div>
@@ -1601,7 +1601,22 @@ function renderSubNav(tabId){
       inner.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
       document.getElementById(tabId).querySelectorAll('.sub-content').forEach(s=>s.classList.remove('active'));
       document.getElementById(item.id).classList.add('active');
-      setTimeout(()=>{Object.values(Chart.instances).forEach(c=>c.resize())},60);
+      setTimeout(function(){
+        Object.values(Chart.instances).forEach(function(c){c.resize()});
+        if(!window._lazySubInited) window._lazySubInited={};
+        if(item.id==='sub_wetter_scatter' && !window._lazySubInited.wetterScatter){
+          window._lazySubInited.wetterScatter=true;
+          createWeatherScatterChart();createRainChart();
+        }
+        if(item.id==='sub_personal_sat' && !window._lazySubInited.personalSat){
+          window._lazySubInited.personalSat=true;
+          createSatChannelChart();createSatDurationChart();createSatHourChart();
+        }
+        if(item.id==='sub_promo_kohorten' && !window._lazySubInited.promoKohorten){
+          window._lazySubInited.promoKohorten=true;
+          createCohortChart();
+        }
+      },60);
     });inner.appendChild(btn);
   });
 }
@@ -1614,7 +1629,22 @@ document.querySelectorAll('.main-nav button').forEach(btn=>{
     document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     renderSubNav(tabId);
-    setTimeout(()=>{Object.values(Chart.instances).forEach(c=>c.resize())},60);
+    setTimeout(function(){
+      Object.values(Chart.instances).forEach(function(c){c.resize()});
+      if(!window._lazyInited) window._lazyInited={};
+      if(tabId==='wetter' && !window._lazyInited.wetter){
+        window._lazyInited.wetter=true;
+        createTempBinChart();createWeatherCondChart();
+      }
+      if(tabId==='personal' && !window._lazyInited.personal){
+        window._lazyInited.personal=true;
+        createEmpProdChart();createEmpRoleChart();
+      }
+      if(tabId==='promotions' && !window._lazyInited.promotions){
+        window._lazyInited.promotions=true;
+        createPromoROIChart();createPromoSatChart();
+      }
+    },60);
   });
 });
 
@@ -1950,18 +1980,7 @@ createRFMValueChart();
 createLiftChart();
 updatePriceSim();
 createForecastChart();
-createTempBinChart();
-createWeatherCondChart();
-createWeatherScatterChart();
-createRainChart();
-createEmpProdChart();
-createEmpRoleChart();
-createSatChannelChart();
-createSatDurationChart();
-createSatHourChart();
-createPromoROIChart();
-createPromoSatChart();
-createCohortChart();
+/* Wetter/Personal/Promotions charts are lazy-initialized on first tab visit */
 
 /* ═══════════ INTERACTIVE TABLES ═══════════ */
 
