@@ -268,24 +268,47 @@ ul { list-style: none; }
 }
 
 /* ============================================
-   HERO SECTION
+   HERO CAROUSEL
    ============================================ */
 .hero {
   position: relative;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
   overflow: hidden;
   background: var(--charcoal);
 }
-.hero-bg {
+.hero-carousel {
   position: absolute;
   inset: 0;
-  background:
-    linear-gradient(135deg, rgba(28,25,23,.85) 0%, rgba(28,25,23,.5) 50%, rgba(28,25,23,.7) 100%),
-    url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=1600&q=80') center/cover no-repeat;
+  display: flex;
+  transition: transform 1s cubic-bezier(.65,0,.35,1);
   will-change: transform;
-  transform: translateZ(0);
+}
+.hero-slide {
+  min-width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.hero-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+}
+.hero-slide:nth-child(1) .hero-slide-bg {
+  background-image:
+    linear-gradient(135deg, rgba(28,25,23,.85) 0%, rgba(28,25,23,.5) 50%, rgba(28,25,23,.7) 100%),
+    url('https://images.unsplash.com/photo-1551782450-a2132b4ba21d?w=1600&q=80');
+}
+.hero-slide:nth-child(2) .hero-slide-bg {
+  background-image:
+    linear-gradient(135deg, rgba(28,25,23,.82) 0%, rgba(28,25,23,.45) 50%, rgba(28,25,23,.75) 100%),
+    url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1600&q=80');
+}
+.hero-slide:nth-child(3) .hero-slide-bg {
+  background-image:
+    linear-gradient(135deg, rgba(28,25,23,.8) 0%, rgba(28,25,23,.5) 50%, rgba(28,25,23,.7) 100%),
+    url('https://images.unsplash.com/photo-1550547660-d9450f859349?w=1600&q=80');
 }
 .hero-content {
   position: relative;
@@ -293,6 +316,48 @@ ul { list-style: none; }
   max-width: 650px;
   padding: 0 24px;
   margin-left: 8%;
+}
+/* Carousel dots */
+.hero-dots {
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+}
+.hero-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.3);
+  border: 2px solid rgba(255,255,255,.5);
+  cursor: pointer;
+  transition: all .4s ease;
+  padding: 0;
+}
+.hero-dot.active {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: scale(1.2);
+}
+.hero-dot:hover:not(.active) {
+  background: rgba(255,255,255,.5);
+}
+/* Progress bar under active dot */
+.hero-dot::after {
+  content: '';
+  display: block;
+  width: 0%;
+  height: 2px;
+  background: var(--gold-light);
+  border-radius: 2px;
+  margin-top: 6px;
+  transition: width 10s linear;
+}
+.hero-dot.active.running::after {
+  width: 100%;
 }
 .hero-badge {
   display: inline-flex;
@@ -367,6 +432,7 @@ ul { list-style: none; }
 @media (max-width: 768px) {
   .hero-content { margin-left: 0; }
   .hero-stats-inner { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .hero-dots { bottom: 90px; }
 }
 
 /* ============================================
@@ -1435,35 +1501,11 @@ ul { list-style: none; }
 }
 
 /* ============================================
-   FLOATING FOOD ELEMENTS (HERO)
+   HERO SLIDE CONTENT INITIAL STATE
    ============================================ */
-.hero-floaters {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  overflow: hidden;
-}
-.floater {
-  position: absolute;
-  font-size: 2.5rem;
-  opacity: .12;
-  animation: floatAround 18s ease-in-out infinite;
-  filter: blur(1px);
-  will-change: transform;
-  contain: layout style;
-}
-.floater:nth-child(1) { top: 15%; right: 8%; animation-delay: 0s; animation-duration: 20s; }
-.floater:nth-child(2) { top: 60%; right: 15%; animation-delay: -4s; animation-duration: 16s; }
-.floater:nth-child(3) { top: 30%; right: 25%; animation-delay: -8s; animation-duration: 22s; }
-.floater:nth-child(4) { top: 75%; right: 5%; animation-delay: -12s; animation-duration: 18s; }
-.floater:nth-child(5) { top: 45%; right: 35%; animation-delay: -6s; animation-duration: 24s; }
-.floater:nth-child(6) { top: 85%; right: 30%; animation-delay: -2s; animation-duration: 19s; }
-@keyframes floatAround {
-  0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-  25% { transform: translate(-20px, -30px) rotate(10deg) scale(1.1); }
-  50% { transform: translate(10px, -15px) rotate(-5deg) scale(.95); }
-  75% { transform: translate(-15px, 20px) rotate(8deg) scale(1.05); }
+.hero-slide .hero-content {
+  opacity: 0;
+  transform: translateY(30px);
 }
 
 /* ============================================
@@ -2275,8 +2317,7 @@ body.data-mode .data-schema-mini { display: block; }
    Clean, stable view for the data perspective.
    Only data-specific animations remain active.
    ============================================ */
-body.data-mode .floater { animation: none !important; opacity: .05; }
-body.data-mode .hero-floaters { display: none; }
+/* floaters removed — carousel replaces hero */
 body.data-mode .scroll-progress { animation: none; }
 body.data-mode .menu-card {
   animation: none !important;
@@ -2644,36 +2685,93 @@ body.data-mode .phone-mockup { animation: none; }
   </div>
 </nav>
 
-<!-- ===================== HERO ===================== -->
+<!-- ===================== HERO CAROUSEL ===================== -->
 <section class="hero" id="hero">
-  <div class="hero-bg" id="heroBg"></div>
-  <div class="hero-floaters">
-    <span class="floater">🍔</span>
-    <span class="floater">🍟</span>
-    <span class="floater">🥤</span>
-    <span class="floater">🧅</span>
-    <span class="floater">🍦</span>
-    <span class="floater">🔥</span>
+  <div class="hero-carousel" id="heroCarousel">
+
+    <!-- SLIDE 1: Signature Burger -->
+    <div class="hero-slide">
+      <div class="hero-slide-bg"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fa-solid fa-fire-flame-curved"></i>
+          Jetzt neu: BM App mit 10% Willkommensrabatt
+        </div>
+        <h1 class="hero-title">
+          BURGER WIE<br>SIE SEIN <span>MÜSSEN</span>
+        </h1>
+        <p class="hero-tagline">"Flame-Grilled Since 2017"</p>
+        <p class="hero-desc">
+          100% Rindfleisch vom fränkischen Weiderind. Handgemachte Brioche-Buns
+          aus der Würzburger Backstube. Frische Zutaten, keine Kompromisse.
+        </p>
+        <div class="hero-buttons">
+          <a href="#menu" class="btn btn-primary">
+            <i class="fa-solid fa-utensils"></i> Jetzt bestellen
+          </a>
+          <a href="#about" class="btn btn-outline">Unsere Geschichte</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Fresh Ingredients -->
+    <div class="hero-slide">
+      <div class="hero-slide-bg"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fa-solid fa-leaf"></i>
+          Regionale Zutaten · Nachhaltig · Frisch
+        </div>
+        <h1 class="hero-title">
+          FRISCH AUS<br><span>FRANKEN</span>
+        </h1>
+        <p class="hero-tagline">"Vom Feld auf den Grill"</p>
+        <p class="hero-desc">
+          Unsere Zutaten kommen direkt aus der Region: Rindfleisch vom
+          Schweinfurter Land, Salat aus Veitshöchheim, Tomaten vom Würzburger Markt.
+        </p>
+        <div class="hero-buttons">
+          <a href="#menu" class="btn btn-primary">
+            <i class="fa-solid fa-seedling"></i> Zum Menü
+          </a>
+          <a href="#locations" class="btn btn-outline">Filialen finden</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3: Community / App -->
+    <div class="hero-slide">
+      <div class="hero-slide-bg"></div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fa-solid fa-mobile-screen"></i>
+          Vorbestellen · Treuepunkte · Exklusive Deals
+        </div>
+        <h1 class="hero-title">
+          SMARTER<br><span>BESTELLEN</span>
+        </h1>
+        <p class="hero-tagline">"Dein Burger wartet schon"</p>
+        <p class="hero-desc">
+          Lade die BurgerMetrics App herunter: Vorbestellen, Treuepunkte
+          sammeln, exklusive Coupons einlösen. Dein erster App-Einkauf?
+          10% Willkommensrabatt.
+        </p>
+        <div class="hero-buttons">
+          <a href="#app" class="btn btn-primary">
+            <i class="fa-solid fa-download"></i> App holen
+          </a>
+          <a href="#menu" class="btn btn-outline">Speisekarte ansehen</a>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="hero-content">
-    <div class="hero-badge">
-      <i class="fa-solid fa-fire-flame-curved"></i>
-      Jetzt neu: BM App mit 10% Willkommensrabatt
-    </div>
-    <h1 class="hero-title">
-      BURGER WIE<br>SIE SEIN <span>MÜSSEN</span>
-    </h1>
-    <p class="hero-tagline">"Flame-Grilled Since 2017"</p>
-    <p class="hero-desc">
-      100% Rindfleisch vom fränkischen Weiderind. Handgemachte Brioche-Buns
-      aus der Würzburger Backstube. Frische Zutaten, keine Kompromisse.
-    </p>
-    <div class="hero-buttons">
-      <a href="#menu" class="btn btn-primary">
-        <i class="fa-solid fa-utensils"></i> Jetzt bestellen
-      </a>
-      <a href="#about" class="btn btn-outline">Unsere Geschichte</a>
-    </div>
+
+  <!-- Carousel dots -->
+  <div class="hero-dots" id="heroDots">
+    <button class="hero-dot active" data-slide="0" onclick="goToSlide(0)"></button>
+    <button class="hero-dot" data-slide="1" onclick="goToSlide(1)"></button>
+    <button class="hero-dot" data-slide="2" onclick="goToSlide(2)"></button>
   </div>
   <!-- DATA ANNOTATIONS: HERO -->
   <div class="data-annotation" style="top:120px;right:40px;animation-delay:.1s;">
@@ -3710,11 +3808,14 @@ function toggleDataMode() {
 
   if (dataMode) {
     showToast('🔬 Datenperspektive aktiviert — Willkommen, Data Expert!');
-    // Start simulated event counter
     startEventCounter();
+    // Pause carousel in data mode — less distraction
+    if (typeof slideInterval !== 'undefined') clearInterval(slideInterval);
   } else {
     showToast('🍔 Zurück zur Kundenansicht');
     stopEventCounter();
+    // Resume carousel
+    if (typeof resetSlideTimer === 'function') resetSlideTimer();
   }
 }
 
@@ -3778,17 +3879,14 @@ window.addEventListener('load', () => {
   setTimeout(() => {
     document.getElementById('pageLoader').classList.add('hidden');
     document.body.style.overflow = '';
-    // Trigger hero entrance animations
-    document.querySelector('.hero-content').style.animation = 'heroEntrance .8s ease forwards';
   }, 1800);
 });
-// Add hero entrance animation dynamically
-const heroStyle = document.createElement('style');
-heroStyle.textContent = `
-  .hero-content { opacity: 0; transform: translateY(30px); }
-  @keyframes heroEntrance { to { opacity: 1; transform: translateY(0); } }
-`;
-document.head.appendChild(heroStyle);
+
+// =============================================================================
+// REFS NEEDED BY UNIFIED SCROLL HANDLER
+// =============================================================================
+const backToTop = document.getElementById('backToTop');
+const sections = document.querySelectorAll('section[id]');
 
 // =============================================================================
 // UNIFIED SCROLL HANDLER (prevents jitter from multiple listeners)
@@ -3871,22 +3969,79 @@ function animateCursorGlow() {
 }
 
 // =============================================================================
-// HERO PARALLAX ON MOUSE MOVE (fixed: no longer fights floater CSS animation)
+// HERO CAROUSEL
 // =============================================================================
-const heroBg = document.getElementById('heroBg');
-const hero = document.getElementById('hero');
-hero.addEventListener('mousemove', e => {
-  if (dataMode) return; // No parallax in data mode
-  const rect = hero.getBoundingClientRect();
-  const x = (e.clientX - rect.left) / rect.width - .5;
-  const y = (e.clientY - rect.top) / rect.height - .5;
-  heroBg.style.transform = `scale(1.05) translate(${x * -20}px, ${y * -15}px)`;
-});
-hero.addEventListener('mouseleave', () => {
-  heroBg.style.transform = 'scale(1.05) translate(0, 0)';
-  heroBg.style.transition = 'transform .6s ease';
-  setTimeout(() => heroBg.style.transition = '', 600);
-});
+const heroCarousel = document.getElementById('heroCarousel');
+const heroDots = document.querySelectorAll('.hero-dot');
+let currentSlide = 0;
+let slideInterval = null;
+const SLIDE_DURATION = 10000; // 10 seconds
+
+function goToSlide(index) {
+  currentSlide = index;
+  heroCarousel.style.transform = `translateX(-${index * 100}%)`;
+
+  // Update dots
+  heroDots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === index);
+    dot.classList.remove('running');
+  });
+
+  // Animate slide content
+  const slides = document.querySelectorAll('.hero-slide .hero-content');
+  slides.forEach((content, i) => {
+    if (i === index) {
+      content.style.opacity = '0';
+      content.style.transform = 'translateY(30px)';
+      setTimeout(() => {
+        content.style.transition = 'all .8s cubic-bezier(.4,0,.2,1)';
+        content.style.opacity = '1';
+        content.style.transform = 'translateY(0)';
+      }, 200);
+    } else {
+      content.style.transition = 'none';
+      content.style.opacity = '0';
+      content.style.transform = 'translateY(30px)';
+    }
+  });
+
+  // Restart timer
+  resetSlideTimer();
+
+  // Log in data mode
+  if (typeof logEvent === 'function' && dataMode) {
+    logEvent('CAROUSEL', `slide=${index}`);
+  }
+}
+
+function nextSlide() {
+  goToSlide((currentSlide + 1) % 3);
+}
+
+function resetSlideTimer() {
+  clearInterval(slideInterval);
+  // Start progress indicator
+  heroDots.forEach(d => d.classList.remove('running'));
+  // Small delay so CSS transition restarts
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      heroDots[currentSlide].classList.add('running');
+    });
+  });
+  slideInterval = setInterval(nextSlide, SLIDE_DURATION);
+}
+
+// Initial slide animation
+setTimeout(() => {
+  const firstContent = document.querySelector('.hero-slide:first-child .hero-content');
+  if (firstContent) {
+    firstContent.style.transition = 'all .8s cubic-bezier(.4,0,.2,1)';
+    firstContent.style.opacity = '1';
+    firstContent.style.transform = 'translateY(0)';
+  }
+  heroDots[0].classList.add('running');
+  slideInterval = setInterval(nextSlide, SLIDE_DURATION);
+}, 2000); // Start after page loader
 
 // =============================================================================
 // 3D TILT ON MENU CARDS
@@ -3946,8 +4101,7 @@ document.querySelectorAll('.value-card').forEach(card => {
   });
 });
 
-// Back to top & sections refs (used in unified scroll handler above)
-const backToTop = document.getElementById('backToTop');
+// Back to top (already declared above unified scroll handler)
 
 // =============================================================================
 // CONFETTI ON ORDER
@@ -3984,8 +4138,7 @@ function launchConfetti() {
   setTimeout(() => { container.innerHTML = ''; }, 4000);
 }
 
-// Sections ref (used in unified scroll handler above)
-const sections = document.querySelectorAll('section[id]');
+// Sections ref (already declared above unified scroll handler)
 
 // =============================================================================
 // ANIMATED NUMBER TICKER (improved)
