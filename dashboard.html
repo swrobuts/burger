@@ -287,6 +287,381 @@
       font-size: 10px; color: var(--ink-light); font-weight: 500;
     }
     .ms-action-impl::before { content: '→ '; font-weight: 700; color: var(--ink); }
+
+    /* ══════════════════════════════════════════════════════════════ */
+    /* RESPONSIVE DESIGN MEDIA QUERIES                                */
+    /* ══════════════════════════════════════════════════════════════ */
+
+    /* ── @media (max-width: 1024px) — Tablet adjustments ── */
+    @media (max-width: 1024px) {
+      .header-inner { padding: 20px 24px 0; }
+      .sub-nav-inner { padding: 0 24px; }
+      main { padding: 20px 24px 40px; }
+      footer { padding: 14px 24px; }
+
+      .kpi-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+
+      .ms-hero { grid-template-columns: repeat(2, 1fr); }
+      .ms-hero-cell:nth-child(2n+3) { border-right: none; border-top: 1px solid var(--border); }
+      .ms-hero-cell:nth-child(odd) { border-right: 1px solid var(--border); }
+      .ms-hero-cell:nth-child(even):not(:nth-child(2n+3)) { border-right: none; }
+
+      .ms-grid { grid-template-columns: 1fr; }
+      .ms-grid > .ms-card:nth-child(odd) { border-right: none; }
+    }
+
+    /* ── @media (max-width: 768px) — Main mobile breakpoint ── */
+    @media (max-width: 768px) {
+      .header-inner { padding: 16px 16px 0; }
+
+      .brand h1 { font-size: 18px; }
+      .brand p { font-size: 10px; }
+
+      /* Horizontal scrollable navigation */
+      .main-nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        gap: 0;
+      }
+      .main-nav::-webkit-scrollbar { display: none; }
+      .main-nav { -ms-overflow-style: none; scrollbar-width: none; }
+      .main-nav button {
+        padding: 12px 16px 10px;
+        font-size: 12px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .sub-nav-inner {
+        padding: 0 16px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .sub-nav-inner::-webkit-scrollbar { display: none; }
+      .sub-nav-inner { -ms-overflow-style: none; scrollbar-width: none; }
+      .sub-nav button {
+        padding: 9px 12px 7px;
+        font-size: 11px;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      .filters {
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .filter-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        min-height: 32px;
+      }
+
+      main {
+        padding: 16px 16px 32px;
+        max-width: 100%;
+      }
+
+      .kpi-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .kpi-card { padding: 14px 16px; }
+      .kpi-label { font-size: 9px; }
+      .kpi-value { font-size: 22px; }
+      .kpi-delta { font-size: 10px; }
+      .kpi-context { font-size: 10px; }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .chart-card {
+        padding: 16px 14px;
+        margin-bottom: 12px;
+      }
+      .chart-header { margin-bottom: 12px; }
+      .chart-title { font-size: 12px; }
+      .chart-sub { font-size: 9px; }
+      .chart-area { height: 240px; }
+      .chart-area.tall { height: 300px; }
+      .chart-area.short { height: 200px; }
+      .chart-area.xtall { height: 400px; }
+
+      .interpretation {
+        margin-top: 12px;
+        padding: 10px 12px;
+        font-size: 11px;
+      }
+      .recommendation {
+        margin-top: 6px;
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+
+      /* Horizontal scrollable tables */
+      .chart-card.table-card {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+      }
+      .data-table {
+        min-width: 100%;
+        display: block;
+        overflow-x: auto;
+      }
+      .data-table thead,
+      .data-table tbody,
+      .data-table tr {
+        display: contents;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 8px 8px;
+        font-size: 11px;
+      }
+      .data-table th {
+        font-size: 9px;
+      }
+      .mono { font-size: 11px; }
+
+      .table-toolbar {
+        gap: 6px;
+        margin-bottom: 8px;
+      }
+      .table-search {
+        min-width: 140px;
+        max-width: 100%;
+        padding: 5px 8px 5px 28px;
+        font-size: 11px;
+      }
+      .group-select {
+        padding: 4px 6px;
+        font-size: 10px;
+      }
+      .table-count { font-size: 9px; }
+
+      .legend-row { gap: 10px; }
+      .legend-item { font-size: 10px; }
+
+      /* Heatmap with horizontal scroll */
+      .heatmap-grid {
+        grid-template-columns: 40px repeat(18, 1fr);
+        gap: 1px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        min-width: 100%;
+      }
+      .heatmap-grid::-webkit-scrollbar { height: 4px; }
+      .heatmap-grid::-webkit-scrollbar-thumb { background: var(--subtle); }
+      .hm-label { font-size: 8px; }
+      .hm-cell { font-size: 6px; aspect-ratio: 1.1; }
+
+      footer {
+        padding: 12px 16px;
+        font-size: 9px;
+      }
+
+      /* ── Management Summary Mobile ── */
+      .ms-hero {
+        grid-template-columns: 1fr;
+        margin-bottom: 32px;
+        gap: 0;
+      }
+      .ms-hero-cell {
+        padding: 20px 16px 16px;
+        border-right: none !important;
+        border-top: 1px solid var(--border);
+      }
+      .ms-hero-cell:first-child { border-top: none; border-bottom: 3px solid var(--ink); }
+      .ms-hero { border-bottom: none; }
+      .ms-hero-val { font-size: 28px; }
+      .ms-hero-unit { font-size: 12px; }
+      .ms-hero-label { font-size: 10px; }
+
+      .ms-block { margin-bottom: 28px; }
+      .ms-block-head { margin-bottom: 12px; padding-bottom: 6px; gap: 10px; }
+      .ms-block-num { font-size: 24px; }
+      .ms-block-title { font-size: 12px; }
+
+      .ms-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
+      .ms-card {
+        padding: 12px 14px 14px;
+        border-right: none;
+      }
+      .ms-card-val { font-size: 15px; }
+      .ms-card-tag { font-size: 7px; }
+      .ms-card-text { font-size: 10px; }
+
+      .ms-strat { margin-bottom: 28px; }
+      .ms-strat-head { gap: 10px; padding-bottom: 8px; margin-bottom: 10px; }
+      .ms-strat-icon { width: 32px; height: 32px; font-size: 14px; }
+      .ms-strat-title { font-size: 12px; }
+
+      .ms-action {
+        grid-template-columns: 48px 1fr;
+        margin-bottom: 8px;
+        min-height: 44px;
+      }
+      .ms-action-prio { font-size: 8px; }
+      .ms-action-body { padding: 10px 12px; }
+      .ms-action-title { font-size: 11px; }
+      .ms-action-text { font-size: 10px; }
+      .ms-action-impl { font-size: 9px; margin-top: 4px; padding-top: 4px; }
+
+      .toggle-group { padding: 1px; gap: 0; }
+      .toggle-btn { padding: 3px 8px; font-size: 10px; }
+    }
+
+    /* ── @media (max-width: 480px) — Small phone refinements ── */
+    @media (max-width: 480px) {
+      .header-inner { padding: 12px 12px 0; }
+
+      .brand h1 { font-size: 16px; }
+      .brand p { font-size: 9px; }
+
+      .main-nav button {
+        padding: 10px 14px 8px;
+        font-size: 11px;
+      }
+
+      .sub-nav button {
+        padding: 8px 10px 6px;
+        font-size: 10px;
+      }
+
+      .filter-btn {
+        padding: 5px 8px;
+        font-size: 10px;
+        min-height: 28px;
+      }
+
+      main { padding: 12px 12px 24px; }
+
+      .kpi-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .kpi-card { padding: 12px 12px; }
+      .kpi-label { font-size: 8px; margin-bottom: 2px; }
+      .kpi-value { font-size: 20px; margin-bottom: 4px; }
+      .kpi-delta { font-size: 9px; }
+      .kpi-context { font-size: 9px; margin-top: 4px; }
+
+      .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .chart-card {
+        padding: 12px 10px;
+        margin-bottom: 10px;
+      }
+      .chart-header { margin-bottom: 10px; }
+      .chart-title { font-size: 11px; }
+      .chart-sub { font-size: 8px; }
+      .chart-area { height: 220px; }
+      .chart-area.tall { height: 280px; }
+      .chart-area.short { height: 180px; }
+      .chart-area.xtall { height: 350px; }
+
+      .interpretation {
+        margin-top: 10px;
+        padding: 8px 10px;
+        font-size: 10px;
+      }
+      .recommendation {
+        margin-top: 4px;
+        padding: 6px 8px;
+        font-size: 9px;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 6px 6px;
+        font-size: 10px;
+      }
+      .data-table th { font-size: 8px; }
+      .mono { font-size: 10px; }
+
+      .table-search {
+        min-width: 120px;
+        padding: 4px 6px 4px 24px;
+        font-size: 10px;
+      }
+      .group-select {
+        padding: 3px 5px;
+        font-size: 9px;
+      }
+
+      .legend-row { gap: 8px; }
+      .legend-item { font-size: 9px; }
+
+      .heatmap-grid {
+        grid-template-columns: 36px repeat(18, 1fr);
+        gap: 0.5px;
+      }
+      .hm-label { font-size: 7px; }
+      .hm-cell { font-size: 5px; aspect-ratio: 1; }
+
+      footer {
+        padding: 10px 12px;
+        font-size: 8px;
+      }
+
+      /* ── Management Summary Small Phone ── */
+      .ms-hero { margin-bottom: 24px; }
+      .ms-hero-cell { padding: 16px 12px 12px; }
+      .ms-hero-val { font-size: 24px; }
+      .ms-hero-unit { font-size: 11px; }
+      .ms-hero-label { font-size: 9px; }
+
+      .ms-block { margin-bottom: 20px; }
+      .ms-block-head { margin-bottom: 10px; padding-bottom: 4px; gap: 8px; }
+      .ms-block-num { font-size: 20px; }
+      .ms-block-title { font-size: 11px; }
+
+      .ms-grid { grid-template-columns: 1fr; }
+      .ms-card { padding: 10px 12px 12px; }
+      .ms-card-val { font-size: 14px; }
+      .ms-card-tag { font-size: 6px; padding: 1px 4px; }
+      .ms-card-text { font-size: 9px; }
+
+      .ms-strat { margin-bottom: 20px; }
+      .ms-strat-head { gap: 8px; padding-bottom: 6px; margin-bottom: 8px; }
+      .ms-strat-icon { width: 28px; height: 28px; font-size: 12px; }
+      .ms-strat-title { font-size: 11px; }
+
+      .ms-action {
+        grid-template-columns: 44px 1fr;
+        margin-bottom: 6px;
+        min-height: 40px;
+      }
+      .ms-action-prio { font-size: 7px; }
+      .ms-action-body { padding: 8px 10px; }
+      .ms-action-title { font-size: 10px; margin-bottom: 2px; }
+      .ms-action-text { font-size: 9px; }
+      .ms-action-impl { font-size: 8px; margin-top: 2px; padding-top: 2px; }
+    }
+
+    /* ── Touch-friendly tap targets ── */
+    @media (hover: none) and (pointer: coarse) {
+      .filter-btn,
+      .main-nav button,
+      .sub-nav button,
+      .toggle-btn {
+        min-height: 44px;
+        min-width: 44px;
+      }
+    }
   </style>
 </head>
 <body>

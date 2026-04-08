@@ -2854,6 +2854,272 @@ body.data-mode .phone-mockup { animation: none; }
   color: var(--stone-600);
 }
 </style>
+
+/* ============================================
+   COMPREHENSIVE MOBILE RESPONSIVE DESIGN
+   ============================================ */
+
+/* ===== TABLET (768px and below) ===== */
+@media (max-width: 768px) {
+  /* General layout & spacing */
+  .section-pad { padding: 60px 0; }
+  .container { padding: 0 16px; }
+
+  /* Hero section - fix margin and font sizes */
+  .hero-title { font-size: clamp(2rem, 6vw, 3.5rem); }
+  .hero-subtitle { font-size: clamp(0.9rem, 2vw, 1.2rem); }
+  .hero-content {
+    margin-left: 0;
+    padding: 0 16px;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .hero-cta-group .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* App banner - fix grid and features layout */
+  .app-features { grid-template-columns: 1fr; }
+
+  /* Cart drawer - mobile friendly width */
+  .cart-drawer {
+    width: 100%;
+    right: -100%;
+  }
+  .cart-drawer.open { right: 0; }
+
+  /* Payment grid - 2 columns on tablet */
+  .cart-payment { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .pay-option { padding: 6px 3px; font-size: .65rem; }
+
+  /* About/story sections */
+  .about-story { grid-template-columns: 1fr; gap: 40px; }
+  .about-story-img img { height: 300px; }
+  .about-story-text h3 { font-size: 1.5rem; }
+
+  /* Values grid */
+  .values-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+  /* Team grid */
+  .team-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+  .team-photo { width: 100px; height: 100px; margin: 0 auto 12px; }
+  .team-name { font-size: .85rem; }
+
+  /* Location cards - responsive */
+  .locations-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+
+  /* Data explore section */
+  .data-compare-grid { grid-template-columns: 1fr; gap: 16px; }
+  .data-compare-col h5 { font-size: .9rem; }
+  .data-compare-col ul li { font-size: .85rem; }
+
+  /* Section titles on tablet */
+  .section-title { font-size: clamp(1.8rem, 4vw, 2.4rem); }
+  .section-subtitle { font-size: clamp(0.85rem, 2vw, 1rem); }
+
+  /* Chatbot sizing */
+  .chatbot-window { width: 340px; height: 450px; }
+  .chatbot-messages { max-height: 280px; }
+}
+
+/* ===== MOBILE (480px and below) ===== */
+@media (max-width: 480px) {
+  /* General layout & spacing */
+  .section-pad { padding: 40px 0; }
+  .container { padding: 0 12px; }
+
+  /* Hero section optimized for small screens */
+  .hero-title { font-size: clamp(1.5rem, 5vw, 2.5rem); line-height: 1.2; }
+  .hero-subtitle { font-size: 0.9rem; }
+  .hero-content {
+    margin-left: 0;
+    padding: 0 12px;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .hero-cta-group .btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: .9rem;
+  }
+  .hero-stats { padding: 40px 12px; }
+  .hero-stats-inner { grid-template-columns: 1fr; gap: 16px; }
+  .stat-box {
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-value { font-size: 1.8rem; }
+  .stat-label { font-size: .75rem; }
+
+  /* Marquee text sizing */
+  .marquee-text { font-size: 1rem; }
+
+  /* Menu section - single column layout */
+  .menu-grid { grid-template-columns: 1fr; }
+  .menu-card { padding: 16px; }
+  .menu-card-image { height: 200px; }
+  .menu-card-nutrition { gap: 8px; padding: 8px 0; }
+  .nutrition-val { font-size: .8rem; }
+  .nutrition-label { font-size: .6rem; }
+
+  /* App banner section */
+  .app-banner-inner {
+    grid-template-columns: 1fr;
+    padding: 40px 12px;
+    gap: 40px;
+  }
+  .app-banner-text h2 { font-size: clamp(1.5rem, 4vw, 2.2rem); }
+  .app-banner-text p { font-size: .9rem; }
+  .app-features { grid-template-columns: 1fr; gap: 12px; }
+  .app-feature { gap: 8px; }
+  .app-feature span { font-size: .82rem; }
+  .phone-mockup {
+    width: 200px;
+    height: 400px;
+  }
+
+  /* Cart drawer - full mobile drawer */
+  .cart-drawer {
+    width: 100vw;
+    right: -100vw;
+    max-width: 100vw;
+  }
+  .cart-drawer.open { right: 0; }
+  .cart-header { padding: 16px; }
+  .cart-header h3 { font-size: 1.2rem; }
+  .cart-item { padding: 12px; }
+  .cart-item-name { font-size: .85rem; }
+  .cart-item-qty input { width: 40px; height: 32px; font-size: .8rem; }
+
+  /* Payment grid - single column on phone */
+  .cart-payment { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+  .pay-option {
+    padding: 5px 2px;
+    font-size: .6rem;
+    min-height: 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .pay-option i { font-size: .85rem; margin-bottom: 2px; }
+
+  /* Cart total & checkout */
+  .cart-subtotal { font-size: .85rem; }
+  .cart-total { font-size: 1.1rem; }
+  .cart-checkout {
+    padding: 14px;
+    font-size: .9rem;
+  }
+
+  /* About section */
+  .about-story { grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
+  .about-story-img img { height: 240px; }
+  .about-story-text h3 { font-size: 1.3rem; margin-bottom: 12px; }
+  .about-story-text p { font-size: .88rem; margin-bottom: 8px; }
+
+  /* Values grid - single column on phone */
+  .values-grid { grid-template-columns: 1fr; gap: 12px; margin-bottom: 40px; }
+  .value-card { padding: 24px 16px; }
+  .value-icon { width: 44px; height: 44px; }
+
+  /* Team grid - single column */
+  .team-grid { grid-template-columns: 1fr; gap: 16px; }
+  .team-photo { width: 80px; height: 80px; margin: 0 auto 12px; border-width: 2px; }
+  .team-name { font-size: .8rem; }
+  .team-role { font-size: .75rem; }
+
+  /* Locations - single column */
+  .locations-grid { grid-template-columns: 1fr; gap: 12px; }
+  .location-card { padding: 16px; }
+  .location-name { font-size: 1rem; }
+  .location-type { font-size: .6rem; padding: 2px 8px; }
+
+  /* Data exploration section */
+  .data-compare-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 12px; }
+  .data-compare-col h5 { font-size: .85rem; margin-bottom: 8px; }
+  .data-compare-col ul li { font-size: .8rem; padding: 4px 0; }
+
+  /* Section titles on mobile */
+  .section-title { font-size: clamp(1.3rem, 5vw, 1.8rem); margin-bottom: 12px; }
+  .section-subtitle { font-size: .85rem; margin-bottom: 20px; }
+
+  /* Buttons - larger touch targets */
+  .btn, .btn-primary, .btn-secondary, .btn-sm {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .btn { padding: 12px 20px; font-size: .95rem; }
+  .btn-sm { padding: 10px 16px; font-size: .85rem; }
+
+  /* Input fields - touch-friendly */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 1rem; /* prevents zoom on iOS */
+  }
+
+  /* Chatbot on mobile */
+  .chatbot-window {
+    width: calc(100vw - 24px);
+    height: 380px;
+    bottom: 12px;
+    right: 12px;
+    max-width: 360px;
+  }
+  .chatbot-messages { max-height: 200px; min-height: 150px; }
+  .chat-msg { max-width: 90%; font-size: .82rem; }
+
+  /* Modal on mobile */
+  .apikey-box {
+    width: 95%;
+    padding: 20px;
+    max-width: 100%;
+  }
+  .apikey-box h3 { font-size: 1.2rem; }
+  .apikey-box p { font-size: .8rem; }
+  .apikey-box input { font-size: 1rem; padding: 12px; }
+  .apikey-actions button { padding: 12px 16px; font-size: .85rem; }
+
+  /* Success modal */
+  .success-modal-content { padding: 20px; }
+  .success-modal-content h2 { font-size: 1.3rem; }
+  .success-modal-content p { font-size: .85rem; }
+
+  /* Navigation adjustments */
+  .nav-brand { font-size: 1.1rem; }
+  .cart-count { font-size: .65rem; width: 18px; height: 18px; line-height: 18px; }
+
+  /* Prevent horizontal overflow */
+  body { overflow-x: hidden; }
+  * { max-width: 100%; }
+}
+
+/* ===== EXTRA SMALL (below 360px) ===== */
+@media (max-width: 359px) {
+  .container { padding: 0 8px; }
+  .section-pad { padding: 30px 0; }
+  .hero-title { font-size: clamp(1.2rem, 4vw, 2rem); }
+  .section-title { font-size: clamp(1rem, 4vw, 1.5rem); }
+  .menu-grid { grid-template-columns: 1fr; }
+  .team-grid { grid-template-columns: 1fr; }
+  .values-grid { grid-template-columns: 1fr; }
+  .btn, .btn-primary, .btn-secondary {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: .9rem;
+  }
+}
 </head>
 <body>
 
